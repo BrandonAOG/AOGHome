@@ -4,16 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Always On Generators - Forms Hub</title>
-
-<!-- PWA Manifest -->
-<link rel="manifest" href="./manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#FBBF24">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AOG Hub">
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --yellow: #FCD34D;
@@ -609,7 +607,9 @@ body::after {
     New version ready to install
   </div>
   <button id="update-reload-btn" onclick="window.location.reload()">Reload</button>
-  <button id="update-dismiss-btn" onclick="document.getElementById('update-toast').classList.remove('visible')" title="Dismiss">✕</button>
+  <button id="update-dismiss-btn"
+    onclick="document.getElementById('update-toast').classList.remove('visible')"
+    title="Dismiss">✕</button>
 </div>
 
 <div class="container">
@@ -617,7 +617,8 @@ body::after {
   <!-- HEADER -->
   <div class="header">
     <div class="logo-wrap">
-      <img src="https://raw.githubusercontent.com/BrandonAOG/AOG-Logo/main/logo.png" alt="Always On Generators Logo" class="logo-img">
+      <img src="https://raw.githubusercontent.com/BrandonAOG/AOG-Logo/main/logo.png"
+        alt="Always On Generators Logo" class="logo-img">
       <div class="title-block">
         <div class="company-name">Always On<br>Generators</div>
         <div class="tagline">// Power When You Need It //</div>
@@ -634,7 +635,7 @@ body::after {
     </div>
     <div class="status-item">
       <span class="status-dot yellow"></span>
-      <span>8 Forms Active</span>
+      <span>9 Forms Active</span>
     </div>
     <div class="status-item">
       <span class="status-dot orange"></span>
@@ -651,7 +652,7 @@ body::after {
 
   <div class="forms-grid">
 
-    <!-- INSTALL FORM -->
+    <!-- ELECTRICAL INSTALL -->
     <a href="#" class="form-card" data-form="install">
       <div class="glow-strip"></div>
       <div class="form-card-content">
@@ -661,31 +662,33 @@ body::after {
           </svg>
         </div>
         <div class="form-text">
-          <div class="form-title">Electrical Install Form</div>
+          <div class="form-title">Electrical Install</div>
           <div class="form-desc">New generator installation paperwork &amp; checklists</div>
         </div>
       </div>
       <div class="form-arrow">▶ ENTER</div>
     </a>
-<!-- GAS INSTALL FORM -->
-<a href="#" class="form-card" data-form="gas-install">
-  <div class="glow-strip"></div>
-  <div class="form-card-content">
-    <div class="form-icon-wrap">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 2C8 6 6 10 8 14c1 2 3 3 4 3s3-1 4-3c2-4 0-8-4-12z"/>
-        <path d="M8 14c-2 1-3 3-3 5h14c0-2-1-4-3-5"/>
-        <line x1="12" y1="17" x2="12" y2="19"/>
-      </svg>
-    </div>
-    <div class="form-text">
-      <div class="form-title">Gas Installation Form</div>
-      <div class="form-desc">Gas line hookup, connection &amp; installation paperwork</div>
-    </div>
-  </div>
-  <div class="form-arrow">▶ ENTER</div>
-</a>
-    <!-- ESTIMATE FORM -->
+
+    <!-- GAS INSTALL -->
+    <a href="#" class="form-card" data-form="gas-install">
+      <div class="glow-strip"></div>
+      <div class="form-card-content">
+        <div class="form-icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2C8 6 6 10 8 14c1 2 3 3 4 3s3-1 4-3c2-4 0-8-4-12z"/>
+            <path d="M8 14c-2 1-3 3-3 5h14c0-2-1-4-3-5"/>
+            <line x1="12" y1="17" x2="12" y2="19"/>
+          </svg>
+        </div>
+        <div class="form-text">
+          <div class="form-title">Gas Installation</div>
+          <div class="form-desc">Gas line hookup, connection &amp; installation paperwork</div>
+        </div>
+      </div>
+      <div class="form-arrow">▶ ENTER</div>
+    </a>
+
+    <!-- ESTIMATE -->
     <a href="#" class="form-card" data-form="estimate">
       <div class="glow-strip"></div>
       <div class="form-card-content">
@@ -705,14 +708,14 @@ body::after {
       <div class="form-arrow">▶ ENTER</div>
     </a>
 
-    <!-- MAINTENANCE FORM -->
+    <!-- MAINTENANCE -->
     <a href="#" class="form-card" data-form="maintenance">
       <div class="glow-strip"></div>
       <div class="form-card-content">
         <div class="form-icon-wrap">
           <svg viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
           </svg>
         </div>
         <div class="form-text">
@@ -723,7 +726,7 @@ body::after {
       <div class="form-arrow">▶ ENTER</div>
     </a>
 
-    <!-- SITE VISITS FORM -->
+    <!-- SITE VISIT -->
     <a href="#" class="form-card" data-form="site-visits">
       <div class="glow-strip"></div>
       <div class="form-card-content">
@@ -759,7 +762,7 @@ body::after {
       <div class="form-arrow">▶ ENTER</div>
     </a>
 
-    <!-- CONDUIT FILL FORM -->
+    <!-- CONDUIT FILL -->
     <a href="#" class="form-card" data-form="conduit-fill">
       <div class="glow-strip"></div>
       <div class="form-card-content">
@@ -772,7 +775,7 @@ body::after {
         </div>
         <div class="form-text">
           <div class="form-title">Conduit Fill</div>
-          <div class="form-desc">Electrical conduit sizing &amp; fill calculations</div>
+          <div class="form-desc">NEC Chapter 9 conduit sizing &amp; fill calculations</div>
         </div>
       </div>
       <div class="form-arrow">▶ ENTER</div>
@@ -795,7 +798,7 @@ body::after {
       <div class="form-arrow">▶ ENTER</div>
     </a>
 
-    <!-- BREAKER & CONDUCTOR SIZING -->
+    <!-- BREAKER & CONDUCTOR -->
     <a href="#" class="form-card" data-form="breaker-sizing">
       <div class="glow-strip"></div>
       <div class="form-card-content">
@@ -809,7 +812,7 @@ body::after {
         </div>
         <div class="form-text">
           <div class="form-title">Breaker &amp; Conductor</div>
-          <div class="form-desc">NEC conductor sizing, derating, EGC &amp; parallel sets — 240.6 · 310.16 · 310.12 · 250.122</div>
+          <div class="form-desc">NEC conductor sizing, derating, EGC &amp; parallel sets</div>
         </div>
       </div>
       <div class="form-arrow">▶ ENTER</div>
@@ -820,7 +823,7 @@ body::after {
   <!-- FOOTER -->
   <div class="footer">
     <div class="footer-text">Always On Generators · Field Operations Portal</div>
-    <div class="footer-version">SYSTEM <span>v1.2</span> · OFFLINE READY · GITHUB PAGES</div>
+    <div class="footer-version">SYSTEM <span>v1.0</span> · OFFLINE READY · GITHUB PAGES</div>
   </div>
 
 </div>
@@ -828,27 +831,26 @@ body::after {
 <script>
 // ── Form URL routing ──────────────────────────────────────
 const FORM_URLS = {
-  maintenance:   './maintenance/',
-  gasInstall:    './gas-install/',
-  install:       './elect-install/',      
-  estimate:      './estimate/',
-  siteVisit:     './site-visit/',
-  sketchPad:     './sketch-pad/',
-  conduitFill:   './conduit-fill/',
-  loadCalc:      './load-calcs/',
-  breakerSizing: './breaker-conductor/',
+  'install':        './elect-install/',
+  'gas-install':    './gas-install/',
+  'estimate':       './estimate/',
+  'maintenance':    './maintenance/',
+  'site-visits':    './site-visit/',
+  'sketch-pad':     './sketch-pad/',
+  'conduit-fill':   './conduit-fill/',
+  'load-calc':      './load-calcs/',
+  'breaker-sizing': './breaker-conductor/',
 };
-
 
 document.querySelectorAll('.form-card').forEach(function(card) {
   const formKey = card.getAttribute('data-form');
   const url = FORM_URLS[formKey];
-  if (url && url !== '#') card.setAttribute('href', url);
+  if (url) card.setAttribute('href', url);
   card.addEventListener('click', function(e) {
-    if (!url || url === '#') {
+    if (!url) {
       e.preventDefault();
       const title = this.querySelector('.form-title').textContent;
-      alert('🔧 ' + title + ' - URL not yet configured.\n\nEdit the FORM_URLS section in index.html to set this link.');
+      alert('🔧 ' + title + ' — URL not yet configured.\n\nEdit FORM_URLS in index.html.');
     }
   });
 });
@@ -867,9 +869,9 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
 // ── Online / Offline banner ───────────────────────────────
-const banner       = document.getElementById('offline-banner');
-const swDot        = document.getElementById('sw-status-dot');
-const swLabel      = document.getElementById('sw-status-label');
+const banner  = document.getElementById('offline-banner');
+const swDot   = document.getElementById('sw-status-dot');
+const swLabel = document.getElementById('sw-status-label');
 
 function setOnline() {
   banner.classList.remove('visible');
@@ -892,28 +894,31 @@ if (!navigator.onLine) setOffline();
 // ── Service Worker registration ───────────────────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js').then(function(reg) {
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+      .then(function(reg) {
 
-      // Show update toast when a new SW is waiting
-      reg.addEventListener('updatefound', function() {
-        const newWorker = reg.installing;
-        newWorker.addEventListener('statechange', function() {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            document.getElementById('update-toast').classList.add('visible');
-          }
+        // Show update toast when new SW is waiting
+        reg.addEventListener('updatefound', function() {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', function() {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              document.getElementById('update-toast').classList.add('visible');
+            }
+          });
         });
+
+        // Update SW status dot once active
+        if (reg.active) {
+          swDot.classList.remove('offline-dot');
+          swDot.classList.add('blue');
+          swLabel.textContent = navigator.onLine ? 'Sync Enabled' : 'Offline Mode';
+        }
+
+        console.log('[SW] Registered, scope:', reg.scope);
+      })
+      .catch(function(err) {
+        console.warn('[SW] Registration failed:', err);
       });
-
-      // Update SW status dot once active
-      if (reg.active) {
-        swDot.classList.remove('offline-dot');
-        swDot.classList.add('blue');
-        swLabel.textContent = navigator.onLine ? 'Sync Enabled' : 'Offline Mode';
-      }
-
-    }).catch(function(err) {
-      console.warn('Service worker registration failed:', err);
-    });
   });
 }
 </script>
