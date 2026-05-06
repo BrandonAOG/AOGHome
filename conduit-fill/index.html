@@ -6,489 +6,501 @@
 <title>AOG Conduit Fill Calculator — NEC Chapter 9</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
 <meta name="theme-color" content="#FBBF24">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AOG Forms">
 
-  
-  <style>
-  :root {
-    --bg: #f8f9fa;
-    --bg2: #ffffff;
-    --bg3: #f1f3f5;
-    --border: #dee2e6;
-    --text: #1F2937;
-    --text2: #4b5563;
-    --accent: #D97706;
-    --accent2: #B45309;
-    --cyan: #0891b2;
-    --success: #059669;
-    --danger: #DC2626;
-    --warn: #d97706;
-    --shadow: 0 2px 8px rgba(0,0,0,0.08);
-    --radius: 12px;
-    --header-bg: #1a1a2e;
-    --header-text: #D97706;
-  }
-  .dark {
-    --bg: #0A0E27;
-    --bg2: #0f1535;
-    --bg3: #141a3a;
-    --border: #1e2a4a;
-    --text: #E0F7FF;
-    --text2: #94a3b8;
-    --accent: #00FFC8;
-    --accent2: #06B6D4;
-    --cyan: #00FFC8;
-    --success: #10b981;
-    --danger: #ef4444;
-    --warn: #f59e0b;
-    --shadow: 0 2px 8px rgba(0,255,200,0.06);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Exo 2', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    transition: background 0.3s, color 0.3s;
-  }
+<style>
+:root {
+  --bg: #f8f9fa;
+  --bg2: #ffffff;
+  --bg3: #f1f3f5;
+  --border: #dee2e6;
+  --text: #1F2937;
+  --text2: #4b5563;
+  --accent: #D97706;
+  --accent2: #B45309;
+  --cyan: #0891b2;
+  --success: #059669;
+  --danger: #DC2626;
+  --warn: #d97706;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius: 12px;
+  --header-bg: #1a1a2e;
+  --header-text: #D97706;
+}
+.dark {
+  --bg: #0A0E27;
+  --bg2: #0f1535;
+  --bg3: #141a3a;
+  --border: #1e2a4a;
+  --text: #E0F7FF;
+  --text2: #94a3b8;
+  --accent: #00FFC8;
+  --accent2: #06B6D4;
+  --cyan: #00FFC8;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warn: #f59e0b;
+  --shadow: 0 2px 8px rgba(0,255,200,0.06);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Exo 2', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
 
-  /* HEADER */
-  .header {
-    background: var(--header-bg);
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
-  }
-  .header-left { display: flex; align-items: center; gap: 10px; }
-  .header-logo {
-    width: 38px; height: 38px; border-radius: 50%;
-    object-fit: cover; border: 2px solid #D97706;
-  }
-  .header-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 13px; font-weight: 700;
-    color: #D97706; letter-spacing: 1px;
-    line-height: 1.2;
-  }
-  .header-sub {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 9px; color: #94a3b8; letter-spacing: 1px;
-  }
-  .header-right { display: flex; align-items: center; gap: 8px; }
-  .theme-btn {
-    background: none; border: 1px solid #D97706;
-    color: #D97706; border-radius: 8px;
-    padding: 6px 10px; font-size: 14px; cursor: pointer;
-    transition: all 0.2s;
-  }
-  .theme-btn:hover { background: #D97706; color: #000; }
-  .nec-badge {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 8px; background: #D97706;
-    color: #000; padding: 3px 7px;
-    border-radius: 4px; font-weight: 700;
-    letter-spacing: 1px;
-  }
+/* HEADER */
+.header {
+  background: var(--header-bg);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+.header-left { display: flex; align-items: center; gap: 10px; }
+.header-logo {
+  width: 38px; height: 38px; border-radius: 50%;
+  object-fit: cover; border: 2px solid #D97706;
+}
+.header-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: #D97706; letter-spacing: 1px;
+  line-height: 1.2;
+}
+.header-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; color: #94a3b8; letter-spacing: 1px;
+}
+.header-right { display: flex; align-items: center; gap: 8px; }
+.home-btn {
+  background: none; border: 1px solid #D97706;
+  color: #D97706; border-radius: 8px;
+  padding: 6px 10px; font-size: 11px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700; letter-spacing: 1px;
+  cursor: pointer; transition: all 0.2s;
+  text-decoration: none; display: inline-flex;
+  align-items: center; gap: 4px;
+}
+.home-btn:hover { background: #D97706; color: #000; }
+.theme-btn {
+  background: none; border: 1px solid #D97706;
+  color: #D97706; border-radius: 8px;
+  padding: 6px 10px; font-size: 14px; cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-btn:hover { background: #D97706; color: #000; }
+.nec-badge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; background: #D97706;
+  color: #000; padding: 3px 7px;
+  border-radius: 4px; font-weight: 700;
+  letter-spacing: 1px;
+}
 
-  /* MAIN */
-  .main { padding: 16px; max-width: 900px; margin: 0 auto; }
+/* MAIN */
+.main { padding: 16px; max-width: 900px; margin: 0 auto; }
 
-  /* SECTION CARDS */
-  .card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-bottom: 14px;
-    box-shadow: var(--shadow);
-    transition: background 0.3s, border 0.3s;
-  }
-  .card-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 11px; font-weight: 700;
-    color: var(--accent);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .card-title::before {
-    content: ''; display: inline-block;
-    width: 3px; height: 14px;
-    background: var(--accent); border-radius: 2px;
-  }
+/* SECTION CARDS */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  transition: background 0.3s, border 0.3s;
+}
+.card-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px; font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title::before {
+  content: ''; display: inline-block;
+  width: 3px; height: 14px;
+  background: var(--accent); border-radius: 2px;
+}
 
-  /* FORM ELEMENTS */
-  label {
-    font-size: 11px; font-weight: 600;
-    color: var(--text2);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    display: block; margin-bottom: 5px;
-  }
-  select, input[type="number"], input[type="text"] {
-    width: 100%;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--text);
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 14px;
-    font-family: 'Exo 2', sans-serif;
-    outline: none;
-    transition: border 0.2s, box-shadow 0.2s;
-    -webkit-appearance: none;
-  }
-  select:focus, input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(217,119,6,0.2);
-  }
-  .dark select:focus, .dark input:focus {
-    box-shadow: 0 0 0 2px rgba(0,255,200,0.15);
-  }
+/* FORM ELEMENTS */
+label {
+  font-size: 11px; font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  display: block; margin-bottom: 5px;
+}
+select, input[type="number"], input[type="text"] {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: 'Exo 2', sans-serif;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+select:focus, input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(217,119,6,0.2);
+}
+.dark select:focus, .dark input:focus {
+  box-shadow: 0 0 0 2px rgba(0,255,200,0.15);
+}
 
-  /* GRID LAYOUTS */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-  @media(max-width:520px) {
-    .grid-2 { grid-template-columns: 1fr; }
-    .grid-3 { grid-template-columns: 1fr 1fr; }
-  }
+/* GRID LAYOUTS */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+@media(max-width:520px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+}
 
-  /* WIRE ROWS */
-  .wire-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    gap: 8px;
-    align-items: end;
-    padding: 10px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 8px;
-    transition: background 0.3s;
-  }
-  .wire-row:hover { border-color: var(--accent); }
-  .remove-btn {
-    background: var(--danger);
-    color: white; border: none;
-    border-radius: 6px; width: 32px; height: 32px;
-    font-size: 16px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: opacity 0.2s;
-    align-self: flex-end; margin-bottom: 0;
-  }
-  .remove-btn:hover { opacity: 0.8; }
-  .add-btn {
-    background: var(--accent);
-    color: #000; border: none;
-    border-radius: 8px; padding: 10px 16px;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 1px; cursor: pointer;
-    display: flex; align-items: center; gap: 6px;
-    transition: opacity 0.2s, transform 0.1s;
-    width: 100%; justify-content: center;
-    margin-top: 8px;
-  }
-  .add-btn:hover { opacity: 0.85; transform: translateY(-1px); }
-  .add-btn:active { transform: translateY(0); }
+/* WIRE ROWS */
+.wire-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  align-items: end;
+  padding: 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: background 0.3s;
+}
+.wire-row:hover { border-color: var(--accent); }
+.remove-btn {
+  background: var(--danger);
+  color: white; border: none;
+  border-radius: 6px; width: 32px; height: 32px;
+  font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: opacity 0.2s;
+  align-self: flex-end; margin-bottom: 0;
+}
+.remove-btn:hover { opacity: 0.8; }
+.add-btn {
+  background: var(--accent);
+  color: #000; border: none;
+  border-radius: 8px; padding: 10px 16px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 1px; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: opacity 0.2s, transform 0.1s;
+  width: 100%; justify-content: center;
+  margin-top: 8px;
+}
+.add-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+.add-btn:active { transform: translateY(0); }
 
-  /* CALCULATE BUTTON */
-  .calc-btn {
-    width: 100%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #000; border: none;
-    border-radius: 10px; padding: 14px;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 13px; font-weight: 700;
-    letter-spacing: 2px; cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 15px rgba(217,119,6,0.3);
-    margin-top: 4px;
-  }
-  .calc-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(217,119,6,0.4);
-  }
-  .calc-btn:active { transform: translateY(0); }
-  .dark .calc-btn {
-    background: linear-gradient(135deg, #00FFC8, #06B6D4);
-    box-shadow: 0 4px 15px rgba(0,255,200,0.25);
-  }
+/* CALCULATE BUTTON */
+.calc-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #000; border: none;
+  border-radius: 10px; padding: 14px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 2px; cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(217,119,6,0.3);
+  margin-top: 4px;
+}
+.calc-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(217,119,6,0.4);
+}
+.calc-btn:active { transform: translateY(0); }
+.dark .calc-btn {
+  background: linear-gradient(135deg, #00FFC8, #06B6D4);
+  box-shadow: 0 4px 15px rgba(0,255,200,0.25);
+}
 
-  /* RESULTS */
-  .result-card {
-    background: var(--bg2);
-    border: 2px solid var(--accent);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-bottom: 14px;
-    box-shadow: 0 0 20px rgba(217,119,6,0.1);
-  }
-  .dark .result-card {
-    box-shadow: 0 0 20px rgba(0,255,200,0.08);
-  }
-  .result-header {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 11px; color: var(--accent);
-    letter-spacing: 1.5px; margin-bottom: 14px;
-    text-transform: uppercase;
-    display: flex; align-items: center; gap: 8px;
-  }
+/* RESULTS */
+.result-card {
+  background: var(--bg2);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 0 20px rgba(217,119,6,0.1);
+}
+.dark .result-card {
+  box-shadow: 0 0 20px rgba(0,255,200,0.08);
+}
+.result-header {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px; color: var(--accent);
+  letter-spacing: 1.5px; margin-bottom: 14px;
+  text-transform: uppercase;
+  display: flex; align-items: center; gap: 8px;
+}
 
-  /* CONDUIT TABLE */
-  .conduit-table {
-    width: 100%; border-collapse: collapse;
-    font-size: 12px; font-family: 'Share Tech Mono', monospace;
-  }
-  .conduit-table th {
-    background: var(--bg3);
-    color: var(--accent);
-    font-family: 'Orbitron', sans-serif;
-    font-size: 9px; letter-spacing: 1px;
-    padding: 8px 10px; text-align: left;
-    border-bottom: 2px solid var(--border);
-    white-space: nowrap;
-  }
-  .conduit-table td {
-    padding: 8px 10px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text);
-    vertical-align: middle;
-  }
-  .conduit-table tr:last-child td { border-bottom: none; }
-  .conduit-table tr:hover td { background: var(--bg3); }
+/* CONDUIT TABLE */
+.conduit-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 12px; font-family: 'Share Tech Mono', monospace;
+}
+.conduit-table th {
+  background: var(--bg3);
+  color: var(--accent);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px; letter-spacing: 1px;
+  padding: 8px 10px; text-align: left;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+.conduit-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: middle;
+}
+.conduit-table tr:last-child td { border-bottom: none; }
+.conduit-table tr:hover td { background: var(--bg3); }
 
-  /* STATUS PILLS */
-  .status-pass {
-    background: var(--success);
-    color: white; padding: 3px 8px;
-    border-radius: 12px; font-size: 10px;
-    font-weight: 700; white-space: nowrap;
-  }
-  .status-fail {
-    background: var(--danger);
-    color: white; padding: 3px 8px;
-    border-radius: 12px; font-size: 10px;
-    font-weight: 700; white-space: nowrap;
-  }
-  .status-warn {
-    background: var(--warn);
-    color: #000; padding: 3px 8px;
-    border-radius: 12px; font-size: 10px;
-    font-weight: 700; white-space: nowrap;
-  }
-  .status-best {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #000; padding: 3px 8px;
-    border-radius: 12px; font-size: 10px;
-    font-weight: 700; white-space: nowrap;
-  }
+/* STATUS PILLS */
+.status-pass {
+  background: var(--success);
+  color: white; padding: 3px 8px;
+  border-radius: 12px; font-size: 10px;
+  font-weight: 700; white-space: nowrap;
+}
+.status-fail {
+  background: var(--danger);
+  color: white; padding: 3px 8px;
+  border-radius: 12px; font-size: 10px;
+  font-weight: 700; white-space: nowrap;
+}
+.status-warn {
+  background: var(--warn);
+  color: #000; padding: 3px 8px;
+uit  border-radius: 12px; font-size: 10px;
+  font-weight: 700; white-space: nowrap;
+}
+.status-best {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #000; padding: 3px 8px;
+  border-radius: 12px; font-size: 10px;
+  font-weight: 700; white-space: nowrap;
+}
 
-  /* FILL BAR */
-  .fill-bar-wrap {
-    background: var(--bg3);
-    border-radius: 6px; height: 10px;
-    overflow: hidden; min-width: 60px;
-  }
-  .fill-bar {
-    height: 100%; border-radius: 6px;
-    transition: width 0.6s ease;
-  }
-  .fill-green { background: var(--success); }
-  .fill-yellow { background: var(--warn); }
-  .fill-red { background: var(--danger); }
+/* FILL BAR */
+.fill-bar-wrap {
+  background: var(--bg3);
+  border-radius: 6px; height: 10px;
+  overflow: hidden; min-width: 60px;
+}
+.fill-bar {
+  height: 100%; border-radius: 6px;
+  transition: width 0.6s ease;
+}
+.fill-green { background: var(--success); }
+.fill-yellow { background: var(--warn); }
+.fill-red { background: var(--danger); }
 
-  /* JAM SECTION */
-  .jam-box {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px;
-    margin-top: 12px;
-  }
-  .jam-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 10px; color: var(--accent);
-    letter-spacing: 1px; margin-bottom: 8px;
-  }
-  .jam-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 8px;
-  }
-  .jam-item {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px; padding: 8px;
-    text-align: center;
-  }
-  .jam-size {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px; font-weight: 700;
-    color: var(--text);
-  }
-  .jam-ratio {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px; color: var(--text2);
-    margin: 2px 0;
-  }
-  .jam-status {
-    font-size: 10px; font-weight: 700;
-    margin-top: 4px;
-  }
-  .jam-ok { color: var(--success); }
-  .jam-risk { color: var(--warn); }
-  .jam-high { color: var(--danger); }
+/* JAM SECTION */
+.jam-box {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+}
+.jam-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px; color: var(--accent);
+  letter-spacing: 1px; margin-bottom: 8px;
+}
+.jam-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+.jam-item {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px; padding: 8px;
+  text-align: center;
+}
+.jam-size {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px; font-weight: 700;
+  color: var(--text);
+}
+.jam-ratio {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; color: var(--text2);
+  margin: 2px 0;
+}
+.jam-status {
+  font-size: 10px; font-weight: 700;
+  margin-top: 4px;
+}
+.jam-ok  { color: var(--success); }
+.jam-risk { color: var(--warn); }
+.jam-high { color: var(--danger); }
 
-  /* WIRE SUMMARY */
-  .wire-summary {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    margin-bottom: 12px;
-  }
-  .wire-chip {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 4px 10px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px; color: var(--text);
-  }
+/* WIRE SUMMARY */
+.wire-summary {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 12px;
+}
+.wire-chip {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; color: var(--text);
+}
 
-  /* RECOMMENDATION */
-  .rec-box {
-    background: linear-gradient(135deg, rgba(217,119,6,0.1), rgba(180,83,9,0.05));
-    border: 1px solid var(--accent);
-    border-radius: 8px; padding: 12px;
-    margin-top: 12px;
-  }
-  .dark .rec-box {
-    background: linear-gradient(135deg, rgba(0,255,200,0.05), rgba(6,182,212,0.03));
-    border-color: var(--accent);
-  }
-  .rec-label {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 9px; color: var(--accent);
-    letter-spacing: 1.5px; margin-bottom: 6px;
-  }
-  .rec-size {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 20px; font-weight: 900;
-    color: var(--accent);
-  }
-  .rec-detail {
-    font-size: 12px; color: var(--text2);
-    margin-top: 4px; font-family: 'Share Tech Mono', monospace;
-  }
+/* RECOMMENDATION */
+.rec-box {
+  background: linear-gradient(135deg, rgba(217,119,6,0.1), rgba(180,83,9,0.05));
+  border: 1px solid var(--accent);
+  border-radius: 8px; padding: 12px;
+  margin-top: 12px;
+}
+.dark .rec-box {
+  background: linear-gradient(135deg, rgba(0,255,200,0.05), rgba(6,182,212,0.03));
+  border-color: var(--accent);
+}
+.rec-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px; color: var(--accent);
+  letter-spacing: 1.5px; margin-bottom: 6px;
+}
+.rec-size {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px; font-weight: 900;
+  color: var(--accent);
+}
+.rec-detail {
+  font-size: 12px; color: var(--text2);
+  margin-top: 4px; font-family: 'Share Tech Mono', monospace;
+}
 
-  /* STATS ROW */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px; margin-bottom: 12px;
-  }
-  .stat-box {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px;
-    text-align: center;
-  }
-  .stat-val {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 16px; font-weight: 700;
-    color: var(--accent);
-  }
-  .stat-lbl {
-    font-size: 9px; color: var(--text2);
-    text-transform: uppercase;
-    letter-spacing: 0.8px; margin-top: 2px;
-  }
+/* STATS ROW */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px; margin-bottom: 12px;
+}
+.stat-box {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px;
+  text-align: center;
+}
+.stat-val {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px; font-weight: 700;
+  color: var(--accent);
+}
+.stat-lbl {
+  font-size: 9px; color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.8px; margin-top: 2px;
+}
 
-  /* NIPPLE/RACEWAY TOGGLE */
-  .toggle-row {
-    display: flex; gap: 8px;
-    margin-bottom: 14px;
-  }
-  .toggle-opt {
-    flex: 1; padding: 10px;
-    border: 2px solid var(--border);
-    border-radius: 8px; text-align: center;
-    cursor: pointer; font-family: 'Orbitron', sans-serif;
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 1px; color: var(--text2);
-    transition: all 0.2s;
-  }
-  .toggle-opt.active {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: rgba(217,119,6,0.08);
-  }
-  .dark .toggle-opt.active {
-    background: rgba(0,255,200,0.07);
-  }
+/* NIPPLE/RACEWAY TOGGLE */
+.toggle-row {
+  display: flex; gap: 8px;
+  margin-bottom: 14px;
+}
+.toggle-opt {
+  flex: 1; padding: 10px;
+  border: 2px solid var(--border);
+  border-radius: 8px; text-align: center;
+  cursor: pointer; font-family: 'Orbitron', sans-serif;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 1px; color: var(--text2);
+  transition: all 0.2s;
+}
+.toggle-opt.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(217,119,6,0.08);
+}
+.dark .toggle-opt.active {
+  background: rgba(0,255,200,0.07);
+}
 
-  /* OVERFLOW TABLE */
-  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/* OVERFLOW TABLE */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-  /* EMPTY STATE */
-  .empty-state {
-    text-align: center; padding: 40px 20px;
-    color: var(--text2);
-  }
-  .empty-icon { font-size: 48px; margin-bottom: 8px; }
-  .empty-text {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px; letter-spacing: 1px;
-  }
+/* EMPTY STATE */
+.empty-state {
+  text-align: center; padding: 40px 20px;
+  color: var(--text2);
+}
+.empty-icon { font-size: 48px; margin-bottom: 8px; }
+.empty-text {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; letter-spacing: 1px;
+}
 
-  /* DIVIDER */
-  .divider {
-    border: none; border-top: 1px solid var(--border);
-    margin: 12px 0;
-  }
+/* DIVIDER */
+.divider {
+  border: none; border-top: 1px solid var(--border);
+  margin: 12px 0;
+}
 
-  /* INFO ROW */
-  .info-row {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 11px; color: var(--text2);
-    margin-top: 6px;
-    font-family: 'Share Tech Mono', monospace;
-  }
-  .info-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%; background: var(--accent);
-    flex-shrink: 0;
-  }
+/* INFO ROW */
+.info-row {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--text2);
+  margin-top: 6px;
+  font-family: 'Share Tech Mono', monospace;
+}
+.info-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%; background: var(--accent);
+  flex-shrink: 0;
+}
 
-  /* PRINT */
-  @media print {
-    .header, .add-btn, .remove-btn, .calc-btn, .theme-btn, .toggle-row { display: none !important; }
-    body { background: white; color: black; }
-    .card, .result-card { box-shadow: none; border: 1px solid #ccc; }
-  }
+/* PRINT */
+@media print {
+  .header, .add-btn, .remove-btn, .calc-btn,
+  .theme-btn, .home-btn, .toggle-row { display: none !important; }
+  body { background: white; color: black; }
+  .card, .result-card { box-shadow: none; border: 1px solid #ccc; }
+}
 
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
-  /* FOOTER */
-  .footer {
-    text-align: center; padding: 20px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px; color: var(--text2);
-    letter-spacing: 1px;
-  }
+/* FOOTER */
+.footer {
+  text-align: center; padding: 20px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; color: var(--text2);
+  letter-spacing: 1px;
+}
 </style>
 </head>
 <body>
@@ -496,15 +508,19 @@
 <!-- HEADER -->
 <div class="header">
   <div class="header-left">
+    <!-- FIX: local path for offline/PWA support -->
     <img class="header-logo"
-      src="https://lh3.googleusercontent.com/a/ACg8ocJP3abFJ_3mTYZ2vCcFGJ5eDsMroNqrPrfd3aX3T5Pa-Xq7SVg=s317-c-no"
-      alt="AOG Logo" onerror="this.style.display='none'">
+      src="../logo.png"
+      alt="AOG Logo"
+      onerror="this.style.display='none'">
     <div>
       <div class="header-title">CONDUIT FILL CALC</div>
       <div class="header-sub">NEC CHAPTER 9 — TABLES 1, 4 &amp; 5</div>
     </div>
   </div>
   <div class="header-right">
+    <!-- HOME BUTTON -->
+    <a class="home-btn" href="https://brandonaog.github.io/AOG-hub/">&#127968; HOME</a>
     <span class="nec-badge">NEC 2023</span>
     <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
   </div>
@@ -652,7 +668,10 @@
 
     <!-- ALL CONDUIT SIZES TABLE -->
     <div class="result-card">
-      <div class="result-header">📋 All Conduit Sizes — <span id="r-type-label" style="color:var(--text2);font-size:10px;"></span></div>
+      <div class="result-header">
+        📋 All Conduit Sizes —
+        <span id="r-type-label" style="color:var(--text2);font-size:10px;"></span>
+      </div>
       <div class="table-wrap">
         <table class="conduit-table" id="allSizesTable">
           <thead>
@@ -676,7 +695,8 @@
       <div class="result-header">⚠️ Jam Ratio Prediction</div>
       <div class="info-row" style="margin-bottom:10px;">
         <div class="info-dot"></div>
-        <span>Per NEC informational note: jam ratio = conduit ID ÷ largest wire OD. Risk zone: 2.8–3.2</span>
+        <span>Per NEC informational note: jam ratio = conduit ID ÷ largest wire OD.
+              Risk zone: 2.8–3.2</span>
       </div>
       <div class="jam-grid" id="jamGrid"></div>
     </div>
@@ -709,9 +729,6 @@
 <script>
 // ============================================================
 // NEC CHAPTER 9 — TABLE 4 — CONDUIT INTERNAL DIMENSIONS
-// All values in square inches (total internal area)
-// Format: { tradeSize: { totalArea, id_inch } }
-// Sources: NEC 2023 Table 4
 // ============================================================
 const CONDUIT_DATA = {
   RMC: {
@@ -849,238 +866,224 @@ const CONDUIT_DATA = {
 
 // ============================================================
 // NEC CHAPTER 9 — TABLE 5 — CONDUCTOR AREAS (in²)
-// { type: { size: { area, od } } }
-// od = outer diameter in inches (for jam ratio)
 // ============================================================
 const WIRE_DATA = {
-  // THHN/THWN-2 (most common)
   "THHN/THWN-2": {
-    "18 AWG":   { area: 0.0097, od: 0.111 },
-    "16 AWG":   { area: 0.0117, od: 0.122 },
-    "14 AWG":   { area: 0.0139, od: 0.133 },
-    "12 AWG":   { area: 0.0181, od: 0.152 },
-    "10 AWG":   { area: 0.0243, od: 0.176 },
-    "8 AWG":    { area: 0.0437, od: 0.236 },
-    "6 AWG":    { area: 0.0590, od: 0.274 },
-    "4 AWG":    { area: 0.0814, od: 0.322 },
-    "3 AWG":    { area: 0.0962, od: 0.350 },
-    "2 AWG":    { area: 0.1146, od: 0.382 },
-    "1 AWG":    { area: 0.1534, od: 0.442 },
-    "1/0 AWG":  { area: 0.1825, od: 0.482 },
-    "2/0 AWG":  { area: 0.2190, od: 0.528 },
-    "3/0 AWG":  { area: 0.2640, od: 0.580 },
-    "4/0 AWG":  { area: 0.3237, od: 0.642 },
-    "250 kcmil":{ area: 0.3970, od: 0.711 },
-    "300 kcmil":{ area: 0.4608, od: 0.766 },
-    "350 kcmil":{ area: 0.5281, od: 0.820 },
-    "400 kcmil":{ area: 0.5958, od: 0.871 },
-    "500 kcmil":{ area: 0.7073, od: 0.949 },
-    "600 kcmil":{ area: 0.8676, od: 1.051 },
-    "700 kcmil":{ area: 0.9887, od: 1.122 },
-    "750 kcmil":{ area: 1.0496, od: 1.156 },
-    "1000 kcmil":{ area: 1.3478, od: 1.310 }
+    "18 AWG":    { area: 0.0097,  od: 0.111 },
+    "16 AWG":    { area: 0.0117,  od: 0.122 },
+    "14 AWG":    { area: 0.0139,  od: 0.133 },
+    "12 AWG":    { area: 0.0181,  od: 0.152 },
+    "10 AWG":    { area: 0.0243,  od: 0.176 },
+    "8 AWG":     { area: 0.0437,  od: 0.236 },
+    "6 AWG":     { area: 0.0590,  od: 0.274 },
+    "4 AWG":     { area: 0.0814,  od: 0.322 },
+    "3 AWG":     { area: 0.0962,  od: 0.350 },
+    "2 AWG":     { area: 0.1146,  od: 0.382 },
+    "1 AWG":     { area: 0.1534,  od: 0.442 },
+    "1/0 AWG":   { area: 0.1825,  od: 0.482 },
+    "2/0 AWG":   { area: 0.2190,  od: 0.528 },
+    "3/0 AWG":   { area: 0.2640,  od: 0.580 },
+    "4/0 AWG":   { area: 0.3237,  od: 0.642 },
+    "250 kcmil": { area: 0.3970,  od: 0.711 },
+    "300 kcmil": { area: 0.4608,  od: 0.766 },
+    "350 kcmil": { area: 0.5281,  od: 0.820 },
+    "400 kcmil": { area: 0.5958,  od: 0.871 },
+    "500 kcmil": { area: 0.7073,  od: 0.949 },
+    "600 kcmil": { area: 0.8676,  od: 1.051 },
+    "700 kcmil": { area: 0.9887,  od: 1.122 },
+    "750 kcmil": { area: 1.0496,  od: 1.156 },
+    "1000 kcmil":{ area: 1.3478,  od: 1.310 }
   },
-  // TW / THW / THW-2
   "TW/THW/THW-2": {
-    "14 AWG":   { area: 0.0293, od: 0.193 },
-    "12 AWG":   { area: 0.0353, od: 0.212 },
-    "10 AWG":   { area: 0.0507, od: 0.254 },
-    "8 AWG":    { area: 0.0836, od: 0.326 },
-    "6 AWG":    { area: 0.1041, od: 0.364 },
-    "4 AWG":    { area: 0.1333, od: 0.412 },
-    "3 AWG":    { area: 0.1521, od: 0.440 },
-    "2 AWG":    { area: 0.1750, od: 0.472 },
-    "1 AWG":    { area: 0.2660, od: 0.582 },
-    "1/0 AWG":  { area: 0.3039, od: 0.622 },
-    "2/0 AWG":  { area: 0.3505, od: 0.668 },
-    "3/0 AWG":  { area: 0.4072, od: 0.720 },
-    "4/0 AWG":  { area: 0.4754, od: 0.778 },
-    "250 kcmil":{ area: 0.6291, od: 0.895 },
-    "300 kcmil":{ area: 0.7088, od: 0.950 },
-    "350 kcmil":{ area: 0.7870, od: 1.001 },
-    "400 kcmil":{ area: 0.8626, od: 1.048 },
-    "500 kcmil":{ area: 1.0082, od: 1.133 },
-    "600 kcmil":{ area: 1.1882, od: 1.229 },
-    "700 kcmil":{ area: 1.3561, od: 1.313 },
-    "750 kcmil":{ area: 1.4272, od: 1.348 },
-    "1000 kcmil":{ area: 1.8242, od: 1.524 }
+    "14 AWG":    { area: 0.0293,  od: 0.193 },
+    "12 AWG":    { area: 0.0353,  od: 0.212 },
+    "10 AWG":    { area: 0.0507,  od: 0.254 },
+    "8 AWG":     { area: 0.0836,  od: 0.326 },
+    "6 AWG":     { area: 0.1041,  od: 0.364 },
+    "4 AWG":     { area: 0.1333,  od: 0.412 },
+    "3 AWG":     { area: 0.1521,  od: 0.440 },
+    "2 AWG":     { area: 0.1750,  od: 0.472 },
+    "1 AWG":     { area: 0.2660,  od: 0.582 },
+    "1/0 AWG":   { area: 0.3039,  od: 0.622 },
+    "2/0 AWG":   { area: 0.3505,  od: 0.668 },
+    "3/0 AWG":   { area: 0.4072,  od: 0.720 },
+    "4/0 AWG":   { area: 0.4754,  od: 0.778 },
+    "250 kcmil": { area: 0.6291,  od: 0.895 },
+    "300 kcmil": { area: 0.7088,  od: 0.950 },
+    "350 kcmil": { area: 0.7870,  od: 1.001 },
+    "400 kcmil": { area: 0.8626,  od: 1.048 },
+    "500 kcmil": { area: 1.0082,  od: 1.133 },
+    "600 kcmil": { area: 1.1882,  od: 1.229 },
+    "700 kcmil": { area: 1.3561,  od: 1.313 },
+    "750 kcmil": { area: 1.4272,  od: 1.348 },
+    "1000 kcmil":{ area: 1.8242,  od: 1.524 }
   },
-  // XHHW / XHHW-2
   "XHHW/XHHW-2": {
-    "14 AWG":   { area: 0.0139, od: 0.133 },
-    "12 AWG":   { area: 0.0181, od: 0.152 },
-    "10 AWG":   { area: 0.0243, od: 0.176 },
-    "8 AWG":    { area: 0.0437, od: 0.236 },
-    "6 AWG":    { area: 0.0590, od: 0.274 },
-    "4 AWG":    { area: 0.0814, od: 0.322 },
-    "3 AWG":    { area: 0.0962, od: 0.350 },
-    "2 AWG":    { area: 0.1146, od: 0.382 },
-    "1 AWG":    { area: 0.1534, od: 0.442 },
-    "1/0 AWG":  { area: 0.1825, od: 0.482 },
-    "2/0 AWG":  { area: 0.2190, od: 0.528 },
-    "3/0 AWG":  { area: 0.2640, od: 0.580 },
-    "4/0 AWG":  { area: 0.3237, od: 0.642 },
-    "250 kcmil":{ area: 0.3970, od: 0.711 },
-    "300 kcmil":{ area: 0.4608, od: 0.766 },
-    "350 kcmil":{ area: 0.5281, od: 0.820 },
-    "400 kcmil":{ area: 0.5958, od: 0.871 },
-    "500 kcmil":{ area: 0.7073, od: 0.949 },
-    "600 kcmil":{ area: 0.8676, od: 1.051 },
-    "700 kcmil":{ area: 0.9887, od: 1.122 },
-    "750 kcmil":{ area: 1.0496, od: 1.156 },
-    "1000 kcmil":{ area: 1.3478, od: 1.310 }
+    "14 AWG":    { area: 0.0139,  od: 0.133 },
+    "12 AWG":    { area: 0.0181,  od: 0.152 },
+    "10 AWG":    { area: 0.0243,  od: 0.176 },
+    "8 AWG":     { area: 0.0437,  od: 0.236 },
+    "6 AWG":     { area: 0.0590,  od: 0.274 },
+    "4 AWG":     { area: 0.0814,  od: 0.322 },
+    "3 AWG":     { area: 0.0962,  od: 0.350 },
+    "2 AWG":     { area: 0.1146,  od: 0.382 },
+    "1 AWG":     { area: 0.1534,  od: 0.442 },
+    "1/0 AWG":   { area: 0.1825,  od: 0.482 },
+    "2/0 AWG":   { area: 0.2190,  od: 0.528 },
+    "3/0 AWG":   { area: 0.2640,  od: 0.580 },
+    "4/0 AWG":   { area: 0.3237,  od: 0.642 },
+    "250 kcmil": { area: 0.3970,  od: 0.711 },
+    "300 kcmil": { area: 0.4608,  od: 0.766 },
+    "350 kcmil": { area: 0.5281,  od: 0.820 },
+    "400 kcmil": { area: 0.5958,  od: 0.871 },
+    "500 kcmil": { area: 0.7073,  od: 0.949 },
+    "600 kcmil": { area: 0.8676,  od: 1.051 },
+    "700 kcmil": { area: 0.9887,  od: 1.122 },
+    "750 kcmil": { area: 1.0496,  od: 1.156 },
+    "1000 kcmil":{ area: 1.3478,  od: 1.310 }
   },
-  // RHH / RHW / RHW-2 (No outer covering)
   "RHH/RHW/RHW-2": {
-    "14 AWG":   { area: 0.0209, od: 0.163 },
-    "12 AWG":   { area: 0.0260, od: 0.182 },
-    "10 AWG":   { area: 0.0333, od: 0.206 },
-    "8 AWG":    { area: 0.0556, od: 0.266 },
-    "6 AWG":    { area: 0.0726, od: 0.304 },
-    "4 AWG":    { area: 0.0973, od: 0.352 },
-    "3 AWG":    { area: 0.1134, od: 0.380 },
-    "2 AWG":    { area: 0.1333, od: 0.412 },
-    "1 AWG":    { area: 0.1901, od: 0.492 },
-    "1/0 AWG":  { area: 0.2223, od: 0.532 },
-    "2/0 AWG":  { area: 0.2624, od: 0.578 },
-    "3/0 AWG":  { area: 0.3117, od: 0.630 },
-    "4/0 AWG":  { area: 0.3718, od: 0.688 },
-    "250 kcmil":{ area: 0.4596, od: 0.765 },
-    "300 kcmil":{ area: 0.5281, od: 0.820 },
-    "350 kcmil":{ area: 0.5958, od: 0.871 },
-    "400 kcmil":{ area: 0.6648, od: 0.920 },
-    "500 kcmil":{ area: 0.7854, od: 1.000 },
-    "600 kcmil":{ area: 0.9503, od: 1.100 },
-    "700 kcmil":{ area: 1.0755, od: 1.170 },
-    "750 kcmil":{ area: 1.1410, od: 1.205 },
-    "1000 kcmil":{ area: 1.4784, od: 1.372 }
+    "14 AWG":    { area: 0.0209,  od: 0.163 },
+    "12 AWG":    { area: 0.0260,  od: 0.182 },
+    "10 AWG":    { area: 0.0333,  od: 0.206 },
+    "8 AWG":     { area: 0.0556,  od: 0.266 },
+    "6 AWG":     { area: 0.0726,  od: 0.304 },
+    "4 AWG":     { area: 0.0973,  od: 0.352 },
+    "3 AWG":     { area: 0.1134,  od: 0.380 },
+    "2 AWG":     { area: 0.1333,  od: 0.412 },
+    "1 AWG":     { area: 0.1901,  od: 0.492 },
+    "1/0 AWG":   { area: 0.2223,  od: 0.532 },
+    "2/0 AWG":   { area: 0.2624,  od: 0.578 },
+    "3/0 AWG":   { area: 0.3117,  od: 0.630 },
+    "4/0 AWG":   { area: 0.3718,  od: 0.688 },
+    "250 kcmil": { area: 0.4596,  od: 0.765 },
+    "300 kcmil": { area: 0.5281,  od: 0.820 },
+    "350 kcmil": { area: 0.5958,  od: 0.871 },
+    "400 kcmil": { area: 0.6648,  od: 0.920 },
+    "500 kcmil": { area: 0.7854,  od: 1.000 },
+    "600 kcmil": { area: 0.9503,  od: 1.100 },
+    "700 kcmil": { area: 1.0755,  od: 1.170 },
+    "750 kcmil": { area: 1.1410,  od: 1.205 },
+    "1000 kcmil":{ area: 1.4784,  od: 1.372 }
   },
-  // USE-2
   "USE-2": {
-    "14 AWG":   { area: 0.0139, od: 0.133 },
-    "12 AWG":   { area: 0.0181, od: 0.152 },
-    "10 AWG":   { area: 0.0243, od: 0.176 },
-    "8 AWG":    { area: 0.0437, od: 0.236 },
-    "6 AWG":    { area: 0.0590, od: 0.274 },
-    "4 AWG":    { area: 0.0814, od: 0.322 },
-    "3 AWG":    { area: 0.0962, od: 0.350 },
-    "2 AWG":    { area: 0.1146, od: 0.382 },
-    "1 AWG":    { area: 0.1534, od: 0.442 },
-    "1/0 AWG":  { area: 0.1825, od: 0.482 },
-    "2/0 AWG":  { area: 0.2190, od: 0.528 },
-    "3/0 AWG":  { area: 0.2640, od: 0.580 },
-    "4/0 AWG":  { area: 0.3237, od: 0.642 },
-    "250 kcmil":{ area: 0.3970, od: 0.711 },
-    "300 kcmil":{ area: 0.4608, od: 0.766 },
-    "500 kcmil":{ area: 0.7073, od: 0.949 }
+    "14 AWG":    { area: 0.0139,  od: 0.133 },
+    "12 AWG":    { area: 0.0181,  od: 0.152 },
+    "10 AWG":    { area: 0.0243,  od: 0.176 },
+    "8 AWG":     { area: 0.0437,  od: 0.236 },
+    "6 AWG":     { area: 0.0590,  od: 0.274 },
+    "4 AWG":     { area: 0.0814,  od: 0.322 },
+    "3 AWG":     { area: 0.0962,  od: 0.350 },
+    "2 AWG":     { area: 0.1146,  od: 0.382 },
+    "1 AWG":     { area: 0.1534,  od: 0.442 },
+    "1/0 AWG":   { area: 0.1825,  od: 0.482 },
+    "2/0 AWG":   { area: 0.2190,  od: 0.528 },
+    "3/0 AWG":   { area: 0.2640,  od: 0.580 },
+    "4/0 AWG":   { area: 0.3237,  od: 0.642 },
+    "250 kcmil": { area: 0.3970,  od: 0.711 },
+    "300 kcmil": { area: 0.4608,  od: 0.766 },
+    "500 kcmil": { area: 0.7073,  od: 0.949 }
   },
-  // THHW
   "THHW": {
-    "14 AWG":   { area: 0.0139, od: 0.133 },
-    "12 AWG":   { area: 0.0181, od: 0.152 },
-    "10 AWG":   { area: 0.0243, od: 0.176 },
-    "8 AWG":    { area: 0.0437, od: 0.236 },
-    "6 AWG":    { area: 0.0590, od: 0.274 },
-    "4 AWG":    { area: 0.0814, od: 0.322 },
-    "2 AWG":    { area: 0.1146, od: 0.382 },
-    "1/0 AWG":  { area: 0.1825, od: 0.482 },
-    "2/0 AWG":  { area: 0.2190, od: 0.528 },
-    "4/0 AWG":  { area: 0.3237, od: 0.642 },
-    "250 kcmil":{ area: 0.3970, od: 0.711 },
-    "500 kcmil":{ area: 0.7073, od: 0.949 }
+    "14 AWG":    { area: 0.0139,  od: 0.133 },
+    "12 AWG":    { area: 0.0181,  od: 0.152 },
+    "10 AWG":    { area: 0.0243,  od: 0.176 },
+    "8 AWG":     { area: 0.0437,  od: 0.236 },
+    "6 AWG":     { area: 0.0590,  od: 0.274 },
+    "4 AWG":     { area: 0.0814,  od: 0.322 },
+    "2 AWG":     { area: 0.1146,  od: 0.382 },
+    "1/0 AWG":   { area: 0.1825,  od: 0.482 },
+    "2/0 AWG":   { area: 0.2190,  od: 0.528 },
+    "4/0 AWG":   { area: 0.3237,  od: 0.642 },
+    "250 kcmil": { area: 0.3970,  od: 0.711 },
+    "500 kcmil": { area: 0.7073,  od: 0.949 }
   },
-  // MTW (Machine Tool Wire)
   "MTW": {
-    "22 AWG":   { area: 0.0031, od: 0.063 },
-    "20 AWG":   { area: 0.0040, od: 0.071 },
-    "18 AWG":   { area: 0.0055, od: 0.084 },
-    "16 AWG":   { area: 0.0070, od: 0.094 },
-    "14 AWG":   { area: 0.0097, od: 0.111 },
-    "12 AWG":   { area: 0.0133, od: 0.130 },
-    "10 AWG":   { area: 0.0184, od: 0.153 },
-    "8 AWG":    { area: 0.0366, od: 0.216 },
-    "6 AWG":    { area: 0.0507, od: 0.254 },
-    "4 AWG":    { area: 0.0669, od: 0.292 },
-    "2 AWG":    { area: 0.0973, od: 0.352 },
-    "1 AWG":    { area: 0.1333, od: 0.412 },
-    "1/0 AWG":  { area: 0.1590, od: 0.450 },
-    "2/0 AWG":  { area: 0.1901, od: 0.492 }
+    "22 AWG":    { area: 0.0031,  od: 0.063 },
+    "20 AWG":    { area: 0.0040,  od: 0.071 },
+    "18 AWG":    { area: 0.0055,  od: 0.084 },
+    "16 AWG":    { area: 0.0070,  od: 0.094 },
+    "14 AWG":    { area: 0.0097,  od: 0.111 },
+    "12 AWG":    { area: 0.0133,  od: 0.130 },
+    "10 AWG":    { area: 0.0184,  od: 0.153 },
+    "8 AWG":     { area: 0.0366,  od: 0.216 },
+    "6 AWG":     { area: 0.0507,  od: 0.254 },
+    "4 AWG":     { area: 0.0669,  od: 0.292 },
+    "2 AWG":     { area: 0.0973,  od: 0.352 },
+    "1 AWG":     { area: 0.1333,  od: 0.412 },
+    "1/0 AWG":   { area: 0.1590,  od: 0.450 },
+    "2/0 AWG":   { area: 0.1901,  od: 0.492 }
   },
-  // PFA / PFAH
   "PFA/PFAH": {
-    "18 AWG":   { area: 0.0060, od: 0.087 },
-    "16 AWG":   { area: 0.0075, od: 0.098 },
-    "14 AWG":   { area: 0.0100, od: 0.113 },
-    "12 AWG":   { area: 0.0133, od: 0.130 },
-    "10 AWG":   { area: 0.0172, od: 0.148 },
-    "8 AWG":    { area: 0.0333, od: 0.206 },
-    "6 AWG":    { area: 0.0468, od: 0.244 },
-    "4 AWG":    { area: 0.0660, od: 0.290 },
-    "2 AWG":    { area: 0.0973, od: 0.352 },
-    "1/0 AWG":  { area: 0.1590, od: 0.450 }
+    "18 AWG":    { area: 0.0060,  od: 0.087 },
+    "16 AWG":    { area: 0.0075,  od: 0.098 },
+    "14 AWG":    { area: 0.0100,  od: 0.113 },
+    "12 AWG":    { area: 0.0133,  od: 0.130 },
+    "10 AWG":    { area: 0.0172,  od: 0.148 },
+    "8 AWG":     { area: 0.0333,  od: 0.206 },
+    "6 AWG":     { area: 0.0468,  od: 0.244 },
+    "4 AWG":     { area: 0.0660,  od: 0.290 },
+    "2 AWG":     { area: 0.0973,  od: 0.352 },
+    "1/0 AWG":   { area: 0.1590,  od: 0.450 }
   },
-  // TFN / TFFN
   "TFN/TFFN": {
-    "18 AWG":   { area: 0.0055, od: 0.084 },
-    "16 AWG":   { area: 0.0072, od: 0.096 }
+    "18 AWG":    { area: 0.0055,  od: 0.084 },
+    "16 AWG":    { area: 0.0072,  od: 0.096 }
   },
-  // ZW / ZW-2
   "ZW/ZW-2": {
-    "18 AWG":   { area: 0.0045, od: 0.076 },
-    "16 AWG":   { area: 0.0059, od: 0.087 },
-    "14 AWG":   { area: 0.0075, od: 0.098 },
-    "12 AWG":   { area: 0.0100, od: 0.113 },
-    "10 AWG":   { area: 0.0142, od: 0.135 }
+    "18 AWG":    { area: 0.0045,  od: 0.076 },
+    "16 AWG":    { area: 0.0059,  od: 0.087 },
+    "14 AWG":    { area: 0.0075,  od: 0.098 },
+    "12 AWG":    { area: 0.0100,  od: 0.113 },
+    "10 AWG":    { area: 0.0142,  od: 0.135 }
   },
-  // BARE Conductors (grounding/bonding)
   "Bare Conductor (Solid)": {
-    "14 AWG":   { area: 0.0030, od: 0.064 },
-    "12 AWG":   { area: 0.0040, od: 0.072 },
-    "10 AWG":   { area: 0.0066, od: 0.092 },
-    "8 AWG":    { area: 0.0104, od: 0.115 },
-    "6 AWG":    { area: 0.0166, od: 0.145 },
-    "4 AWG":    { area: 0.0264, od: 0.183 },
-    "2 AWG":    { area: 0.0421, od: 0.232 },
-    "1 AWG":    { area: 0.0530, od: 0.260 },
-    "1/0 AWG":  { area: 0.0670, od: 0.292 },
-    "2/0 AWG":  { area: 0.0843, od: 0.328 },
-    "3/0 AWG":  { area: 0.1063, od: 0.368 },
-    "4/0 AWG":  { area: 0.1134, od: 0.380 },
-    "250 kcmil":{ area: 0.1963, od: 0.500 },
-    "350 kcmil":{ area: 0.2749, od: 0.592 },
-    "500 kcmil":{ area: 0.3927, od: 0.707 }
+    "14 AWG":    { area: 0.0030,  od: 0.064 },
+    "12 AWG":    { area: 0.0040,  od: 0.072 },
+    "10 AWG":    { area: 0.0066,  od: 0.092 },
+    "8 AWG":     { area: 0.0104,  od: 0.115 },
+    "6 AWG":     { area: 0.0166,  od: 0.145 },
+    "4 AWG":     { area: 0.0264,  od: 0.183 },
+    "2 AWG":     { area: 0.0421,  od: 0.232 },
+    "1 AWG":     { area: 0.0530,  od: 0.260 },
+    "1/0 AWG":   { area: 0.0670,  od: 0.292 },
+    "2/0 AWG":   { area: 0.0843,  od: 0.328 },
+    "3/0 AWG":   { area: 0.1063,  od: 0.368 },
+    "4/0 AWG":   { area: 0.1134,  od: 0.380 },
+    "250 kcmil": { area: 0.1963,  od: 0.500 },
+    "350 kcmil": { area: 0.2749,  od: 0.592 },
+    "500 kcmil": { area: 0.3927,  od: 0.707 }
   },
-  // Bare Conductor (Stranded)
   "Bare Conductor (Stranded)": {
-    "14 AWG":   { area: 0.0030, od: 0.064 },
-    "12 AWG":   { area: 0.0040, od: 0.072 },
-    "10 AWG":   { area: 0.0066, od: 0.092 },
-    "8 AWG":    { area: 0.0109, od: 0.118 },
-    "6 AWG":    { area: 0.0173, od: 0.149 },
-    "4 AWG":    { area: 0.0275, od: 0.187 },
-    "2 AWG":    { area: 0.0437, od: 0.236 },
-    "1 AWG":    { area: 0.0552, od: 0.265 },
-    "1/0 AWG":  { area: 0.0695, od: 0.298 },
-    "2/0 AWG":  { area: 0.0877, od: 0.334 },
-    "3/0 AWG":  { area: 0.1104, od: 0.375 },
-    "4/0 AWG":  { area: 0.1393, od: 0.421 },
-    "250 kcmil":{ area: 0.2042, od: 0.510 },
-    "350 kcmil":{ area: 0.2856, od: 0.603 },
-    "500 kcmil":{ area: 0.4071, od: 0.720 }
+    "14 AWG":    { area: 0.0030,  od: 0.064 },
+    "12 AWG":    { area: 0.0040,  od: 0.072 },
+    "10 AWG":    { area: 0.0066,  od: 0.092 },
+    "8 AWG":     { area: 0.0109,  od: 0.118 },
+    "6 AWG":     { area: 0.0173,  od: 0.149 },
+    "4 AWG":     { area: 0.0275,  od: 0.187 },
+    "2 AWG":     { area: 0.0437,  od: 0.236 },
+    "1 AWG":     { area: 0.0552,  od: 0.265 },
+    "1/0 AWG":   { area: 0.0695,  od: 0.298 },
+    "2/0 AWG":   { area: 0.0877,  od: 0.334 },
+    "3/0 AWG":   { area: 0.1104,  od: 0.375 },
+    "4/0 AWG":   { area: 0.1393,  od: 0.421 },
+    "250 kcmil": { area: 0.2042,  od: 0.510 },
+    "350 kcmil": { area: 0.2856,  od: 0.603 },
+    "500 kcmil": { area: 0.4071,  od: 0.720 }
   }
 };
 
-// Trade size order for iteration
-const TRADE_SIZES_ORDER = ["3/8","1/2","3/4","1","1-1/4","1-1/2","2","2-1/2","3","3-1/2","4","5","6"];
+const TRADE_SIZES_ORDER = [
+  "3/8","1/2","3/4","1","1-1/4","1-1/2",
+  "2","2-1/2","3","3-1/2","4","5","6"
+];
 
 // State
-let fillMode = 'raceway'; // 'raceway' or 'nipple'
+let fillMode    = 'raceway';
 let wireCounter = 0;
-let darkMode = false;
+let darkMode    = false;
 
-// ============================================================
-// THEME
-// ============================================================
+// ── THEME ──────────────────────────────────────────────────
 function toggleTheme() {
   darkMode = !darkMode;
   document.body.classList.toggle('dark', darkMode);
@@ -1088,7 +1091,7 @@ function toggleTheme() {
   localStorage.setItem('aog-theme', darkMode ? 'dark' : 'light');
 }
 (function initTheme() {
-  const saved = localStorage.getItem('aog-theme');
+  const saved  = localStorage.getItem('aog-theme');
   const prefer = window.matchMedia('(prefers-color-scheme: dark)').matches;
   if (saved === 'dark' || (!saved && prefer)) {
     darkMode = true;
@@ -1097,9 +1100,7 @@ function toggleTheme() {
   }
 })();
 
-// ============================================================
-// FILL MODE
-// ============================================================
+// ── FILL MODE ──────────────────────────────────────────────
 function setFillMode(mode) {
   fillMode = mode;
   document.getElementById('tog-raceway').classList.toggle('active', mode === 'raceway');
@@ -1107,105 +1108,50 @@ function setFillMode(mode) {
   updateConduitInfo();
 }
 
-// ============================================================
-// NEC TABLE 1 — Fill percentages
-// ============================================================
+// ── NEC TABLE 1 — fill % ───────────────────────────────────
 function getAllowedFillPct(numConductors) {
   if (fillMode === 'nipple') return 0.60;
-  if (numConductors === 1) return 0.53;
-  if (numConductors === 2) return 0.31;
+  if (numConductors === 1)  return 0.53;
+  if (numConductors === 2)  return 0.31;
   return 0.40;
 }
 
-// ============================================================
-// CONDUIT INFO UPDATE
-// ============================================================
+// ── CONDUIT INFO ───────────────────────────────────────────
 function updateConduitInfo() {
   const type = document.getElementById('conduitType').value;
   const size = document.getElementById('tradeSize').value;
-  const box = document.getElementById('conduitInfoBox');
+  const box  = document.getElementById('conduitInfoBox');
 
   if (!size || !CONDUIT_DATA[type] || !CONDUIT_DATA[type][size]) {
-    box.style.display = 'none'; return;
+    box.style.display = 'none';
+    return;
   }
-  const d = CONDUIT_DATA[type][size];
+  const d       = CONDUIT_DATA[type][size];
   const numWires = document.querySelectorAll('.wire-row').length || 3;
-  const pct = getAllowedFillPct(numWires);
+  const pct     = getAllowedFillPct(numWires);
   const allowed = (d.total * pct).toFixed(4);
 
-  document.getElementById('ci-id').textContent = d.id.toFixed(3) + '"';
-  document.getElementById('ci-total').textContent = d.total.toFixed(4);
+  document.getElementById('ci-id').textContent      = d.id.toFixed(3) + '"';
+  document.getElementById('ci-total').textContent   = d.total.toFixed(4);
   document.getElementById('ci-allowed').textContent = allowed;
   document.getElementById('ci-allowed-lbl').textContent =
-    'Allowed Fill (in²) @ ' + Math.round(pct * 100) + '%';
+    'Allowed Fill (in\u00b2) @ ' + Math.round(pct * 100) + '%';
   box.style.display = 'block';
 }
 
-// ============================================================
-// WIRE MANAGEMENT
-// ============================================================
-function addWire() {
-  wireCounter++;
-  const id = 'wire_' + wireCounter;
-  const div = document.createElement('div');
-  div.className = 'wire-row';
-  div.id = id;
-
-  // Build wire type options
-  let typeOpts = '';
-  for (const t in WIRE_DATA) {
-    typeOpts += `<option value="${t}">${t}</option>`;
-  }
-  // Default to THHN
-  const defaultType = 'THHN/THWN-2';
-
-  div.innerHTML = `
-    <div>
-      <label>Wire Type</label>
-      <select onchange="updateWireSizes('${id}')">
-        ${Object.keys(WIRE_DATA).map(t =>
-          `<option value="${t}" ${t === defaultType ? 'selected' : ''}>${t}</option>`
-        ).join('')}
-      </select>
-    </div>
-    <div>
-      <label>Size</label>
-      <select id="size_${id}">
-        ${buildSizeOptions(defaultType)}
-      </select>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:4px;">
-      <label>Qty</label>
-      <input type="number" id="qty_${id}" value="1" min="1" max="999"
-        style="width:60px;padding:9px 8px;text-align:center;">
-    </div>
-    <button class="remove-btn" onclick="removeWire('${id}')">✕</button>
-  `;
-
-  document.getElementById('wireList').appendChild(div);
-
-  // Pre-select 12 AWG as default
-  const sizeSelect = document.getElementById('size_' + id);
-  const opts = Array.from(sizeSelect.options);
-  const twelveOpt = opts.find(o => o.value === '12 AWG');
-  if (twelveOpt) twelveOpt.selected = true;
-
-  updateConduitInfo();
-}
-
+// ── WIRE MANAGEMENT ────────────────────────────────────────
 function buildSizeOptions(wireType) {
   if (!WIRE_DATA[wireType]) return '';
-  return Object.keys(WIRE_DATA[wireType]).map(s =>
-    `<option value="${s}">${s}</option>`
-  ).join('');
+  return Object.keys(WIRE_DATA[wireType])
+    .map(s => '<option value="' + s + '">' + s + '</option>')
+    .join('');
 }
 
 function updateWireSizes(rowId) {
-  const row = document.getElementById(rowId);
+  const row        = document.getElementById(rowId);
   const typeSelect = row.querySelector('select');
   const sizeSelect = document.getElementById('size_' + rowId);
-  const type = typeSelect.value;
-  sizeSelect.innerHTML = buildSizeOptions(type);
+  sizeSelect.innerHTML = buildSizeOptions(typeSelect.value);
 }
 
 function removeWire(id) {
@@ -1214,82 +1160,128 @@ function removeWire(id) {
   updateConduitInfo();
 }
 
-// Add 1 default wire on load
-window.addEventListener('load', () => {
-  addWire();
-});
+function addWire() {
+  wireCounter++;
+  const id  = 'wire_' + wireCounter;
+  const div = document.createElement('div');
+  div.className = 'wire-row';
+  div.id = id;
 
+  const defaultType = 'THHN/THWN-2';
 
-// ============================================================
-// CALCULATE
-// ============================================================
+  div.innerHTML =
+    '<div>' +
+      '<label>Wire Type</label>' +
+      '<select onchange="updateWireSizes(\'' + id + '\')">' +
+        Object.keys(WIRE_DATA).map(function(t) {
+          return '<option value="' + t + '"' +
+            (t === defaultType ? ' selected' : '') + '>' + t + '</option>';
+        }).join('') +
+      '</select>' +
+    '</div>' +
+    '<div>' +
+      '<label>Size</label>' +
+      '<select id="size_' + id + '">' +
+        buildSizeOptions(defaultType) +
+      '</select>' +
+    '</div>' +
+    '<div style="display:flex;flex-direction:column;gap:4px;">' +
+      '<label>Qty</label>' +
+      '<input type="number" id="qty_' + id + '" value="1" min="1" max="999"' +
+        ' style="width:60px;padding:9px 8px;text-align:center;">' +
+    '</div>' +
+    '<button class="remove-btn" onclick="removeWire(\'' + id + '\')">✕</button>';
+
+  document.getElementById('wireList').appendChild(div);
+
+  // Pre-select 12 AWG
+  const sizeSelect = document.getElementById('size_' + id);
+  var opts = Array.from(sizeSelect.options);
+  var twelveOpt = opts.find(function(o) { return o.value === '12 AWG'; });
+  if (twelveOpt) twelveOpt.selected = true;
+
+  updateConduitInfo();
+}
+
+window.addEventListener('load', function() { addWire(); });
+
+// ── CALCULATE ──────────────────────────────────────────────
 function calculate() {
   const conduitType = document.getElementById('conduitType').value;
   const selectedSize = document.getElementById('tradeSize').value;
-
-  // Gather wire selections
   const rows = document.querySelectorAll('.wire-row');
+
   if (rows.length === 0) {
     alert('Please add at least one conductor.');
     return;
   }
 
-  const conductors = [];
-  let totalWireArea = 0;
-  let largestOD = 0;
+  var conductors   = [];
+  var totalWireArea = 0;
+  var largestOD    = 0;
 
-  rows.forEach(row => {
-    const id = row.id;
-    const type = row.querySelector('select').value;
-    const size = document.getElementById('size_' + id).value;
-    const qty = parseInt(document.getElementById('qty_' + id).value) || 1;
-    const wireInfo = WIRE_DATA[type] && WIRE_DATA[type][size];
+  rows.forEach(function(row) {
+    var rowId    = row.id;
+    var type     = row.querySelector('select').value;
+    var size     = document.getElementById('size_' + rowId).value;
+    var qty      = parseInt(document.getElementById('qty_' + rowId).value) || 1;
+    var wireInfo = WIRE_DATA[type] && WIRE_DATA[type][size];
 
     if (wireInfo) {
-      const rowArea = wireInfo.area * qty;
+      var rowArea = wireInfo.area * qty;
       totalWireArea += rowArea;
       if (wireInfo.od > largestOD) largestOD = wireInfo.od;
-      conductors.push({ type, size, qty, area: wireInfo.area, od: wireInfo.od, rowArea });
+      conductors.push({
+        type: type, size: size, qty: qty,
+        area: wireInfo.area, od: wireInfo.od, rowArea: rowArea
+      });
     }
   });
 
   totalWireArea = parseFloat(totalWireArea.toFixed(4));
-  const numConductors = conductors.reduce((s, c) => s + c.qty, 0);
-  const allowedPct = getAllowedFillPct(numConductors);
+  var numConductors = conductors.reduce(function(s, c) { return s + c.qty; }, 0);
+  var allowedPct    = getAllowedFillPct(numConductors);
 
-  // Get conduit data for all sizes
   const conduitSizes = CONDUIT_DATA[conduitType];
   if (!conduitSizes) { alert('No data for selected conduit type.'); return; }
 
-  const conduitTypeName = document.getElementById('conduitType').options[document.getElementById('conduitType').selectedIndex].text;
+  const conduitTypeName =
+    document.getElementById('conduitType').options[
+      document.getElementById('conduitType').selectedIndex
+    ].text;
 
-  // ---- WIRE SUMMARY CHIPS ----
-  const summaryDiv = document.getElementById('r-wire-summary');
-  summaryDiv.innerHTML = conductors.map(c =>
-    `<div class="wire-chip">${c.qty}× ${c.type} ${c.size} (${(c.rowArea).toFixed(4)} in²)</div>`
-  ).join('');
+  // Wire summary chips
+  document.getElementById('r-wire-summary').innerHTML =
+    conductors.map(function(c) {
+      return '<div class="wire-chip">' +
+        c.qty + '\u00d7 ' + c.type + ' ' + c.size +
+        ' (' + c.rowArea.toFixed(4) + ' in\u00b2)</div>';
+    }).join('');
 
-  // ---- STATS ----
-  let selectedAllowed = null, selectedFillPct = null;
+  // Stats
+  var selectedAllowed  = null;
+  var selectedFillPct  = null;
   if (selectedSize && conduitSizes[selectedSize]) {
-    const sd = conduitSizes[selectedSize];
+    var sd = conduitSizes[selectedSize];
     selectedAllowed = sd.total * allowedPct;
     selectedFillPct = (totalWireArea / sd.total) * 100;
   }
 
-  document.getElementById('r-total-area').textContent = totalWireArea.toFixed(4) + ' in²';
+  document.getElementById('r-total-area').textContent =
+    totalWireArea.toFixed(4) + ' in\u00b2';
   document.getElementById('r-fill-pct').textContent =
-    selectedFillPct !== null ? selectedFillPct.toFixed(1) + '%' : '—';
+    selectedFillPct !== null ? selectedFillPct.toFixed(1) + '%' : '\u2014';
   document.getElementById('r-allowed').textContent =
-    selectedAllowed !== null ? selectedAllowed.toFixed(4) + ' in²' : '—';
+    selectedAllowed !== null ? selectedAllowed.toFixed(4) + ' in\u00b2' : '\u2014';
   document.getElementById('r-type-label').textContent = conduitTypeName;
 
-  // ---- FILL BAR ----
+  // Fill bar
   if (selectedFillPct !== null) {
-    const bar = document.getElementById('r-fill-bar');
-    const pctCapped = Math.min(selectedFillPct, 100);
+    var bar      = document.getElementById('r-fill-bar');
+    var pctCapped = Math.min(selectedFillPct, 100);
+    var maxPct   = allowedPct * 100;
     bar.style.width = pctCapped + '%';
-    const maxPct = allowedPct * 100;
+
     if (selectedFillPct <= maxPct * 0.8) {
       bar.className = 'fill-bar fill-green';
       document.getElementById('r-fill-label').textContent =
@@ -1308,153 +1300,150 @@ function calculate() {
     }
   }
 
-  // ---- ALL SIZES TABLE ----
-  const tbody = document.getElementById('allSizesTbody');
+  // All sizes table
+  var tbody   = document.getElementById('allSizesTbody');
   tbody.innerHTML = '';
-  let bestSize = null;
-  let bestArea = null;
+  var bestSize = null;
 
-  TRADE_SIZES_ORDER.forEach(size => {
+  TRADE_SIZES_ORDER.forEach(function(size) {
     if (!conduitSizes[size]) return;
-    const d = conduitSizes[size];
-    const allowed = d.total * allowedPct;
-    const fillPct = (totalWireArea / d.total) * 100;
-    const passes = totalWireArea <= allowed;
+    var d       = conduitSizes[size];
+    var allowed = d.total * allowedPct;
+    var fillPct = (totalWireArea / d.total) * 100;
+    var passes  = totalWireArea <= allowed;
 
-    // Track best (smallest that passes)
-    if (passes && bestSize === null) {
-      bestSize = size;
-      bestArea = d.total;
-    }
+    if (passes && bestSize === null) bestSize = size;
 
-    const barWidth = Math.min(fillPct, 100);
-    const barClass = fillPct <= (allowedPct * 100 * 0.8) ? 'fill-green'
-      : fillPct <= (allowedPct * 100) ? 'fill-yellow' : 'fill-red';
+    var barWidth  = Math.min(fillPct, 100);
+    var barClass  = fillPct <= allowedPct * 100 * 0.8 ? 'fill-green'
+                  : fillPct <= allowedPct * 100       ? 'fill-yellow'
+                  : 'fill-red';
 
-    let statusHtml = passes
-      ? `<span class="status-pass">✓ PASS</span>`
-      : `<span class="status-fail">✗ FAIL</span>`;
-    if (passes && size === bestSize) {
-      statusHtml = `<span class="status-best">⭐ BEST FIT</span>`;
-    }
-    if (passes && size === selectedSize) {
-      statusHtml += ` <span class="status-warn">SELECTED</span>`;
-    }
+    var statusHtml = passes
+      ? '<span class="status-pass">\u2713 PASS</span>'
+      : '<span class="status-fail">\u2717 FAIL</span>';
+    if (passes && size === bestSize)
+      statusHtml = '<span class="status-best">\u2B50 BEST FIT</span>';
+    if (passes && size === selectedSize)
+      statusHtml += ' <span class="status-warn">SELECTED</span>';
 
-    const isSelected = size === selectedSize;
-    const tr = document.createElement('tr');
-    if (isSelected) tr.style.background = 'rgba(217,119,6,0.07)';
-
-    tr.innerHTML = `
-      <td style="font-weight:700;color:var(--accent)">${size}"</td>
-      <td>${d.total.toFixed(4)}</td>
-      <td>${allowed.toFixed(4)}</td>
-      <td>${totalWireArea.toFixed(4)}</td>
-      <td style="font-weight:700">${fillPct.toFixed(1)}%</td>
-      <td style="min-width:80px;">
-        <div class="fill-bar-wrap">
-          <div class="fill-bar ${barClass}" style="width:${barWidth}%"></div>
-        </div>
-      </td>
-      <td>${statusHtml}</td>
-    `;
+    var tr = document.createElement('tr');
+    if (size === selectedSize) tr.style.background = 'rgba(217,119,6,0.07)';
+    tr.innerHTML =
+      '<td style="font-weight:700;color:var(--accent)">' + size + '"</td>' +
+      '<td>' + d.total.toFixed(4) + '</td>' +
+      '<td>' + allowed.toFixed(4) + '</td>' +
+      '<td>' + totalWireArea.toFixed(4) + '</td>' +
+      '<td style="font-weight:700">' + fillPct.toFixed(1) + '%</td>' +
+      '<td style="min-width:80px;">' +
+        '<div class="fill-bar-wrap">' +
+          '<div class="fill-bar ' + barClass + '" style="width:' + barWidth + '%"></div>' +
+        '</div></td>' +
+      '<td>' + statusHtml + '</td>';
     tbody.appendChild(tr);
   });
 
-  // ---- RECOMMENDATION ----
+  // Recommendation
   if (bestSize) {
+    var bd       = conduitSizes[bestSize];
+    var bAllowed = bd.total * allowedPct;
+    var bFill    = (totalWireArea / bd.total * 100).toFixed(1);
+    var bHead    = (bAllowed - totalWireArea).toFixed(4);
     document.getElementById('r-rec-size').textContent =
-      bestSize + '" ' + document.getElementById('conduitType').value;
-    const bd = conduitSizes[bestSize];
-    const bAllowed = bd.total * allowedPct;
-    const bFill = (totalWireArea / bd.total * 100).toFixed(1);
-    const bHeadroom = (bAllowed - totalWireArea).toFixed(4);
+      bestSize + '" ' + conduitType;
     document.getElementById('r-rec-detail').textContent =
-      `Fill: ${bFill}% | Headroom: ${bHeadroom} in² | ` +
-      `${Math.round(allowedPct*100)}% rule | ${numConductors} conductor${numConductors !== 1 ? 's' : ''}`;
+      'Fill: ' + bFill + '% | Headroom: ' + bHead + ' in\u00b2 | ' +
+      Math.round(allowedPct * 100) + '% rule | ' +
+      numConductors + ' conductor' + (numConductors !== 1 ? 's' : '');
   } else {
-    document.getElementById('r-rec-size').textContent = 'NO STANDARD SIZE';
+    document.getElementById('r-rec-size').textContent  = 'NO STANDARD SIZE';
     document.getElementById('r-rec-detail').textContent =
       'Wire area exceeds all standard trade sizes for this conduit type.';
   }
 
-  // ---- JAM RATIO ----
+  // Jam ratios
   renderJamRatios(conduitType, largestOD, numConductors);
 
-  // Show results
   document.getElementById('results').style.display = 'block';
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ============================================================
-// JAM RATIO CALCULATION
-// NEC Informational Note: ratio = conduit ID / wire OD
-// Jam risk zone: 2.8 — 3.2
-// ============================================================
+// ── JAM RATIO ──────────────────────────────────────────────
 function renderJamRatios(conduitType, largestOD, numConductors) {
-  const grid = document.getElementById('jamGrid');
+  var grid = document.getElementById('jamGrid');
   grid.innerHTML = '';
 
   if (largestOD === 0 || numConductors < 3) {
-    grid.innerHTML = `<div style="color:var(--text2);font-size:12px;font-family:'Share Tech Mono',monospace;padding:8px;">
-      Jam ratio applies to 3+ conductors of the same size. Add 3+ conductors to see jam prediction.
-    </div>`;
+    grid.innerHTML =
+      '<div style="color:var(--text2);font-size:12px;' +
+      'font-family:\'Share Tech Mono\',monospace;padding:8px;">' +
+      'Jam ratio applies to 3+ conductors of the same size. ' +
+      'Add 3+ conductors to see jam prediction.</div>';
     return;
   }
 
-  const conduitSizes = CONDUIT_DATA[conduitType];
-  TRADE_SIZES_ORDER.forEach(size => {
+  var conduitSizes = CONDUIT_DATA[conduitType];
+  TRADE_SIZES_ORDER.forEach(function(size) {
     if (!conduitSizes || !conduitSizes[size]) return;
-    const d = conduitSizes[size];
-    const ratio = d.id / largestOD;
+    var d     = conduitSizes[size];
+    var ratio = d.id / largestOD;
 
-    let statusClass = 'jam-ok';
-    let statusText = '✓ LOW RISK';
-    let statusLabel = '';
+    var statusClass  = 'jam-ok';
+    var statusText   = '\u2713 LOW RISK';
+    var statusLabel  = 'Good geometry for pulling';
 
     if (ratio >= 2.8 && ratio <= 3.2) {
       statusClass = 'jam-high';
-      statusText = '⚠ HIGH JAM RISK';
-      statusLabel = 'Avoid — conductor ODs create jam geometry';
+      statusText  = '\u26a0 HIGH JAM RISK';
+      statusLabel = 'Avoid \u2014 conductor ODs create jam geometry';
     } else if (ratio > 3.2 && ratio <= 3.8) {
       statusClass = 'jam-risk';
-      statusText = '⚡ MOD. RISK';
+      statusText  = '\u26a1 MOD. RISK';
       statusLabel = 'Use caution when pulling';
     } else if (ratio < 2.8 && ratio > 0) {
       statusClass = 'jam-ok';
-      statusText = '✓ CLEAR';
+      statusText  = '\u2713 CLEAR';
       statusLabel = 'Conduit ID too small for jam';
-    } else {
-      statusClass = 'jam-ok';
-      statusText = '✓ LOW RISK';
-      statusLabel = 'Good geometry for pulling';
     }
 
-    const item = document.createElement('div');
+    var item = document.createElement('div');
     item.className = 'jam-item';
-    item.innerHTML = `
-      <div class="jam-size">${size}"</div>
-      <div class="jam-ratio">ID: ${d.id.toFixed(3)}" | OD: ${largestOD.toFixed(3)}"</div>
-      <div class="jam-ratio">Ratio: <strong>${ratio.toFixed(2)}</strong></div>
-      <div class="jam-status ${statusClass}">${statusText}</div>
-      ${statusLabel ? `<div style="font-size:9px;color:var(--text2);margin-top:2px;">${statusLabel}</div>` : ''}
-    `;
+    item.innerHTML =
+      '<div class="jam-size">' + size + '"</div>' +
+      '<div class="jam-ratio">ID: ' + d.id.toFixed(3) +
+        '" | OD: ' + largestOD.toFixed(3) + '"</div>' +
+      '<div class="jam-ratio">Ratio: <strong>' + ratio.toFixed(2) + '</strong></div>' +
+      '<div class="jam-status ' + statusClass + '">' + statusText + '</div>' +
+      (statusLabel
+        ? '<div style="font-size:9px;color:var(--text2);margin-top:2px;">' +
+          statusLabel + '</div>'
+        : '');
     grid.appendChild(item);
   });
 }
 </script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('../sw.js', { scope: '../' })
-        .then(function(reg) {
-          console.log('[SW] Registered, scope:', reg.scope);
-        })
-        .catch(function(err) {
-          console.warn('[SW] Registration failed:', err);
+
+<!-- SERVICE WORKER — single registration pointing to ../sw.js -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('../sw.js', { scope: '../' })
+      .then(function(reg) {
+        console.log('[SW] Registered, scope:', reg.scope);
+        reg.addEventListener('updatefound', function() {
+          var nw = reg.installing;
+          nw.addEventListener('statechange', function() {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+              console.log('[AOG SW] Update available — reload to apply.');
+            }
+          });
         });
-    });
-  }
+      })
+      .catch(function(err) {
+        console.warn('[SW] Registration failed:', err);
+      });
+  });
+}
 </script>
 
 </body>
