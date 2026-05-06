@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Always On Generators – Permitting Info Request</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FBBF24">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AOG Forms">
+
 
 <style>
 :root {
@@ -784,7 +791,7 @@ body.dark-mode .notice { color: #7DD3FC; }
 <div class="action-bar">
   <div style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:100%;">
     <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
-      <button class="btn" onclick="window.location.href='https://brandonaog.github.io/AOG-hub/'">🏠 HOME</button>
+      <button class="btn" onclick="window.location.href='../'">🏠 HOME</button>
       <button class="btn" id="btn-pdf" onclick="openPrintPreview()">📄 PDF</button>
       <button class="btn" onclick="clearForm()">🗑 CLEAR</button>
       <button class="btn" id="btn-iphone" onclick="saveForIPhone()">📱 iPhone</button>
@@ -1298,5 +1305,20 @@ function saveForAndroid() {
 
 function setStatus(msg) { document.getElementById('save-status').textContent = msg; }
 </script>
+  
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('../sw.js', { scope: '../' })
+        .then(function(reg) {
+          console.log('[SW] Registered, scope:', reg.scope);
+        })
+        .catch(function(err) {
+          console.warn('[SW] Registration failed:', err);
+        });
+    });
+  }
+</script>
+
 </body>
 </html>
