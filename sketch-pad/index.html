@@ -5,7 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Always On Generators – Drawing Pad</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FBBF24">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AOG Forms">
+
+  <style>
 :root {
   --cyan: #D97706;
   --cyan-dim: #B45309;
@@ -863,7 +870,7 @@ body.dark-mode ::-webkit-scrollbar-thumb{background:rgba(0,255,200,0.25);}
   <div class="header-title">Site Drawing Pad</div>
   <div class="header-right">
     <button class="toolbar-toggle" id="toolbar-toggle" title="Toggle Toolbar" onclick="toggleToolbar()">☰</button>
-    <button class="action-btn" onclick="window.location.href='https://brandonaog.github.io/AOG-hub/'" title="Home">🏠</button>
+   <button class="btn" onclick="window.location.href='../'">🏠 HOME</button>
     <button class="action-btn" onclick="exportPNG()" title="Export PNG">💾</button>
     <button class="action-btn" onclick="exportPDF()" title="Export PDF">📄</button>
     <button class="action-btn danger" onclick="confirmClear()" title="Clear">🗑</button>
@@ -2724,5 +2731,19 @@ setInterval(autoSave, 10000);
   updateStatus();
 })();
 </script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('../sw.js', { scope: '../' })
+        .then(function(reg) {
+          console.log('[SW] Registered, scope:', reg.scope);
+        })
+        .catch(function(err) {
+          console.warn('[SW] Registration failed:', err);
+        });
+    });
+  }
+</script>
+
 </body>
 </html>
