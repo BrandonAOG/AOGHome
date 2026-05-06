@@ -3,6 +3,7 @@
   "short_name": "AOG Hub",
   "description": "Field operations forms portal for Always On Generators",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#0A0E27",
@@ -25,12 +26,22 @@
   "shortcuts": [
     {
       "name": "Maintenance Form",
-      "url": "https://brandonaog.github.io/Maintenance/",
+      "url": "./maintenance/",
       "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Install Form",
-      "url": "https://brandonaog.github.io/Installforms/",
+      "url": "./install/",
+      "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Gas Install",
+      "url": "./gas-install/",
+      "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Estimate Form",
+      "url": "./estimate/",
       "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
