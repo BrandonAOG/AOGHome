@@ -5,7 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Always On Generators — Load Calculation NEC 2020</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FBBF24">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AOG Forms">
+
+
+
+  
+  <style>
 :root{
   --bg:#F0F2F5;--surface:#fff;--surface2:#F7F8FC;--border:#E2E6EF;--border2:#C8D0E0;
   --text:#1C2333;--text2:#4A5568;--text3:#8896AA;
@@ -1911,6 +1921,19 @@ ${managedLines.length>0?'<div style="margin-top:10pt;border:1.5pt solid #D97706;
   printWin.document.close();
   } catch(e){ console.error('printReport error:', e); alert('Report error: '+e.message); }
 }
+</script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('../sw.js', { scope: '../' })
+        .then(function(reg) {
+          console.log('[SW] Registered, scope:', reg.scope);
+        })
+        .catch(function(err) {
+          console.warn('[SW] Registration failed:', err);
+        });
+    });
+  }
 </script>
 </body>
 </html>
