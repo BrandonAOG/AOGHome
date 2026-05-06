@@ -828,16 +828,17 @@ body::after {
 <script>
 // ── Form URL routing ──────────────────────────────────────
 const FORM_URLS = {
-  'install':         'https://brandonaog.github.io/Installforms/',
-  'estimate':        'https://brandonaog.github.io/Generator-estimate-form/',
-  'maintenance':     'https://brandonaog.github.io/Maintenance/',
-  'site-visits':     'https://brandonaog.github.io/Site-visit/',
-  'sketch-pad':      'https://brandonaog.github.io/Sketchpad/',
-  'conduit-fill':    'https://brandonaog.github.io/conduitfill/',
-  'load-calc':       'https://brandonaog.github.io/loadcalc/',
-  'breaker-sizing':  'https://brandonaog.github.io/breaker-cond/',
-  'gas-install':     'https://brandonaog.github.io/gas-install/',
+  'install':        './install/',
+  'gas-install':    './gas-install/',
+  'estimate':       './estimate/',
+  'maintenance':    './maintenance/',
+  'site-visits':    './site-visit/',
+  'sketch-pad':     './sketch-pad/',
+  'conduit-fill':   './conduit-fill/',
+  'load-calc':      './load-calc/',
+  'breaker-sizing': './breaker-sizing/',
 };
+
 
 document.querySelectorAll('.form-card').forEach(function(card) {
   const formKey = card.getAttribute('data-form');
