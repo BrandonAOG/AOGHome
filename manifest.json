@@ -31,7 +31,7 @@
     },
     {
       "name": "Install Form",
-      "url": "./install/",
+      "url": "./elect-install/",
       "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192" }]
     },
     {
