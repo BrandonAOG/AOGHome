@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Always On Generators - Maintenance Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --cyan: #D97706;
+  --cyan-dim: #B45309;
+  --cyan-dark: #92400E;
+  --amber: #D97706;
+  --amber-dim: #B45309;
+  --green: #059669;
+  --red: #DC2626;
+  --bg: #FFFFFF;
+  --bg2: #FFFFFF;
+  --bg3: #F8F8F8;
+  --bg4: #F0F0F0;
+  --panel: #FFFFFF;
+  --panel2: #FAFAFA;
+  --border: rgba(217,119,6,0.25);
+  --border-bright: rgba(217,119,6,0.5);
+  --text: #1F2937;
+  --text-muted: #6B7280;
+  --text-dim: #9CA3AF;
+  --glow: 0 0 8px rgba(217,119,6,0.3), 0 0 20px rgba(217,119,6,0.1);
+  --font-display: 'Orbitron', monospace;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-body: 'Exo 2', sans-serif;
+  --icon-color-primary: #D97706;
+  --icon-color-section: #D97706;
+}
+
+body.dark-mode {
+  --bg: #0A0E27;
+  --bg2: #0F1535;
+  --bg3: #1A2847;
+  --bg4: #243458;
+  --panel: #0F1535;
+  --panel2: #1A2847;
+  --border: rgba(0, 255, 200, 0.08);
+  --border-bright: rgba(0, 255, 200, 0.25);
+  --text: #E0F7FF;
+  --text-muted: #7DD3FC;
+  --text-dim: #38BDF8;
+  --cyan: #00FFC8;
+  --cyan-dim: #06B6D4;
+  --cyan-dark: #0891B2;
+  --amber: #D97706;
+  --amber-dim: #B45309;
+  --green: #10B981;
+  --red: #F43F5E;
+  --icon-color-primary: #00FFC8;
+  --icon-color-section: #00FFC8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  width: 100%;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 0;
+  padding-bottom: env(safe-area-inset-bottom, 24px);
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode {
+  background: linear-gradient(
+    135deg,
+    #0A0E27 0%,
+    #0F1535 25%,
+    #0A1628 50%,
+    #0F1535 75%,
+    #0A0E27 100%
+  );
+  background-attachment: fixed;
+  background-size: 400% 400%;
+}
+
+.page {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  background: var(--panel);
+  border: 2px solid var(--cyan);
+  box-shadow: 0 0 0 1px rgba(217,119,6,0.1), 0 0 40px rgba(217,119,6,0.08), inset 0 0 60px rgba(255,255,255,0.8);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+body.dark-mode .page {
+  background: linear-gradient(
+    135deg,
+    rgba(15, 21, 53, 0.95) 0%,
+    rgba(10, 14, 39, 0.98) 100%
+  );
+  border-color: #00FFC8;
+  box-shadow: 
+    0 0 1px rgba(0, 255, 200, 0.3),
+    0 0 20px rgba(0, 255, 200, 0.15),
+    0 0 40px rgba(59, 130, 246, 0.08),
+    inset 0 0 60px rgba(0, 255, 200, 0.02);
+}
+
+/* Corner accents */
+.page::before, .page::after {
+  content: '';
+  position: absolute;
+  width: 24px; height: 24px;
+  border-color: var(--cyan);
+  border-style: solid;
+  z-index: 10;
+}
+.page::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.page::after  { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+.page-corner-bl, .page-corner-br {
+  position: absolute;
+  width: 24px; height: 24px;
+  border-color: var(--cyan);
+  border-style: solid;
+  z-index: 10;
+  pointer-events: none;
+}
+.page-corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+.page-corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+@media (max-width: 768px) {
+  body { padding: 0; }
+  .page { box-shadow: none; border: none; max-width: 100%; }
+  .page::before, .page::after,
+  .page-corner-bl, .page-corner-br { display: none; }
+
+  .header {
+    flex-wrap: nowrap;
+    gap: 6px;
+    padding: 6px 8px;
+    min-height: auto;
+    justify-content: space-between;
+  }
+
+  .header-logo {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .logo-img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .company-name {
+    font-size: 0.75rem !important;
+    letter-spacing: 0.5px !important;
+    white-space: nowrap;
+  }
+
+  .doc-title {
+    font-size: 0.75rem !important;
+    letter-spacing: 1px !important;
+    white-space: nowrap;
+  }
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--panel);
+  padding: 6px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-bright);
+  position: relative;
+  overflow: hidden;
+  min-height: 56px;
+  page-break-after: avoid;
+  break-after: avoid;
+  margin: 0;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+body.dark-mode .header {
+  background: linear-gradient(
+    90deg,
+    rgba(15, 21, 53, 0.9) 0%,
+    rgba(26, 40, 71, 0.8) 50%,
+    rgba(15, 21, 53, 0.9) 100%
+  );
+  border-bottom-color: rgba(0, 255, 200, 0.25);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(0, 255, 200, 0.08),
+    inset 0 1px 0 rgba(0, 255, 200, 0.1);
+}
+
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--amber), var(--cyan), transparent);
+}
+
+body.dark-mode .header::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #00FFC8,
+    #3B82F6,
+    #00FFC8,
+    transparent
+  );
+  opacity: 0.6;
+}
+
+.header-logo { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+
+.logo-img {
+  width: 40px; 
+  height: 40px;
+  flex-shrink: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(217,119,6,0.4)) brightness(1.1);
+}
+
+.company-name {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  line-height: 1.1;
+  text-shadow: 0 0 12px rgba(217,119,6,0.2);
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .company-name {
+  color: #00FFC8;
+  text-shadow: 
+    0 0 10px #00FFC8,
+    0 0 20px rgba(0, 255, 200, 0.5),
+    0 0 30px rgba(59, 130, 246, 0.3),
+    0 0 40px rgba(0, 255, 200, 0.2);
+  letter-spacing: 3px;
+}
+
+.doc-title {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--amber);
+  letter-spacing: 3px;
+  text-shadow: 0 0 12px rgba(217,119,6,0.2);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .doc-title {
+  color: #00FFC8 !important;
+  text-shadow: 
+    0 0 12px #00FFC8,
+    0 0 20px rgba(0, 255, 200, 0.5),
+    0 0 30px rgba(0, 255, 200, 0.3) !important;
+  letter-spacing: 4px;
+}
+
+/* ── THEME TOGGLE BUTTON ── */
+.theme-toggle-btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  padding: 5px;
+  border: 1px solid rgba(217, 119, 6, 0.4);
+  background: rgba(217, 119, 6, 0.05);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan);
+  transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  flex-shrink: 0;
+  z-index: 100;
+}
+
+body.dark-mode .theme-toggle-btn {
+  background: rgba(0, 255, 200, 0.08);
+  border-color: rgba(0, 255, 200, 0.2);
+  color: #00FFC8;
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--cyan);
+  background: rgba(217, 119, 6, 0.1);
+  box-shadow: var(--glow);
+  transform: scale(1.08);
+}
+
+body.dark-mode .theme-toggle-btn:hover {
+  background: rgba(0, 255, 200, 0.12);
+  border-color: #00FFC8;
+  box-shadow: 
+    0 0 12px rgba(0, 255, 200, 0.3),
+    inset 0 0 8px rgba(0, 255, 200, 0.05);
+  transform: scale(1.1);
+}
+
+.theme-toggle-btn:active { transform: scale(0.95); }
+
+.theme-icon {
+  width: 16px;
+  height: 16px;
+  transition: all 0.3s ease;
+  position: absolute;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke: var(--icon-color-primary) !important;
+  color: var(--icon-color-primary) !important;
+}
+
+.theme-icon.theme-icon-moon { opacity: 0; }
+
+body.dark-mode .theme-icon { opacity: 0; transform: rotate(-180deg); }
+body.dark-mode .theme-icon.theme-icon-moon { opacity: 1; transform: rotate(0deg); }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  padding: 4px 8px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .toolbar {
+  background: linear-gradient(
+    90deg,
+    rgba(15, 21, 53, 0.8) 0%,
+    rgba(26, 40, 71, 0.6) 100%
+  );
+  border-bottom-color: rgba(0, 255, 200, 0.1);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border: 1px solid rgba(217,119,6,0.4);
+  background: rgba(217,119,6,0.05);
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--cyan);
+  white-space: nowrap;
+  min-height: 30px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: all 0.15s;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+body.dark-mode .btn {
+  background: rgba(0, 255, 200, 0.08);
+  border-color: rgba(0, 255, 200, 0.25);
+  color: #00FFC8;
+  text-shadow: 0 0 4px rgba(0, 255, 200, 0.3);
+}
+
+.btn:hover { 
+  border-color: var(--cyan); 
+  color: var(--cyan); 
+  box-shadow: var(--glow); 
+}
+
+body.dark-mode .btn:hover {
+  background: rgba(0, 255, 200, 0.12);
+  border-color: #00FFC8;
+  box-shadow: 
+    0 0 12px rgba(0, 255, 200, 0.25),
+    inset 0 0 12px rgba(0, 255, 200, 0.05);
+  text-shadow: 0 0 8px rgba(0, 255, 200, 0.6);
+}
+
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── CONTENT ── */
+.content { 
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+@media (max-width: 480px) { .content { padding: 6px 4px; } }
+
+/* ── SECTIONS ── */
+.section {
+  border: 1px solid var(--border);
+  margin-bottom: 4px;
+  background: var(--panel);
+  position: relative;
+  transition: all 0.3s ease;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+body.dark-mode .section {
+  background: linear-gradient(
+    135deg,
+    rgba(26, 40, 71, 0.6) 0%,
+    rgba(15, 21, 53, 0.8) 100%
+  );
+  border-color: rgba(0, 255, 200, 0.15);
+  box-shadow: 
+    0 0 1px rgba(0, 255, 200, 0.1),
+    inset 0 0 20px rgba(0, 255, 200, 0.02);
+}
+
+.section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--cyan), transparent 60%);
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .section::before {
+  background: linear-gradient(
+    90deg,
+    #00FFC8,
+    rgba(0, 255, 200, 0.3) 40%,
+    transparent 100%
+  );
+  opacity: 0.7;
+}
+
+.section-header {
+  background: var(--bg3);
+  color: var(--cyan);
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 2.5px;
+  padding: 3px 10px;
+  border-bottom: 1px solid var(--border);
+  text-shadow: 0 0 6px rgba(217,119,6,0.15);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+body.dark-mode .section-header {
+  background: linear-gradient(
+    90deg,
+    rgba(26, 40, 71, 0.8) 0%,
+    rgba(36, 52, 88, 0.6) 100%
+  );
+  color: #00FFC8;
+  border-bottom-color: rgba(0, 255, 200, 0.2);
+  text-shadow: 
+    0 0 8px rgba(0, 255, 200, 0.4),
+    0 0 16px rgba(59, 130, 246, 0.15);
+}
+
+.section-header::before {
+  content: '';
+  display: inline-block;
+  width: 4px; height: 4px;
+  background: var(--cyan);
+  box-shadow: 0 0 4px var(--cyan);
+  flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .section-header::before {
+  background: #00FFC8;
+  box-shadow: 
+    0 0 6px #00FFC8,
+    0 0 12px rgba(0, 255, 200, 0.5);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+.section-body { 
+  padding: 4px 8px;
+  transition: all 0.3s ease;
+}
+
+/* ── TWO-COLUMN LAYOUT ── */
+.two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.two-column .section {
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .two-column {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+}
+
+/* ── FIELD ROWS ── */
+.field-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 3px;
+  flex-wrap: wrap;
+}
+.field-row:last-child { margin-bottom: 0; }
+
+label {
+  font-size: 0.5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+  user-select: none;
+  line-height: 1;
+  font-family: var(--font-display);
+  transition: color 0.3s ease;
+}
+
+body.dark-mode label {
+  color: #7DD3FC;
+}
+
+/* ── INPUTS ── */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+textarea,
+select {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text);
+  background: var(--panel);
+  border: none;
+  border-bottom: 1.5px solid rgba(217,119,6,0.25);
+  padding: 2px 4px;
+  outline: none;
+  width: 100%;
+  transition: all 0.2s;
+  border-radius: 0;
+  min-height: 28px;
+  -webkit-appearance: none;
+  appearance: none;
+  caret-color: var(--cyan);
+}
+
+body.dark-mode input[type="text"],
+body.dark-mode input[type="email"],
+body.dark-mode input[type="tel"],
+body.dark-mode input[type="date"],
+body.dark-mode input[type="number"],
+body.dark-mode textarea,
+body.dark-mode select {
+  background: rgba(10, 14, 39, 0.6);
+  border-bottom-color: rgba(0, 255, 200, 0.2);
+  color: #E0F7FF;
+  caret-color: #00FFC8;
+  box-shadow: 
+    inset 0 1px 3px rgba(0, 0, 0, 0.5),
+    inset 0 0 8px rgba(0, 255, 200, 0.05);
+}
+
+input[type="date"] {
+  min-height: 28px;
+  padding: 2px 3px;
+  cursor: pointer;
+  color-scheme: light;
+}
+
+body.dark-mode input[type="date"] {
+  color-scheme: dark;
+}
+
+input::placeholder, textarea::placeholder { 
+  color: var(--text-dim) !important;
+  opacity: 0.4;
+  font-size: 0.65rem;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+  border-bottom-color: var(--cyan);
+  background: rgba(217,119,6,0.04);
+  box-shadow: 0 1px 0 0 rgba(217,119,6,0.3), 0 0 8px rgba(217,119,6,0.08);
+}
+
+body.dark-mode input[type="text"]:focus,
+body.dark-mode input[type="email"]:focus,
+body.dark-mode input[type="tel"]:focus,
+body.dark-mode input[type="date"]:focus,
+body.dark-mode input[type="number"]:focus,
+body.dark-mode textarea:focus,
+body.dark-mode select:focus {
+  border-bottom-color: #00FFC8;
+  background: rgba(26, 40, 71, 0.8);
+  box-shadow: 
+    inset 0 0 8px rgba(0, 255, 200, 0.1),
+    0 0 8px rgba(0, 255, 200, 0.15),
+    0 0 16px rgba(59, 130, 246, 0.08);
+}
+
+input.short { width: 48px; min-width: 48px; flex-shrink: 0; }
+input.med   { width: 80px; min-width: 60px; flex: 0 0 auto; }
+input.long  { flex: 1; min-width: 70px; }
+
+textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid rgba(217,119,6,0.15);
+  padding: 2px 3px;
+  margin-top: 1px;
+  min-height: auto !important;
+  max-height: none !important;
+  background: var(--panel);
+  color: var(--text);
+  transition: all 0.3s ease;
+  font-size: 0.65rem;
+  line-height: 1.2;
+}
+
+body.dark-mode textarea {
+  background: rgba(10, 14, 39, 0.6);
+  border-color: rgba(0, 255, 200, 0.1);
+  color: #E0F7FF;
+}
+
+textarea:focus { 
+  border-color: var(--cyan); 
+  box-shadow: 0 0 6px rgba(217,119,6,0.1); 
+}
+
+body.dark-mode textarea:focus {
+  border-color: #00FFC8;
+  box-shadow: 0 0 6px rgba(0, 255, 200, 0.15);
+}
+
+/* ── CHECK GROUPS ── */
+.check-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  align-items: center;
+  margin-top: 0;
+  width: 100%;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  user-select: none;
+  min-height: 24px;
+  padding: 1px 5px 1px 3px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  border: 0.5px solid rgba(217,119,6,0.25);
+  background: rgba(217,119,6,0.02);
+  transition: all 0.15s;
+  clip-path: polygon(3px 0%, 100% 0%, calc(100% - 3px) 100%, 0% 100%);
+  font-size: 0.5rem;
+}
+
+body.dark-mode .check-item {
+  background: rgba(26, 40, 71, 0.3);
+  border-color: rgba(0, 255, 200, 0.1);
+}
+
+.check-item:hover {
+  border-color: rgba(217,119,6,0.4);
+  background: rgba(217,119,6,0.05);
+}
+
+body.dark-mode .check-item:hover {
+  background: rgba(36, 52, 88, 0.4);
+  border-color: rgba(0, 255, 200, 0.2);
+  box-shadow: 0 0 4px rgba(0, 255, 200, 0.08);
+}
+
+.check-item:has(input:checked) {
+  background: rgba(217,119,6,0.08);
+  border-color: rgba(217,119,6,0.5);
+  box-shadow: 0 0 4px rgba(217,119,6,0.1), inset 0 0 4px rgba(217,119,6,0.02);
+}
+
+body.dark-mode .check-item:has(input:checked) {
+  background: rgba(0, 255, 200, 0.06);
+  border-color: rgba(0, 255, 200, 0.3);
+  box-shadow: 
+    0 0 6px rgba(0, 255, 200, 0.1),
+    inset 0 0 4px rgba(0, 255, 200, 0.03);
+}
+
+.check-item input[type="checkbox"],
+.check-item input[type="radio"] {
+  width: 11px !important;
+  height: 11px !important;
+  min-height: 11px !important;
+  min-width: 11px !important;
+  accent-color: var(--cyan);
+  cursor: pointer;
+  flex-shrink: 0;
+  border: none;
+  border-bottom: none;
+  padding: 0;
+  background: none;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .check-item input[type="checkbox"],
+body.dark-mode .check-item input[type="radio"] {
+  accent-color: #00FFC8;
+}
+
+.check-item span {
+  font-family: var(--font-display);
+  font-size: 0.5rem;
+  font-weight: 500;
+  letter-spacing: 0.6px;
+  color: var(--text);
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+
+body.dark-mode .check-item span {
+  color: #E0F7FF;
+}
+
+.check-item:has(input:checked) span {
+  color: var(--cyan);
+  text-shadow: 0 0 2px rgba(217,119,6,0.3);
+}
+
+body.dark-mode .check-item:has(input:checked) span {
+  color: #00FFC8;
+  text-shadow: 0 0 4px rgba(0, 255, 200, 0.4);
+}
+
+/* ── TEST GRID LAYOUT ── */
+.test-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.test-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.test-item label {
+  min-width: 75px;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .test-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+/* ── Y/N TOGGLE ── */
+.yn-group {
+  display: inline-flex;
+  border: 0.5px solid rgba(217,119,6,0.25);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--panel);
+  transition: all 0.3s ease;
+  height: 26px;
+}
+
+body.dark-mode .yn-group {
+  background: rgba(15, 21, 53, 0.7);
+  border-color: rgba(0, 255, 200, 0.1);
+}
+
+.yn-group input[type="radio"] { display: none; }
+
+.yn-group .yn-label {
+  padding: 0 8px;
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  min-height: 26px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: all 0.15s;
+}
+
+body.dark-mode .yn-group .yn-label {
+  color: #7DD3FC;
+}
+
+.yn-group .yn-label:first-of-type { border-right: 0.5px solid rgba(217,119,6,0.15); }
+
+body.dark-mode .yn-group .yn-label:first-of-type {
+  border-right-color: rgba(0, 255, 200, 0.08);
+}
+
+.yn-group .yn-label:hover { 
+  background: rgba(217,119,6,0.05); 
+  color: var(--text); 
+}
+
+body.dark-mode .yn-group .yn-label:hover {
+  background: rgba(0, 255, 200, 0.04);
+  color: #E0F7FF;
+  box-shadow: 0 0 4px rgba(0, 255, 200, 0.08);
+}
+
+.yn-group .yn-y:checked + .yn-label-y {
+  background: rgba(5,150,105,0.1);
+  color: var(--green);
+  text-shadow: 0 0 4px rgba(5,150,105,0.3);
+  box-shadow: inset 0 0 6px rgba(5,150,105,0.05);
+}
+
+.yn-group .yn-n:checked + .yn-label-n {
+  background: rgba(220,38,38,0.1);
+  color: var(--red);
+  text-shadow: 0 0 4px rgba(220,38,38,0.3);
+  box-shadow: inset 0 0 6px rgba(220,38,38,0.05);
+}
+
+body.dark-mode .yn-group .yn-y:checked + .yn-label-y {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10B981;
+  text-shadow: 0 0 6px rgba(16, 185, 129, 0.3);
+  box-shadow: 
+    0 0 6px rgba(16, 185, 129, 0.15),
+    inset 0 0 6px rgba(16, 185, 129, 0.08);
+}
+
+body.dark-mode .yn-group .yn-n:checked + .yn-label-n {
+  background: rgba(244, 63, 94, 0.12);
+  color: #F43F5E;
+  text-shadow: 0 0 6px rgba(244, 63, 94, 0.3);
+  box-shadow: 
+    0 0 6px rgba(244, 63, 94, 0.15),
+    inset 0 0 6px rgba(244, 63, 94, 0.08);
+}
+
+/* ── FOOTER ── */
+.footer {
+  background: var(--panel);
+  padding: 4px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  border-top: 1px solid var(--border-bright);
+  margin-top: auto;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: auto;
+}
+
+body.dark-mode .footer {
+  background: linear-gradient(
+    90deg,
+    rgba(15, 21, 53, 0.8) 0%,
+    rgba(26, 40, 71, 0.6) 100%
+  );
+  border-top-color: rgba(0, 255, 200, 0.15);
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.footer-text {
+  font-family: var(--font-display);
+  font-size: 0.48rem;
+  color: var(--text-dim);
+  letter-spacing: 1.5px;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .footer-text {
+  color: #7DD3FC;
+  text-shadow: 0 0 4px rgba(0, 255, 200, 0.15);
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(217,119,6,0.3); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--cyan-dim); }
+
+body.dark-mode::-webkit-scrollbar { width: 6px; }
+body.dark-mode::-webkit-scrollbar-track { background: rgba(10, 14, 39, 0.5); border-radius: 3px; }
+body.dark-mode::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00FFC8 0%, #3B82F6 100%);
+  border-radius: 3px;
+  box-shadow: 0 0 6px rgba(0, 255, 200, 0.3);
+  transition: all 0.3s ease;
+}
+
+body.dark-mode::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00FFE8 0%, #60A5FA 100%);
+  box-shadow: 0 0 10px rgba(0, 255, 200, 0.5);
+}
+
+/* ── PRINT STYLES ── */
+@media print {
+  @page {
+    size: 8.5in 11in;
+    margin: 0;
+    padding: 0;
+  }
+
+  input::placeholder, textarea::placeholder { 
+    color: transparent !important; 
+    opacity: 0 !important;
+  }
+
+  html, body {
+    width: 8.5in;
+    height: 10.96in;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .page {
+    max-width: 8.5in !important;
+    width: 8.5in !important;
+    height: 10.96in !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0.02in !important;
+    border: 1.5px solid #D97706 !important;
+    box-shadow: none !important;
+  }
+
+  .header {
+    flex-shrink: 0;
+    margin-bottom: 2px !important;
+    padding: 3px 8px !important;
+    border-bottom: 0.5px solid #D97706 !important;
+    background: white !important;
+  }
+
+  .logo-img {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  .company-name {
+    color: #D97706 !important;
+    text-shadow: none !important;
+    font-size: 1.1rem !important;
+    letter-spacing: 1px !important;
+  }
+
+  .doc-title {
+    color: #D97706 !important;
+    text-shadow: none !important;
+    font-size: 1.1rem !important;
+    letter-spacing: 1.5px !important;
+  }
+
+  .toolbar, button, .theme-toggle-btn { 
+    display: none !important;
+  }
+
+  .page::before, .page::after,
+  .page-corner-bl, .page-corner-br { 
+    display: block !important; 
+    border-color: #D97706 !important; 
+  }
+
+  .header::after { 
+    display: none !important; 
+  }
+
+  .content {
+    flex: 1 !important;
+    overflow: hidden !important;
+    padding: 2px 4px !important;
+    margin: 0 !important;
+  }
+.footer {
+    margin-top: auto !important;
+    flex-shrink: 0 !important;
+    padding: 4px 20px !important;
+    border-top: 1px solid #D97706 !important;
+    background: white !important;
+    line-height: 1.4 !important;
+    overflow: visible !important;
+    min-height: 22px !important;
+    box-sizing: border-box !important;
+  }
+
+  .footer-text,
+  .footer span {
+    line-height: 1.4 !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+    font-size: 0.50rem !important;
+  }
+  .two-column {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .section { 
+    background: white !important;
+    border: 0.5px solid #D97706 !important;
+    margin-bottom: 2px !important;
+    padding: 1px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    box-shadow: none !important;
+  }
+
+  .section::before { 
+    background: none !important; 
+  }
+
+  .section-header { 
+    background: #f5f5f5 !important;
+    color: #D97706 !important;
+    border-bottom: 0.5px solid #D97706 !important;
+    text-shadow: none !important;
+    padding: 2px 6px !important;
+    font-size: 0.5rem !important;
+    min-height: auto !important;
+  }
+
+  .section-header::before { 
+    width: 2px !important;
+    height: 0 !important;
+    background: #D97706 !important;
+    box-shadow: none !important;
+  }
+
+  .section-body { 
+    padding: 2px 4px !important;
+    background: white !important;
+  }
+
+  .field-row {
+    display: flex !important;
+    margin-bottom: 1px !important;
+    gap: 2px !important;
+  }
+
+  label {
+    color: #6B7280 !important;
+    font-size: 0.45rem !important;
+    letter-spacing: 0.3px !important;
+  }
+
+  input[type="text"], 
+  input[type="email"], 
+  input[type="tel"],
+  input[type="date"], 
+  input[type="number"], 
+  textarea, 
+  select {
+    background: white !important;
+    border-bottom: 0.5px solid #D97706 !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    color: #1F2937 !important;
+    min-height: 16px !important;
+    padding: 0px 2px !important;
+    font-size: 0.6rem !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  textarea { 
+    max-height: none !important;  
+    height: auto !important;
+    min-height: 40px !important;
+    background: white !important;
+    border: 0.5px solid #D97706 !important;
+    font-size: 0.55rem !important;
+    padding: 0px 2px !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  #batnotes, #gennotes {
+    min-height: 50px !important;
+    height: 50px !important;
+  }
+
+  #oilnotes, #gasnotes, #tsnotes {
+    min-height: 30px !important;
+    height: 30px !important;
+  }
+
+  .test-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2px !important;
+    margin-top: 2px !important;
+  }
+
+  .test-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+
+  .test-item label {
+    min-width: 50px !important;
+    font-size: 0.45rem !important;
+  }
+
+  .yn-group { 
+    border: 0.5px solid #D97706 !important;
+    background: white !important;
+    height: 18px !important;
+    display: inline-flex !important;
+  }
+
+  .yn-group .yn-label { 
+    min-height: 18px !important;
+    padding: 0 4px !important;
+    color: #6B7280 !important;
+    border-right: 0.5px solid #D97706 !important;
+    font-size: 0.45rem !important;
+    background: white !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .yn-group .yn-label:last-child {
+    border-right: none !important;
+  }
+
+ .yn-group .yn-y:checked + .yn-label-y {
+    background: #f0f0f0 !important;
+    color: #059669 !important;
+  }
+
+  /* Nuclear light mode override - beats dark-mode class at any scale */
+  body.dark-mode,
+  body.dark-mode .page,
+  body.dark-mode .header,
+  body.dark-mode .section,
+  body.dark-mode .section-header,
+  body.dark-mode .section-body,
+  body.dark-mode .content,
+  body.dark-mode .footer,
+  body.dark-mode .toolbar,
+  body.dark-mode .two-column,
+  body.dark-mode .field-row,
+  body.dark-mode .check-group,
+  body.dark-mode .check-item,
+  body.dark-mode .yn-group,
+  body.dark-mode .btn {
+    background: white !important;
+    background-image: none !important;
+    color: #1F2937 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    border-color: rgba(217,119,6,0.35) !important;
+  }
+
+  body.dark-mode .company-name,
+  body.dark-mode .doc-title,
+  body.dark-mode .section-header {
+    color: #D97706 !important;
+    text-shadow: none !important;
+  }
+
+  body.dark-mode .section-header {
+    background: #f5f5f5 !important;
+  }
+
+  body.dark-mode label,
+  body.dark-mode .footer-text,
+  body.dark-mode .yn-group .yn-label,
+  body.dark-mode .check-item span {
+    color: #6B7280 !important;
+    text-shadow: none !important;
+  }
+
+  body.dark-mode input[type="text"],
+  body.dark-mode input[type="date"],
+  body.dark-mode input[type="number"],
+  body.dark-mode input[type="email"],
+  body.dark-mode input[type="tel"],
+  body.dark-mode textarea,
+  body.dark-mode select {
+    background: white !important;
+    color: #1F2937 !important;
+    box-shadow: none !important;
+    border-color: rgba(217,119,6,0.35) !important;
+  }
+
+  body.dark-mode .page {
+    border: 1.5px solid #D97706 !important;
+  }
+
+  body.dark-mode .yn-group {
+    background: white !important;
+    border-color: rgba(217,119,6,0.4) !important;
+  }
+
+  body.dark-mode .check-item {
+    background: white !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="page" id="page">
+
+  <div class="header">
+    <div class="header-logo">
+      <img src="https://raw.githubusercontent.com/BrandonAOG/AOG-Logo/main/logo.png" alt="logo" width="40" height="40" class="logo-img">
+      <div class="company-name">Always On<br>Generators</div>
+    </div>
+    <div class="doc-title">Maintenance Report</div>
+    
+    <button id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle dark mode" aria-label="Toggle dark mode">
+      <svg class="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <svg class="theme-icon theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn" onclick="window.location.href='https://brandonaog.github.io/AOG-hub/'">🏠 HOME</button>
+    <button class="btn" onclick="printForm()" title="Print or save as PDF">📄 PDF</button>
+    <button class="btn" onclick="clearForm()" title="Clear all fields">🗑 CLEAR</button>
+  </div>
+
+  <div class="content">
+
+    <!-- Customer & Job Info -->
+    <div class="section">
+      <div class="section-header">Customer & Job Info</div>
+      <div class="section-body">
+        <div class="field-row">
+          <label for="name">Name</label>
+          <input type="text" id="name" class="long" placeholder="Name">
+          <label for="number">Job #</label>
+          <input type="text" id="number" class="short" placeholder="12345">
+          <label for="date">Date</label>
+          <input type="date" id="date" class="med">
+        </div>
+
+        <div class="field-row">
+          <label for="address">Address</label>
+          <input type="text" id="address" class="long" placeholder="Address">
+          <label for="tech">Tech</label>
+          <input type="text" id="tech" class="med" placeholder="Tech"style="width: 165px;">
+        </div>
+
+        <div class="field-row">
+          <label for="model">Model</label>
+          <input type="text" id="model" class="med" placeholder="Model"style="width: 100px;">
+          <label for="serial">Serial #</label>
+          <input type="text" id="serial" class="med" placeholder="Serial number"style="width: 100px;">
+          <label for="hours">Hrs</label>
+          <input type="number" id="hours" class="med" placeholder="500"style="width: 60px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- TWO COLUMN: Battery & Generator -->
+    <div class="two-column">
+      
+      <!-- Battery Section -->
+      <div class="section">
+        <div class="section-header">Battery</div>
+        <div class="section-body">
+          <div class="field-row">
+            <label>Visual</label>
+            <div class="check-group">
+              <label class="check-item"><input type="checkbox" name="appearance" value="corr"><span>Corrosion</span></label>
+              <label class="check-item"><input type="checkbox" name="appearance" value="cables"><span>Broken Cables</span></label>
+              <label class="check-item"><input type="checkbox" name="appearance" value="good"><span>Good</span></label>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label>Condition</label>
+            <div class="check-group">
+              <label class="check-item"><input type="radio" name="battcond" value="good"><span>Good</span></label>
+              <label class="check-item"><input type="radio" name="battcond" value="avg"><span>Average</span></label>
+              <label class="check-item"><input type="radio" name="battcond" value="poor"><span>Poor</span></label>
+              <label class="check-item"><input type="radio" name="battcond" value="replace"><span>Needs Replaced</span></label>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label>Replaced</label>
+            <div class="yn-group">
+              <input type="radio" name="battreplaced" id="br_y" value="Y" class="yn-y">
+              <label class="yn-label yn-label-y" for="br_y">Y</label>
+              <input type="radio" name="battreplaced" id="br_n" value="N" class="yn-n">
+              <label class="yn-label yn-label-n" for="br_n">N</label>
+            </div>
+            <label for="voltage">V</label>
+            <input type="text" id="voltage" class="short" placeholder="12">
+          </div>
+
+          <div class="field-row">
+            <label for="cca">CCA</label>
+            <input type="text" id="cca" class="short" placeholder="500">
+            <label for="soh">SOH</label>
+            <input type="number" id="soh" class="short" placeholder="100">
+          </div>
+
+          <div class="field-row">
+            <label for="brand">Brand</label>
+            <input type="text" id="dare" class="med" placeholder="Brand"style="width: 135px;">
+            <label for="batt-date">Date</label>
+            <input type="text" id="batt-date" class="med" placeholder="xx/xx">
+          </div>
+
+          <div class="field-row">
+            <label>Water</label>
+            <div class="check-group">
+              <label class="check-item"><input type="radio" name="water" value="low"><span>Low</span></label>
+              <label class="check-item"><input type="radio" name="water" value="full"><span>Full</span></label>
+              <label class="check-item"><input type="radio" name="water" value="add"><span>Add</span></label>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label for="batnotes"></label>
+          </div>
+         <textarea id="batnotes" placeholder="Battery notes..." style="height:60px;"></textarea>
+
+        </div>
+      </div>
+
+      <!-- Generator Section -->
+      <div class="section">
+        <div class="section-header">Generator</div>
+        <div class="section-body">
+          <div class="field-row">
+            <label>Startup Test</label>
+            <div class="check-group">
+              <label class="check-item"><input type="radio" name="startup" value="norm"><span>Normal</span></label>
+              <label class="check-item"><input type="radio" name="startup" value="abn"><span>Abnormal</span></label>
+            </div>
+            <label for="genvolt">Voltage</label>
+            <input type="text" id="genvolt" class="short" placeholder="120/240">
+          </div>
+
+          <div class="field-row">
+            <label>Case</label>
+            <div class="check-group">
+              <label class="check-item"><input type="radio" name="casecheck" value="clean"><span>Clean</span></label>
+              <label class="check-item"><input type="radio" name="casecheck" value="debris"><span>Debris</span></label>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label>Coolant Level</label>
+            <div class="check-group">
+              <label class="check-item"><input type="radio" name="coolant" value="full"><span>Full</span></label>
+              <label class="check-item"><input type="radio" name="coolant" value="3/4"><span>3/4</span></label>
+              <label class="check-item"><input type="radio" name="coolant" value="1/2"><span>1/2</span></label>
+              <label class="check-item"><input type="radio" name="coolant" value="empty"><span>Empty</span></label>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label for="coolantadded">Added (oz)</label>
+            <input type="number" id="coolantadded" class="short" placeholder="0">
+          </div>
+
+          <div class="field-row">
+            <label>Wiring Check</label>
+            <div class="check-group">
+              <label class="check-item"><input type="checkbox" name="wires" value="loose"><span>Loose</span></label>
+              <label class="check-item"><input type="checkbox" name="wires" value="broken"><span>Broken</span></label>
+              <label class="check-item"><input type="checkbox" name="wires" value="damaged"><span>Damaged</span></label>
+              <label class="check-item"><input type="checkbox" name="wires" value="good"><span>Good</span></label>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label>Interior Check</label>
+            <div class="check-group">
+              <label class="check-item"><input type="checkbox" name="interior" value="belts"><span>Belts</span></label>
+              <label class="check-item"><input type="checkbox" name="interior" value="pulleys"><span>Pulleys</span></label>
+              <label class="check-item"><input type="checkbox" name="interior" value="hoses"><span>Hoses</span></label>
+              <label class="check-item"><input type="checkbox" name="interior" value="harness"><span>Harness</span></label>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label>Condition</label>
+            <div class="check-group">
+              <label class="check-item"><input type="radio" name="gencond" value="good"><span>Good</span></label>
+              <label class="check-item"><input type="radio" name="gencond" value="average"><span>Average</span></label>
+              <label class="check-item"><input type="radio" name="gencond" value="poor"><span>Poor</span></label>
+              <label class="check-item"><input type="radio" name="gencond" value=" Needs replaced"><span>Needs Replaced</span></label>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label for="exercisetime">Exercise Schedule</label>
+            <input type="text" id="exercisetime" class="med" placeholder="e.g., Tues 11:00am">
+          </div>
+
+          <div class="field-row">
+            <label for="gennotes"></label>
+          </div>
+         <textarea id="gennotes" placeholder="Generator notes..." style="height:60px;"></textarea>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Oil & Filters -->
+    <div class="section">
+      <div class="section-header">Oil & Filters</div>
+      <div class="section-body">
+        <div class="field-row">
+          <label>Oil Change Type</label>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="oiltype" value="full"><span>Full</span></label>
+            <label class="check-item"><input type="radio" name="oiltype" value="half"><span>Half</span></label>
+          </div>
+          <label>Filter</label>
+          <div class="yn-group">
+            <input type="radio" name="oilfilter" id="of_y" value="Y" class="yn-y">
+            <label class="yn-label yn-label-y" for="of_y">Y</label>
+            <input type="radio" name="oilfilter" id="of_n" value="N" class="yn-n">
+            <label class="yn-label yn-label-n" for="of_n">N</label>
+          </div>
+          <label for="filterpart">Part #</label>
+          <input type="text" id="filterpart" class="med" placeholder="Part #"style="width: 135px;">
+        </div>
+
+        <div class="field-row">
+          <label for="oilnotes"></label>
+        </div>
+        <textarea id="oilnotes" placeholder="Oil & filter notes..." style="min-height: 50px;"></textarea>
+      </div>
+    </div>
+
+    <!-- Simulated Outage Test -->
+    <div class="section">
+      <div class="section-header">Simulated Outage Test</div>
+      <div class="section-body">
+        <div class="test-grid">
+          <div class="test-item">
+            <label>Generator Started Up?</label>
+            <div class="yn-group">
+              <input type="radio" name="sim1" id="sim1_y" value="Y" class="yn-y">
+              <label class="yn-label yn-label-y" for="sim1_y">Y</label>
+              <input type="radio" name="sim1" id="sim1_n" value="N" class="yn-n">
+              <label class="yn-label yn-label-n" for="sim1_n">N</label>
+            </div>
+          </div>
+
+          <div class="test-item">
+            <label>Transfered to Generator Power?</label>
+            <div class="yn-group">
+              <input type="radio" name="sim2" id="sim2_y" value="Y" class="yn-y">
+              <label class="yn-label yn-label-y" for="sim2_y">Y</label>
+              <input type="radio" name="sim2" id="sim2_n" value="N" class="yn-n">
+              <label class="yn-label yn-label-n" for="sim2_n">N</label>
+            </div>
+          </div>
+
+          <div class="test-item">
+            <label>transfered back to line power?</label>
+            <div class="yn-group">
+              <input type="radio" name="sim3" id="sim3_y" value="Y" class="yn-y">
+              <label class="yn-label yn-label-y" for="sim3_y">Y</label>
+              <input type="radio" name="sim3" id="sim3_n" value="N" class="yn-n">
+              <label class="yn-label yn-label-n" for="sim3_n">N</label>
+            </div>
+          </div>
+
+          <div class="test-item">
+            <label>Generator shut down?</label>
+            <div class="yn-group">
+              <input type="radio" name="sim4" id="sim4_y" value="Y" class="yn-y">
+              <label class="yn-label yn-label-y" for="sim4_y">Y</label>
+              <input type="radio" name="sim4" id="sim4_n" value="N" class="yn-n">
+              <label class="yn-label yn-label-n" for="sim4_n">N</label>
+            </div>
+          </div>
+
+          <div class="test-item" style="grid-column: 1 / -1;">
+            <label for="simvolt">Voltage during simulation</label>
+            <input type="text" id="simvolt" class="short" placeholder="240V">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gas System -->
+    <div class="section">
+      <div class="section-header">Gas System</div>
+      <div class="section-body">
+        <div class="field-row">
+          <label>Fuel Type</label>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="fuel" value="NG"><span>NG</span></label>
+            <label class="check-item"><input type="radio" name="fuel" value="LP"><span>LP</span></label>
+          </div>
+          <label for="tanklevel">Tank Level</label>
+          <input type="text" id="tanklevel" class="short" placeholder="Full">
+          <label>Leak Found?</label>
+          <div class="yn-group">
+            <input type="radio" name="gasleak" id="gl_y" value="Y" class="yn-y">
+            <label class="yn-label yn-label-y" for="gl_y">Y</label>
+            <input type="radio" name="gasleak" id="gl_n" value="N" class="yn-n">
+            <label class="yn-label yn-label-n" for="gl_n">N</label>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label>Visual Inspection</label>
+          <div class="check-group">
+            <label class="check-item"><input type="checkbox" name="gasvisual" value="rust"><span>Rust</span></label>
+            <label class="check-item"><input type="checkbox" name="gasvisual" value="Shut off valve"><span>Shut off Valve</span></label>
+            <label class="check-item"><input type="checkbox" name="gasvisual" value="straps"><span>Straps</span></label>
+            <label class="check-item"><input type="checkbox" name="gasvisual" value="flex"><span>Flex connection</span></label>
+            <label class="check-item"><input type="checkbox" name="gasvisual" value="reg"><span>Regulator</span></label>
+<label>VENTED?</label>
+          <div class="yn-group">
+            <input type="radio" name="vented" id="vl_y" value="Y" class="yn-y">
+            <label class="yn-label yn-label-y" for="vl_y">Y</label>
+            <input type="radio" name="vented" id="vl_n" value="N" class="yn-n">
+            <label class="yn-label yn-label-n" for="vl_n">N</label>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label for="gasnotes"></label>
+        </div>
+        <textarea id="gasnotes" placeholder="Gas system notes..." style="min-height: 50px;"></textarea>
+      </div>
+    </div>
+</div>
+
+<!-- Transfer Switch Section -->
+<div class="section">
+  <div class="section-header">Transfer Switch</div>
+  <div class="section-body">
+    
+    <!-- Field Row #1 -->
+    <div class="field-row">
+      <div class="field-group">
+        <label for="tsserial1">TS Serial # 1</label>
+        <input type="text" id="tsserial1" placeholder="SN">
+      </div>
+      <div class="field-group">
+        <label>Condition</label>
+        <div class="radio-group">
+          <label><input type="radio" name="tscond1"> Good</label>
+          <label><input type="radio" name="tscond1"> Avg</label>
+          <label><input type="radio" name="tscond1"> Poor</label>
+          <label><input type="radio" name="tscond1"> Needs Replaced</label>
+        </div>
+      </div>
+    </div>  
+    
+    <!-- Field Row #2 -->
+    <div class="field-row">
+      <div class="field-group">
+        <label for="tsserial2">TS Serial # 2</label>
+        <input type="text" id="tsserial2" placeholder="SN">
+      </div>
+      <div class="field-group">
+        <label>Condition</label>
+        <div class="radio-group">
+          <label><input type="radio" name="tscond2"> Good</label>
+          <label><input type="radio" name="tscond2"> Avg</label>
+          <label><input type="radio" name="tscond2"> Poor</label>
+          <label><input type="radio" name="tscond2"> Needs Replaced</label>
+        </div>
+      </div>
+    </div>  
+    
+    <!-- Notes Textarea -->
+    <div class="field-row">
+      <label for="tsnotes"></label>
+      <textarea id="tsnotes" placeholder="Transfer Switch notes..."></textarea>
+    </div> 
+    
+  </div>  
+</div>  
+
+<!-- Other Section (SEPARATE) -->
+<div class="section">
+  <div class="section-header">Other</div>
+  <div class="section-body">
+    
+    <div class="field-row">
+      <div class="field-group">
+        <label>Surge Protection</label>
+        <div class="yn-group">
+          <input type="radio" id="surge_y" name="surge" value="Y">
+          <label class="yn-label yn-label-y" for="surge_y">Y</label>
+          <input type="radio" id="surge_n" name="surge" value="N">
+          <label class="yn-label yn-label-n" for="surge_n">N</label>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Green Light</label>
+        <div class="yn-group">
+          <input type="radio" id="green_y" name="green" value="Y">
+          <label class="yn-label yn-label-y" for="green_y">Y</label>
+          <input type="radio" id="green_n" name="green" value="N">
+          <label class="yn-label yn-label-n" for="green_n">N</label>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Monitor Ready</label>
+        <div class="yn-group">
+          <input type="radio" id="monitor_y" name="monitor" value="Y">
+          <label class="yn-label yn-label-y" for="monitor_y">Y</label>
+          <input type="radio" id="monitor_n" name="monitor" value="N">
+          <label class="yn-label yn-label-n" for="monitor_n">N</label>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Connected</label>
+        <div class="yn-group">
+          <input type="radio" id="conn_y" name="connected" value="Y">
+          <label class="yn-label yn-label-y" for="conn_y">Y</label>
+          <input type="radio" id="conn_n" name="connected" value="N">
+          <label class="yn-label yn-label-n" for="conn_n">N</label>
+        </div>
+      </div>
+      <div class="field-group" style="display:flex; align-items:center; gap:8px;">
+  <label for="signal">Signal %</label>
+ <input type="number" id="signal" placeholder="100" style="width:40px;">
+
+</div>
+
+    </div>  
+    
+  </div>  
+</div>
+<div class="footer">
+  <span class="footer-text">GENERATOR MAINTENANCE REPORT · CONFIDENTIAL</span>
+  <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);">Ver 1.0B</span>
+</div>
+<div class="page-corner-bl"></div>
+<div class="page-corner-br"></div>
+</div>
+
+<script>
+const THEME_KEY = 'aog_maint_theme';
+const DRAFT_KEY = 'aog_maint_draft';
+
+function getInitialTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  if (saved) return saved;
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    return 'dark';
+  }
+  return 'light';
+}
+
+function applyTheme(theme) {
+  const body = document.body;
+  if (theme === 'dark') {
+    body.classList.add('dark-mode');
+  } else {
+    body.classList.remove('dark-mode');
+  }
+  try {
+    localStorage.setItem(THEME_KEY, theme);
+  } catch (e) {}
+}
+
+function toggleTheme() {
+  const isDark = document.body.classList.contains('dark-mode');
+  applyTheme(isDark ? 'light' : 'dark');
+}
+
+function setupThemeToggle() {
+  const btn = document.getElementById('theme-toggle-btn');
+  if (!btn) return;
+  btn.addEventListener('click', toggleTheme);
+}
+
+function saveDraft() {
+  const data = {};
+  document.querySelectorAll('input, textarea').forEach(el => {
+    const key = el.id || el.name;
+    if (!key) return;
+    
+    if (el.type === 'checkbox') {
+      if (!data[key]) data[key] = [];
+      if (el.checked) data[key].push(el.value);
+    } else if (el.type === 'radio') {
+      if (el.checked) data[key] = el.value;
+    } else {
+      if (data[key] === undefined) data[key] = el.value;
+    }
+  });
+  
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+  } catch (e) {}
+}
+
+function restoreDraft() {
+  const saved = localStorage.getItem(DRAFT_KEY);
+  if (!saved) return;
+  
+  try {
+    const data = JSON.parse(saved);
+    document.querySelectorAll('input, textarea').forEach(el => {
+      const key = el.id || el.name;
+      if (!key || data[key] === undefined) return;
+      
+      if (el.type === 'checkbox') {
+        if (Array.isArray(data[key])) {
+          el.checked = data[key].includes(el.value);
+        }
+      } else if (el.type === 'radio') {
+        if (el.value === data[key]) el.checked = true;
+      } else {
+        el.value = data[key];
+      }
+    });
+  } catch (e) {}
+}
+
+// CLEAR FORM - Only define once
+function clearForm() {
+  if (!confirm('Clear all fields?')) return;
+  document.querySelectorAll('input[type="text"], input[type="date"], input[type="number"], textarea').forEach(el => {
+    el.value = '';
+  });
+  document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el => {
+    el.checked = false;
+  });
+  localStorage.removeItem(DRAFT_KEY);
+}
+
+// PRINT FORM - Safari fix
+function printForm() {
+  const wasDark = document.body.classList.contains('dark-mode');
+
+  // Detect Safari (excluding Chrome which also has "Safari" in UA)
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+  if (isSafari) {
+    alert('⚠️ SAFARI PRINT TIP\n\nFor best results, in the print preview:\n\n1. Tap the scale slider/zoom\n2. Scale DOWN by 1\n3. Then scale BACK UP by 1\n\nThis ensures the page fits properly on one page.');
+  }
+
+  // Inject forced light styles
+  const printStyle = document.createElement('style');
+  printStyle.id = 'force-print-light';
+  printStyle.textContent = `
+    *, *::before, *::after {
+      background: white !important;
+      color: #1F2937 !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+      border-color: rgba(217,119,6,0.4) !important;
+    }
+    .page { border: 1.5px solid #D97706 !important; }
+    .company-name, .doc-title { color: #D97706 !important; }
+    .section-header { background: #f5f5f5 !important; color: #D97706 !important; }
+    .footer-text { color: #9CA3AF !important; }
+    .toolbar, button, .theme-toggle-btn { display: none !important; }
+  `;
+  document.head.appendChild(printStyle);
+
+  if (wasDark) document.body.classList.remove('dark-mode');
+
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => {
+      const el = document.getElementById('force-print-light');
+      if (el) el.remove();
+      if (wasDark) document.body.classList.add('dark-mode');
+    }, 1000);
+  }, 250);
+}// Auto-save every 30 seconds
+setInterval(saveDraft, 30000);
+document.addEventListener('change', saveDraft);
+document.addEventListener('input', saveDraft);
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const todayInput = document.getElementById('date');
+  if (todayInput && !todayInput.value) {
+    todayInput.value = new Date().toISOString().split('T')[0];
+  }
+  
+  const initialTheme = getInitialTheme();
+  applyTheme(initialTheme);
+  setupThemeToggle();
+  restoreDraft();
+});
+// ── SERVICE WORKER ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').then(function (reg) {
+      reg.addEventListener('updatefound', function () {
+        var newWorker = reg.installing;
+        newWorker.addEventListener('statechange', function () {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            console.log('[AOG SW] Update available — reload to apply.');
+          }
+        });
+      });
+    }).catch(function (err) {
+      console.warn('[AOG SW] Registration failed:', err);
+    });
+  });
+}
+
+</script>
+
+</body>
+</html>
