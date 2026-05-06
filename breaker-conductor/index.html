@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Breaker &amp; Conductor Sizing — Always On Generators</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
 <link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
 <meta name="theme-color" content="#FBBF24">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AOG Forms">
-  <style>
+<style>
 :root {
   --yellow: #FCD34D;
   --yellow-bright: #FBBF24;
@@ -388,11 +388,11 @@ select:focus {
   border: 1px solid rgba(16,185,129,0.2);
   color: #34D399;
 }
-[data-theme="light"] .derate-flag.active { background: rgba(180,83,9,0.08); border-color: rgba(180,83,9,0.25); color: #92400E; }
-[data-theme="light"] .derate-flag.inactive { background: rgba(5,150,105,0.08); border-color: rgba(5,150,105,0.2); color: #065F46; }
+[data-theme="light"] .derate-flag.active  { background: rgba(180,83,9,0.08);   border-color: rgba(180,83,9,0.25);   color: #92400E; }
+[data-theme="light"] .derate-flag.inactive{ background: rgba(5,150,105,0.08);  border-color: rgba(5,150,105,0.2);   color: #065F46; }
 .derate-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.derate-flag.active .derate-dot   { background: var(--orange); box-shadow: 0 0 6px var(--orange); }
-.derate-flag.inactive .derate-dot { background: #10B981; box-shadow: 0 0 6px #10B981; }
+.derate-flag.active   .derate-dot { background: var(--orange); box-shadow: 0 0 6px var(--orange); }
+.derate-flag.inactive .derate-dot { background: #10B981;        box-shadow: 0 0 6px #10B981; }
 
 .footer {
   text-align: center;
@@ -414,12 +414,12 @@ select:focus {
 
 @media(max-width:480px){
   .selects-grid { grid-template-columns: 1fr 1fr; }
-  .metrics { grid-template-columns: 1fr 1fr; }
+  .metrics      { grid-template-columns: 1fr 1fr; }
   .metric-value { font-size: 1.3rem; }
 }
 @media(max-width:340px){
   .selects-grid { grid-template-columns: 1fr; }
-  .metrics { grid-template-columns: 1fr; }
+  .metrics      { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -429,7 +429,9 @@ select:focus {
 
   <!-- HOME BUTTON -->
   <div style="margin-bottom:12px;">
-    <button class="theme-btn" onclick="window.location.href='https://brandonaog.github.io/AOG-hub/'" style="justify-content:center;">&#127968; HOME</button>
+    <button class="theme-btn"
+            onclick="window.location.href='https://brandonaog.github.io/AOG-hub/'"
+            style="justify-content:center;">&#127968; HOME</button>
   </div>
 
   <!-- THEME TOGGLE -->
@@ -443,7 +445,8 @@ select:focus {
   <!-- HEADER -->
   <div class="header">
     <div class="logo-wrap">
-      <img src="https://raw.githubusercontent.com/BrandonAOG/AOG-Logo/main/logo.png" alt="Always On Generators Logo" class="logo-img">
+      <!-- FIX #2: local path for offline support -->
+      <img src="../logo.png" alt="Always On Generators Logo" class="logo-img">
       <div class="title-block">
         <div class="company-name">Always On<br>Generators</div>
         <div class="tagline">// Power When You Need It //</div>
@@ -565,99 +568,101 @@ select:focus {
 /* ── NEC TABLES ─────────────────────────────────────────────────── */
 
 var cu75 = [
-  { size:'14 AWG',    amps:20  },
-  { size:'12 AWG',    amps:25  },
-  { size:'10 AWG',    amps:35  },
-  { size:'8 AWG',     amps:50  },
-  { size:'6 AWG',     amps:65  },
-  { size:'4 AWG',     amps:85  },
-  { size:'3 AWG',     amps:100 },
-  { size:'2 AWG',     amps:115 },
-  { size:'1 AWG',     amps:130 },
-  { size:'1/0 AWG',   amps:150 },
-  { size:'2/0 AWG',   amps:175 },
-  { size:'3/0 AWG',   amps:200 },
-  { size:'4/0 AWG',   amps:230 },
-  { size:'250 kcmil', amps:255 },
-  { size:'300 kcmil', amps:285 },
-  { size:'350 kcmil', amps:310 },
-  { size:'400 kcmil', amps:335 },
-  { size:'500 kcmil', amps:380 },
-  { size:'600 kcmil', amps:420 },
-  { size:'700 kcmil', amps:460 },
-  { size:'750 kcmil', amps:475 },
-  { size:'800 kcmil', amps:490 },
-  { size:'900 kcmil', amps:520 },
-  { size:'1000 kcmil',amps:545 },
-  { size:'1250 kcmil',amps:590 },
-  { size:'1500 kcmil',amps:625 },
-  { size:'1750 kcmil',amps:650 },
-  { size:'2000 kcmil',amps:665 },
+  { size:'14 AWG',     amps:20  },
+  { size:'12 AWG',     amps:25  },
+  { size:'10 AWG',     amps:35  },
+  { size:'8 AWG',      amps:50  },
+  { size:'6 AWG',      amps:65  },
+  { size:'4 AWG',      amps:85  },
+  { size:'3 AWG',      amps:100 },
+  { size:'2 AWG',      amps:115 },
+  { size:'1 AWG',      amps:130 },
+  { size:'1/0 AWG',    amps:150 },
+  { size:'2/0 AWG',    amps:175 },
+  { size:'3/0 AWG',    amps:200 },
+  { size:'4/0 AWG',    amps:230 },
+  { size:'250 kcmil',  amps:255 },
+  { size:'300 kcmil',  amps:285 },
+  { size:'350 kcmil',  amps:310 },
+  { size:'400 kcmil',  amps:335 },
+  { size:'500 kcmil',  amps:380 },
+  { size:'600 kcmil',  amps:420 },
+  { size:'700 kcmil',  amps:460 },
+  { size:'750 kcmil',  amps:475 },
+  { size:'800 kcmil',  amps:490 },
+  { size:'900 kcmil',  amps:520 },
+  { size:'1000 kcmil', amps:545 },
+  { size:'1250 kcmil', amps:590 },
+  { size:'1500 kcmil', amps:625 },
+  { size:'1750 kcmil', amps:650 },
+  { size:'2000 kcmil', amps:665 },
 ];
 
 var al75 = [
-  { size:'12 AWG',    amps:20  },
-  { size:'10 AWG',    amps:30  },
-  { size:'8 AWG',     amps:40  },
-  { size:'6 AWG',     amps:50  },
-  { size:'4 AWG',     amps:65  },
-  { size:'3 AWG',     amps:75  },
-  { size:'2 AWG',     amps:90  },
-  { size:'1 AWG',     amps:100 },
-  { size:'1/0 AWG',   amps:120 },
-  { size:'2/0 AWG',   amps:135 },
-  { size:'3/0 AWG',   amps:155 },
-  { size:'4/0 AWG',   amps:180 },
-  { size:'250 kcmil', amps:205 },
-  { size:'300 kcmil', amps:230 },
-  { size:'350 kcmil', amps:250 },
-  { size:'400 kcmil', amps:270 },
-  { size:'500 kcmil', amps:310 },
-  { size:'600 kcmil', amps:340 },
-  { size:'700 kcmil', amps:375 },
-  { size:'750 kcmil', amps:385 },
-  { size:'800 kcmil', amps:395 },
-  { size:'900 kcmil', amps:425 },
-  { size:'1000 kcmil',amps:445 },
-  { size:'1250 kcmil',amps:485 },
-  { size:'1500 kcmil',amps:520 },
-  { size:'1750 kcmil',amps:545 },
-  { size:'2000 kcmil',amps:560 },
+  { size:'12 AWG',     amps:20  },
+  { size:'10 AWG',     amps:30  },
+  { size:'8 AWG',      amps:40  },
+  { size:'6 AWG',      amps:50  },
+  { size:'4 AWG',      amps:65  },
+  { size:'3 AWG',      amps:75  },
+  { size:'2 AWG',      amps:90  },
+  { size:'1 AWG',      amps:100 },
+  { size:'1/0 AWG',    amps:120 },
+  { size:'2/0 AWG',    amps:135 },
+  { size:'3/0 AWG',    amps:155 },
+  { size:'4/0 AWG',    amps:180 },
+  { size:'250 kcmil',  amps:205 },
+  { size:'300 kcmil',  amps:230 },
+  { size:'350 kcmil',  amps:250 },
+  { size:'400 kcmil',  amps:270 },
+  { size:'500 kcmil',  amps:310 },
+  { size:'600 kcmil',  amps:340 },
+  { size:'700 kcmil',  amps:375 },
+  { size:'750 kcmil',  amps:385 },
+  { size:'800 kcmil',  amps:395 },
+  { size:'900 kcmil',  amps:425 },
+  { size:'1000 kcmil', amps:445 },
+  { size:'1250 kcmil', amps:485 },
+  { size:'1500 kcmil', amps:520 },
+  { size:'1750 kcmil', amps:545 },
+  { size:'2000 kcmil', amps:560 },
 ];
 
 var egcTable = [
-  { ocpd:15,   cu:'14 AWG',    al:'12 AWG'     },
-  { ocpd:20,   cu:'12 AWG',    al:'10 AWG'     },
-  { ocpd:60,   cu:'10 AWG',    al:'8 AWG'      },
-  { ocpd:100,  cu:'8 AWG',     al:'6 AWG'      },
-  { ocpd:200,  cu:'6 AWG',     al:'4 AWG'      },
-  { ocpd:300,  cu:'4 AWG',     al:'2 AWG'      },
-  { ocpd:400,  cu:'3 AWG',     al:'1 AWG'      },
-  { ocpd:450,  cu:'3 AWG',     al:'1 AWG'      },
-  { ocpd:500,  cu:'2 AWG',     al:'1/0 AWG'    },
-  { ocpd:600,  cu:'1 AWG',     al:'2/0 AWG'    },
-  { ocpd:700,  cu:'1 AWG',     al:'2/0 AWG'    },
-  { ocpd:800,  cu:'1/0 AWG',   al:'3/0 AWG'    },
-  { ocpd:1000, cu:'2/0 AWG',   al:'4/0 AWG'    },
-  { ocpd:1200, cu:'3/0 AWG',   al:'250 kcmil'  },
-  { ocpd:1600, cu:'4/0 AWG',   al:'350 kcmil'  },
-  { ocpd:2000, cu:'250 kcmil', al:'400 kcmil'  },
-  { ocpd:2500, cu:'350 kcmil', al:'600 kcmil'  },
-  { ocpd:3000, cu:'400 kcmil', al:'600 kcmil'  },
-  { ocpd:4000, cu:'500 kcmil', al:'750 kcmil'  },
-  { ocpd:5000, cu:'700 kcmil', al:'1250 kcmil' },
-  { ocpd:6000, cu:'800 kcmil', al:'1250 kcmil' },
+  { ocpd:15,   cu:'14 AWG',     al:'12 AWG'     },
+  { ocpd:20,   cu:'12 AWG',     al:'10 AWG'     },
+  { ocpd:60,   cu:'10 AWG',     al:'8 AWG'      },
+  { ocpd:100,  cu:'8 AWG',      al:'6 AWG'      },
+  { ocpd:200,  cu:'6 AWG',      al:'4 AWG'      },
+  { ocpd:300,  cu:'4 AWG',      al:'2 AWG'      },
+  { ocpd:400,  cu:'3 AWG',      al:'1 AWG'      },
+  { ocpd:450,  cu:'3 AWG',      al:'1 AWG'      },
+  { ocpd:500,  cu:'2 AWG',      al:'1/0 AWG'    },
+  { ocpd:600,  cu:'1 AWG',      al:'2/0 AWG'    },
+  { ocpd:700,  cu:'1 AWG',      al:'2/0 AWG'    },
+  { ocpd:800,  cu:'1/0 AWG',    al:'3/0 AWG'    },
+  { ocpd:1000, cu:'2/0 AWG',    al:'4/0 AWG'    },
+  { ocpd:1200, cu:'3/0 AWG',    al:'250 kcmil'  },
+  { ocpd:1600, cu:'4/0 AWG',    al:'350 kcmil'  },
+  { ocpd:2000, cu:'250 kcmil',  al:'400 kcmil'  },
+  { ocpd:2500, cu:'350 kcmil',  al:'600 kcmil'  },
+  { ocpd:3000, cu:'400 kcmil',  al:'600 kcmil'  },
+  { ocpd:4000, cu:'500 kcmil',  al:'750 kcmil'  },
+  { ocpd:5000, cu:'700 kcmil',  al:'1250 kcmil' },
+  { ocpd:6000, cu:'800 kcmil',  al:'1250 kcmil' },
 ];
+
+/* ── HELPERS ────────────────────────────────────────────────────── */
 
 function derateFactor(cccVal) {
   var v = parseInt(cccVal);
-  if (v <= 3)  return { factor: 1.00, label: 'No derating', pct: '100%' };
-  if (v <= 6)  return { factor: 0.80, label: '4\u20136 CCC',   pct: '80%'  };
-  if (v <= 9)  return { factor: 0.70, label: '7\u20139 CCC',   pct: '70%'  };
-  if (v <= 20) return { factor: 0.50, label: '10\u201320 CCC', pct: '50%'  };
-  if (v <= 30) return { factor: 0.45, label: '21\u201330 CCC', pct: '45%'  };
-  if (v <= 40) return { factor: 0.40, label: '31\u201340 CCC', pct: '40%'  };
-  return               { factor: 0.35, label: '41+ CCC',     pct: '35%'  };
+  if (v <= 3)  return { factor:1.00, label:'No derating',      pct:'100%' };
+  if (v <= 6)  return { factor:0.80, label:'4\u20136 CCC',     pct:'80%'  };
+  if (v <= 9)  return { factor:0.70, label:'7\u20139 CCC',     pct:'70%'  };
+  if (v <= 20) return { factor:0.50, label:'10\u201320 CCC',   pct:'50%'  };
+  if (v <= 30) return { factor:0.45, label:'21\u201330 CCC',   pct:'45%'  };
+  if (v <= 40) return { factor:0.40, label:'31\u201340 CCC',   pct:'40%'  };
+  return               { factor:0.35, label:'41+ CCC',         pct:'35%'  };
 }
 
 function pickConductor(table, minAmps) {
@@ -678,83 +683,110 @@ function pickEGC(ocpd, mat) {
 
 /* ── MAIN CALC ───────────────────────────────────────────────────── */
 function calc() {
-  var breaker  = parseInt(document.getElementById('breaker').value);
-  var mat      = document.getElementById('material').value;
-  var app      = document.getElementById('application').value;
-  var sets     = parseInt(document.getElementById('sets').value);
-  var cccVal   = document.getElementById('ccc').value;
+  var breaker    = parseInt(document.getElementById('breaker').value);
+  var mat        = document.getElementById('material').value;
+  var app        = document.getElementById('application').value;
+  var sets       = parseInt(document.getElementById('sets').value);
+  var cccVal     = document.getElementById('ccc').value;
 
   var isDwelling = app === 'dwelling';
   var table75    = mat === 'copper' ? cu75 : al75;
-
   var df         = derateFactor(cccVal);
   var isDerating = df.factor < 1.0;
+  var matLabel   = mat === 'copper' ? 'Copper' : 'Aluminum / CU-clad AL';
+  var ampPerSet  = Math.ceil(breaker / sets);
 
-  var ampPerSet = Math.ceil(breaker / sets);
+  /* ---- determine violations ---- */
+  var dwellingRangeViolation    = isDwelling && (breaker < 100 || breaker > 400);
+  var dwellingParallelViolation = isDwelling && sets > 1;
 
-  var conductor, method, ruleNote, tableUsed, exceeded = false;
+  /* ---- conductor sizing ---- */
+  var conductor  = null;
+  var method     = '';
+  var ruleNote   = '';
+  var tableUsed  = '';
+  var exceeded   = false;
 
-  if (isDwelling && breaker >= 100 && breaker <= 400) {
-    var req83total  = breaker * 0.83;
-    var req83perSet = Math.ceil(req83total / sets);
-    var entry = pickConductor(table75, req83perSet);
-    conductor = entry ? entry.size : null;
-    if (!conductor) exceeded = true;
-    method    = '310.12 Dwelling (83% rule)';
-    tableUsed = 'Table 310.16, 75\u00b0C col. (via 310.12)';
-    ruleNote  = '83% rule: ' + breaker + 'A \u00d7 83% = ' + Math.round(req83total) + 'A minimum ampacity' + (sets > 1 ? ' \u00f7 ' + sets + ' sets = ' + req83perSet + 'A/set' : '') + '. Conductor selected from Table 310.16, 75\u00b0C column. Applies only when conductors supply the entire load of a 1 or 2 family dwelling.';
-  } else {
-    var requiredAmpacity;
-    if (isDerating) {
-      requiredAmpacity = Math.ceil(ampPerSet / df.factor);
+  if (!dwellingRangeViolation && !dwellingParallelViolation) {
+    if (isDwelling) {
+      /* 310.12 — 83% rule */
+      var req83total  = breaker * 0.83;
+      var req83perSet = Math.ceil(req83total / sets);   /* sets always 1 here */
+      var entry = pickConductor(table75, req83perSet);
+      conductor = entry ? entry.size : null;
+      if (!conductor) exceeded = true;
+      method    = '310.12 Dwelling (83% rule)';
+      tableUsed = 'Table 310.16, 75\u00b0C col. (via 310.12)';
+      ruleNote  = '83% rule: ' + breaker + 'A \u00d7 83% = ' +
+                  Math.round(req83total) + 'A minimum ampacity. ' +
+                  'Conductor selected from Table 310.16, 75\u00b0C column. ' +
+                  'Applies only when conductors supply the entire load of a 1 or 2 family dwelling.';
     } else {
-      requiredAmpacity = ampPerSet;
-    }
+      /* 310.16 general */
+      var requiredAmpacity = isDerating
+        ? Math.ceil(ampPerSet / df.factor)
+        : ampPerSet;
+      var row2 = pickConductor(table75, requiredAmpacity);
+      if (!row2) { exceeded = true; }
+      else       { conductor = row2.size; }
 
-    var row2 = pickConductor(table75, requiredAmpacity);
-    if (!row2) { exceeded = true; conductor = null; }
-    else { conductor = row2.size; }
-
-    if (breaker <= 800) {
-      method    = '240.4(B) \u2014 Next standard size \u2264 800A';
-      tableUsed = 'Table 310.16, 75\u00b0C col.';
-      ruleNote  = 'Breaker ' + breaker + 'A' + (sets > 1 ? ' \u00f7 ' + sets + ' sets = ' + ampPerSet + 'A/set' : '') + (isDerating ? ' \u2192 derate factor ' + df.pct + ' \u2192 min table ampacity ' + Math.ceil(ampPerSet / df.factor) + 'A/set' : '') + '. Next standard breaker size up permitted per 240.4(B).';
-    } else {
-      method    = '240.4(C) \u2014 Exact ampacity required > 800A';
-      tableUsed = 'Table 310.16, 75\u00b0C col.';
-      ruleNote  = 'Over 800A \u2014 conductor ampacity must equal or exceed ' + ampPerSet + 'A/set' + (isDerating ? ' (' + Math.ceil(ampPerSet / df.factor) + 'A/set pre-derate)' : '') + '. Next standard size NOT allowed per 240.4(C).';
+      if (breaker <= 800) {
+        method    = '240.4(B) \u2014 Next standard size \u2264 800A';
+        tableUsed = 'Table 310.16, 75\u00b0C col.';
+        ruleNote  = 'Breaker ' + breaker + 'A' +
+                    (sets > 1 ? ' \u00f7 ' + sets + ' sets = ' + ampPerSet + 'A/set' : '') +
+                    (isDerating
+                      ? ' \u2192 derate factor ' + df.pct + ' \u2192 min table ampacity ' +
+                        Math.ceil(ampPerSet / df.factor) + 'A/set'
+                      : '') +
+                    '. Next standard breaker size up permitted per 240.4(B).';
+      } else {
+        method    = '240.4(C) \u2014 Exact ampacity required > 800A';
+        tableUsed = 'Table 310.16, 75\u00b0C col.';
+        ruleNote  = 'Over 800A \u2014 conductor ampacity must equal or exceed ' + ampPerSet + 'A/set' +
+                    (isDerating ? ' (' + Math.ceil(ampPerSet / df.factor) + 'A/set pre-derate)' : '') +
+                    '. Next standard size NOT allowed per 240.4(C).';
+      }
     }
   }
 
+  /* ---- derated ampacity check ---- */
   var deratedAmpacity = null;
   if (!exceeded && conductor && !isDwelling) {
-    var tRow = null;
     for (var j = 0; j < table75.length; j++) {
-      if (table75[j].size === conductor) { tRow = table75[j]; break; }
+      if (table75[j].size === conductor) {
+        deratedAmpacity = Math.floor(table75[j].amps * df.factor);
+        break;
+      }
     }
-    if (tRow) deratedAmpacity = Math.floor(tRow.amps * df.factor);
   }
 
-  var egcSize = pickEGC(breaker, mat);
-  var matLabel = mat === 'copper' ? 'Copper' : 'Aluminum / CU-clad AL';
+  /* ---- parallel size violation ---- */
+  var smallerThan1_0 = ['14 AWG','12 AWG','10 AWG','8 AWG','6 AWG','4 AWG','3 AWG','2 AWG','1 AWG'];
+  var parallelViolation = sets > 1 && !exceeded && conductor &&
+                          smallerThan1_0.indexOf(conductor) !== -1;
 
+  /* ---- EGC ---- */
+  var egcSize = pickEGC(breaker, mat);
+
+  /* ══════════════════════════════════════════════════════════════ *
+   *  BUILD HTML                                                    *
+   * ══════════════════════════════════════════════════════════════ */
   var html = '';
 
+  /* — derating banner — */
   html += '<div class="derate-flag ' + (isDerating ? 'active' : 'inactive') + '">' +
     '<span class="derate-dot"></span>' +
     '<span>' + (isDerating
-      ? 'Derating active \u2014 ' + df.pct + ' factor applied (' + df.label + ') per Table 310.15(C)(1)'
-      : 'No derating \u2014 1 to 3 current-carrying conductors in raceway') + '</span>' +
-    '</div>';
+      ? 'Derating active \u2014 ' + df.pct + ' factor applied (' + df.label +
+        ') per Table 310.15(C)(1)'
+      : 'No derating \u2014 1 to 3 current-carrying conductors in raceway') +
+    '</span></div>';
 
-  var smallerThan1_0 = ['14 AWG','12 AWG','10 AWG','8 AWG','6 AWG','4 AWG','3 AWG','2 AWG','1 AWG'];
-  var parallelViolation = sets > 1 && !exceeded && conductor && smallerThan1_0.indexOf(conductor) !== -1;
-
-  var dwellingRangeViolation   = isDwelling && (breaker < 100 || breaker > 400);
-  var dwellingParallelViolation = isDwelling && sets > 1;
-
+  /* — metrics grid — */
   html += '<div class="metrics">';
 
+  /* conductor metric */
   if (dwellingRangeViolation) {
     var reason = breaker < 100
       ? (breaker + 'A is below the 100A minimum for 310.12')
@@ -766,6 +798,7 @@ function calc() {
       '<div class="metric-sub" style="color:#FCA5A5;">310.12 only applies to 100A\u2013400A single-phase dwelling services and feeders</div>' +
       '<span class="tag tag-err" style="margin-top:8px;">310.12 \u2014 select General (310.16) or change breaker size</span>' +
       '</div>';
+
   } else if (dwellingParallelViolation) {
     html += '<div class="metric" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.5);grid-column:span 2;">' +
       '<div class="metric-label" style="color:#F87171;">Conductor / Set \u2014 Not Applicable</div>' +
@@ -774,6 +807,7 @@ function calc() {
       '<div class="metric-sub" style="color:#FCA5A5;">Set parallel sets to 1, or switch to General (310.16)</div>' +
       '<span class="tag tag-err" style="margin-top:8px;">310.12 \u2014 paralleling not permitted under this section</span>' +
       '</div>';
+
   } else if (parallelViolation) {
     html += '<div class="metric" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.5);grid-column:span 2;">' +
       '<div class="metric-label" style="color:#F87171;">Conductor / Set \u2014 Violation</div>' +
@@ -782,32 +816,41 @@ function calc() {
       '<div class="metric-sub" style="color:#FCA5A5;">Paralleling prohibited \u2014 check 310.10(H)</div>' +
       '<span class="tag tag-err" style="margin-top:8px;">310.10(H) Violation \u2014 increase sets or use larger breaker</span>' +
       '</div>';
+
   } else {
     html += '<div class="metric">' +
       '<div class="metric-label">Conductor / Set</div>' +
       '<div class="metric-value">' + (exceeded ? '\u2014' : conductor) + '</div>' +
       '<div class="metric-sub">' + matLabel + '</div>' +
       '<div class="metric-sub">' + tableUsed + '</div>' +
-      '<span class="tag ' + (isDwelling ? 'tag-info' : breaker > 800 ? 'tag-warn' : 'tag-ok') + '">' + method + '</span>' +
+      '<span class="tag ' + (isDwelling ? 'tag-info' : breaker > 800 ? 'tag-warn' : 'tag-ok') + '">' +
+        method + '</span>' +
       '</div>';
   }
 
+  /* OCPD metric */
   html += '<div class="metric">' +
     '<div class="metric-label">OCPD Rating</div>' +
     '<div class="metric-value">' + breaker + 'A</div>' +
-    '<div class="metric-sub">' + (sets > 1 ? ampPerSet + 'A min per set (' + sets + ' sets)' : 'Single conductor set') + '</div>' +
-    '</div>';
+    '<div class="metric-sub">' +
+      (sets > 1
+        ? ampPerSet + 'A min per set (' + sets + ' sets)'
+        : 'Single conductor set') +
+    '</div></div>';
 
+  /* derated ampacity metric */
   if (!isDwelling && !exceeded && deratedAmpacity !== null) {
     var ok = deratedAmpacity >= ampPerSet;
     html += '<div class="metric">' +
       '<div class="metric-label">Derated Ampacity</div>' +
       '<div class="metric-value">' + deratedAmpacity + 'A</div>' +
       '<div class="metric-sub">After ' + df.pct + ' factor / set</div>' +
-      '<span class="tag ' + (ok ? 'tag-ok' : 'tag-err') + '">' + (ok ? 'Adequate' : 'Insufficient') + '</span>' +
+      '<span class="tag ' + (ok ? 'tag-ok' : 'tag-err') + '">' +
+        (ok ? 'Adequate' : 'Insufficient') + '</span>' +
       '</div>';
   }
 
+  /* EGC metric */
   html += '<div class="metric">' +
     '<div class="metric-label">Min EGC Size</div>' +
     '<div class="metric-value" style="font-size:clamp(1rem,3vw,1.4rem)">' + egcSize + '</div>' +
@@ -815,48 +858,62 @@ function calc() {
     '<span class="tag tag-info">250.122</span>' +
     '</div>';
 
-  html += '</div>';
+  html += '</div>'; /* end .metrics */
 
   html += '<div class="hr"></div>';
 
-  html += '<div class="note-block"><strong>Code basis \u2014 conductor sizing</strong>' + ruleNote + '</div>';
+  /* ─── note blocks ─── */
+
+  /* FIX #4: only render ruleNote when it is actually defined (no violation path) */
+  if (!dwellingRangeViolation && !dwellingParallelViolation && !parallelViolation) {
+    html += '<div class="note-block"><strong>Code basis \u2014 conductor sizing</strong>' +
+            ruleNote + '</div>';
+  }
 
   if (isDerating) {
     html += '<div class="note-block warn"><strong>Derating \u2014 Table 310.15(C)(1)</strong>' +
-      'More than 3 current-carrying conductors in a raceway. ' + df.pct + ' adjustment factor applied to base ampacity. Conductor must have a base ampacity of at least ' + (!isDwelling && conductor ? Math.ceil(ampPerSet / df.factor) : '\u2014') + 'A to yield ' + ampPerSet + 'A after derating.' +
-      '</div>';
+      'More than 3 current-carrying conductors in a raceway. ' + df.pct +
+      ' adjustment factor applied to base ampacity. Conductor must have a base ampacity of at least ' +
+      (!isDwelling && conductor ? Math.ceil(ampPerSet / df.factor) : '\u2014') +
+      'A to yield ' + ampPerSet + 'A after derating.</div>';
   }
 
   if (sets > 1) {
     if (dwellingParallelViolation) {
       html += '<div class="note-block err"><strong>310.12 \u2014 Paralleling not permitted</strong>' +
-        'NEC 310.12 applies to single conductors supplying the entire load of a dwelling. Parallel sets are not recognized under this section. Set parallel sets to 1, or switch to the General (310.16 75\u00b0C) application.' +
-        '</div>';
+        'NEC 310.12 applies to single conductors supplying the entire load of a dwelling. ' +
+        'Parallel sets are not recognized under this section. Set parallel sets to 1, ' +
+        'or switch to the General (310.16 75\u00b0C) application.</div>';
     } else if (parallelViolation) {
       html += '<div class="note-block err"><strong>310.10(H) \u2014 Parallel conductor violation</strong>' +
-        'Conductors smaller than 1/0 AWG cannot be paralleled. The selected ' + conductor + ' per set does not meet the minimum size requirement. Increase the number of parallel sets, select a larger breaker, or verify the load requires paralleling.' +
-        '</div>';
+        'Conductors smaller than 1/0 AWG cannot be paralleled. The selected ' + conductor +
+        ' per set does not meet the minimum size requirement. Increase the number of parallel sets, ' +
+        'select a larger breaker, or verify the load requires paralleling.</div>';
     } else if (!exceeded) {
       html += '<div class="note-block"><strong>Paralleling \u2014 310.10(H)</strong>' +
-        'Each of the ' + sets + ' sets must use ' + conductor + ' conductors. All conductors in each parallel set must be the same size, insulation type, and length. Minimum parallel size is 1/0 AWG.' +
-        '</div>';
+        'Each of the ' + sets + ' sets must use ' + conductor + ' conductors. ' +
+        'All conductors in each parallel set must be the same size, insulation type, and length. ' +
+        'Minimum parallel size is 1/0 AWG.</div>';
     }
   }
 
   if (dwellingRangeViolation) {
     html += '<div class="note-block err"><strong>310.12 \u2014 Out of range</strong>' +
-      'NEC 310.12 and its 83% rule apply only to single-phase 120/240V services and feeders rated 100A through 400A supplying the entire load of a one- or two-family dwelling. For this breaker size, switch to the General (310.16 75\u00b0C) application or adjust the breaker rating.' +
-      '</div>';
+      'NEC 310.12 and its 83% rule apply only to single-phase 120/240V services and feeders ' +
+      'rated 100A through 400A supplying the entire load of a one- or two-family dwelling. ' +
+      'For this breaker size, switch to the General (310.16 75\u00b0C) application ' +
+      'or adjust the breaker rating.</div>';
   }
 
   html += '<div class="note-block"><strong>Equipment grounding conductor \u2014 250.122</strong>' +
-    'Minimum ' + egcSize + ' (' + matLabel + ') based on ' + breaker + 'A OCPD. If circuit conductors are upsized for any reason, the EGC must be proportionally increased per 250.122(B).' +
-    '</div>';
+    'Minimum ' + egcSize + ' (' + matLabel + ') based on ' + breaker + 'A OCPD. ' +
+    'If circuit conductors are upsized for any reason, the EGC must be proportionally ' +
+    'increased per 250.122(B).</div>';
 
   if (exceeded) {
     html += '<div class="note-block err"><strong>Table exceeded</strong>' +
-      'The required ampacity per set exceeds the largest conductor in NEC 310.16. Consider increasing the number of parallel sets.' +
-      '</div>';
+      'The required ampacity per set exceeds the largest conductor in NEC 310.16. ' +
+      'Consider increasing the number of parallel sets.</div>';
   }
 
   document.getElementById('result').innerHTML = html;
@@ -864,49 +921,41 @@ function calc() {
 
 /* ── THEME TOGGLE ───────────────────────────────────────────────── */
 function toggleTheme() {
-  var html = document.documentElement;
+  var html  = document.documentElement;
   var isDark = html.getAttribute('data-theme') === 'dark';
   html.setAttribute('data-theme', isDark ? 'light' : 'dark');
   document.getElementById('themeIcon').textContent  = isDark ? '\ud83c\udf19' : '\u2600\ufe0f';
-  document.getElementById('themeLabel').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+  document.getElementById('themeLabel').textContent = isDark ? 'Dark Mode'   : 'Light Mode';
 }
 
-/* ── INIT ───────────────────────────────────────────────────────── */
+/* ── EVENT LISTENERS + INIT ─────────────────────────────────────── */
 ['breaker','material','application','sets','ccc'].forEach(function(id) {
   document.getElementById(id).addEventListener('change', calc);
 });
 calc();
+</script>
 
-/* ── SERVICE WORKER ─────────────────────────────────────────────── */
+<!-- FIX #1: single SW registration — ../sw.js only, duplicate ./sw.js block removed -->
+<script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./sw.js').then(function (reg) {
-      reg.addEventListener('updatefound', function () {
-        var newWorker = reg.installing;
-        newWorker.addEventListener('statechange', function () {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            console.log('[AOG SW] Update available \u2014 reload to apply.');
-          }
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('../sw.js', { scope: '../' })
+      .then(function(reg) {
+        console.log('[SW] Registered, scope:', reg.scope);
+        reg.addEventListener('updatefound', function() {
+          var nw = reg.installing;
+          nw.addEventListener('statechange', function() {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+              console.log('[AOG SW] Update available \u2014 reload to apply.');
+            }
+          });
         });
+      })
+      .catch(function(err) {
+        console.warn('[AOG SW] Registration failed:', err);
       });
-    }).catch(function (err) {
-      console.warn('[AOG SW] Registration failed:', err);
-    });
   });
 }
-</script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('../sw.js', { scope: '../' })
-        .then(function(reg) {
-          console.log('[SW] Registered, scope:', reg.scope);
-        })
-        .catch(function(err) {
-          console.warn('[SW] Registration failed:', err);
-        });
-    });
-  }
 </script>
 
 </body>
