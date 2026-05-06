@@ -7,7 +7,14 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>Generator Installation Estimate</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#FBBF24">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AOG Forms">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
 (function() {
@@ -2008,7 +2015,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
   </div>
 
   <div class="toolbar" id="toolbar">
-    <button class="btn" onclick="window.location.href='https://brandonaog.github.io/AOG-hub/'">🏠 HOME</button>
+    <button class="btn" onclick="window.location.href='../'">🏠 HOME</button>
     <button class="btn" onclick="printPDF()" title="Export as PDF">📄 PDF</button>
     <button class="btn" onclick="openImageModal()" title="Save as JPEG image">🖼 IMAGE</button>
     <button class="btn btn-gold" id="email-btn" onclick="sendEmail()" title="Send estimate via email">✉ EMAIL</button>
@@ -3206,6 +3213,18 @@ document.addEventListener('DOMContentLoaded', function() {
   restoreDraft();
 });
 </script>
-
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('../sw.js', { scope: '../' })
+        .then(function(reg) {
+          console.log('[SW] Registered, scope:', reg.scope);
+        })
+        .catch(function(err) {
+          console.warn('[SW] Registration failed:', err);
+        });
+    });
+  }
+</script>
 </body>
 </html>
