@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Always On Generators - Forms Hub</title>
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#FBBF24">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AOG Hub">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --yellow: #FCD34D;
+  --yellow-bright: #FBBF24;
+  --orange: #F97316;
+  --orange-bright: #FB923C;
+  --orange-deep: #EA580C;
+  --blue: #1E40AF;
+  --blue-bright: #3B82F6;
+  --blue-deep: #1E3A8A;
+  --blue-electric: #00D4FF;
+  --bg-dark: #0A0E27;
+  --bg-mid: #0F1535;
+  --bg-light: #1A2847;
+  --text: #F1F5F9;
+  --text-dim: #94A3B8;
+  --font-display: 'Orbitron', monospace;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-body: 'Exo 2', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  background: linear-gradient(135deg, #0A0E27 0%, #0F1535 25%, #1A2847 50%, #0F1535 75%, #0A0E27 100%);
+  background-size: 400% 400%;
+  color: var(--text);
+  min-height: 100vh;
+  position: relative;
+  animation: bgShift 20s ease infinite;
+}
+
+@keyframes bgShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-image:
+    linear-gradient(rgba(251, 191, 36, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 1;
+  animation: gridMove 40s linear infinite;
+}
+
+@keyframes gridMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 50px 50px; }
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(251, 191, 36, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(249, 115, 22, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.06) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== OFFLINE BANNER ===== */
+#offline-banner {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 9999;
+  padding: 10px 20px;
+  background: linear-gradient(90deg, rgba(10,14,39,0.97), rgba(15,21,53,0.97));
+  border-bottom: 2px solid var(--orange);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 3px;
+  color: var(--orange-bright);
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(249,115,22,0.5);
+  animation: bannerPulse 2s ease-in-out infinite;
+}
+
+#offline-banner.visible { display: block; }
+
+@keyframes bannerPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
+}
+
+#offline-banner::before {
+  content: '⚠ ';
+  color: var(--yellow-bright);
+}
+#offline-banner::after {
+  content: ' ⚠';
+  color: var(--yellow-bright);
+}
+
+/* ===== UPDATE TOAST ===== */
+#update-toast {
+  display: none;
+  position: fixed;
+  bottom: 24px; right: 24px;
+  z-index: 9998;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, rgba(15,21,53,0.97), rgba(26,40,71,0.97));
+  border: 1px solid var(--yellow-bright);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  max-width: 320px;
+  box-shadow: 0 0 20px rgba(251,191,36,0.2);
+  clip-path: polygon(8px 0%, 100% 0%, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0% 100%, 0% 8px);
+}
+
+#update-toast.visible { display: flex; align-items: center; gap: 14px; }
+
+#update-toast-msg { flex: 1; }
+#update-toast-msg strong {
+  display: block;
+  color: var(--yellow-bright);
+  margin-bottom: 4px;
+}
+
+#update-reload-btn {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, var(--yellow-bright), var(--orange));
+  border: none;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--bg-dark);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+#update-reload-btn:hover {
+  box-shadow: 0 0 12px rgba(251,191,36,0.5);
+  transform: scale(1.05);
+}
+
+#update-dismiss-btn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+#update-dismiss-btn:hover { color: var(--orange-bright); }
+
+.container {
+  position: relative;
+  z-index: 10;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== HEADER ===== */
+.header {
+  text-align: center;
+  margin-bottom: 50px;
+  padding: 40px 20px 30px;
+  position: relative;
+}
+
+.header::before,
+.header::after {
+  content: '';
+  position: absolute;
+  height: 2px;
+  width: 80%;
+  left: 10%;
+  background: linear-gradient(90deg, transparent, var(--yellow-bright), var(--orange), var(--blue-electric), transparent);
+}
+
+.header::before {
+  top: 0;
+  animation: scanline 4s linear infinite;
+}
+
+.header::after {
+  bottom: 0;
+  animation: scanline 4s linear infinite reverse;
+}
+
+@keyframes scanline {
+  0% { opacity: 0; transform: scaleX(0); }
+  50% { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(0); }
+}
+
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.logo-img {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 12px rgba(251, 191, 36, 0.6))
+    drop-shadow(0 0 24px rgba(249, 115, 22, 0.4))
+    brightness(1.1);
+  animation: logoPulse 3s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 12px rgba(251, 191, 36, 0.6))
+      drop-shadow(0 0 24px rgba(249, 115, 22, 0.4))
+      brightness(1.1);
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 18px rgba(251, 191, 36, 0.8))
+      drop-shadow(0 0 36px rgba(249, 115, 22, 0.6))
+      brightness(1.2);
+  }
+}
+
+.title-block { text-align: left; }
+
+@media (max-width: 600px) {
+  .title-block { text-align: center; }
+}
+
+.company-name {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--yellow-bright) 0%, var(--orange) 50%, var(--orange-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+
+.tagline {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 6px;
+  color: var(--blue-electric);
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+}
+
+.subtitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 8px;
+  color: var(--text-dim);
+  margin-top: 16px;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.subtitle span {
+  color: var(--orange-bright);
+  text-shadow: 0 0 8px rgba(249, 115, 22, 0.5);
+}
+
+/* ===== STATUS BAR ===== */
+.status-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 12px 24px;
+  margin-bottom: 40px;
+  background: rgba(15, 21, 53, 0.6);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: 4px;
+  backdrop-filter: blur(8px);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dim);
+}
+
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+  animation: pulse 2s ease-in-out infinite;
+}
+.status-dot.yellow { background: var(--yellow-bright); box-shadow: 0 0 8px var(--yellow-bright); }
+.status-dot.orange { background: var(--orange);        box-shadow: 0 0 8px var(--orange); }
+.status-dot.blue   { background: var(--blue-electric); box-shadow: 0 0 8px var(--blue-electric); }
+.status-dot.offline-dot { background: #6B7280; box-shadow: 0 0 8px #6B7280; animation: none; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* ===== FORMS GRID ===== */
+.forms-section-label {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 6px;
+  color: var(--yellow-bright);
+  text-align: center;
+  margin-bottom: 32px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+  position: relative;
+}
+
+.forms-section-label::before,
+.forms-section-label::after {
+  content: '◆';
+  color: var(--orange);
+  margin: 0 16px;
+  font-size: 0.7rem;
+  vertical-align: middle;
+}
+
+.forms-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 50px;
+  flex: 1;
+}
+
+@media (max-width: 700px) {
+  .forms-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== FORM CARD ===== */
+.form-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-decoration: none;
+  padding: 32px 28px;
+  background: linear-gradient(135deg, rgba(15, 21, 53, 0.9) 0%, rgba(26, 40, 71, 0.7) 100%);
+  border: 2px solid rgba(251, 191, 36, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  min-height: 180px;
+  clip-path: polygon(12px 0%, 100% 0%, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0% 100%, 0% 12px);
+}
+
+.form-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 20px; height: 20px;
+  border-top: 2px solid var(--yellow-bright);
+  border-left: 2px solid var(--yellow-bright);
+  transition: all 0.3s;
+}
+
+.form-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 20px; height: 20px;
+  border-bottom: 2px solid var(--blue-electric);
+  border-right: 2px solid var(--blue-electric);
+  transition: all 0.3s;
+}
+
+.form-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--orange);
+  background: linear-gradient(135deg, rgba(26, 40, 71, 0.95) 0%, rgba(36, 52, 88, 0.85) 100%);
+  box-shadow:
+    0 0 30px rgba(251, 191, 36, 0.3),
+    0 0 60px rgba(249, 115, 22, 0.2),
+    inset 0 0 30px rgba(251, 191, 36, 0.05);
+}
+
+.form-card:hover::before { width: 28px; height: 28px; border-color: var(--orange-bright); }
+.form-card:hover::after  { width: 28px; height: 28px; border-color: var(--blue-bright); }
+.form-card:active { transform: translateY(-2px); }
+
+.form-card .glow-strip {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--yellow-bright), var(--orange), var(--blue-electric), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.form-card:hover .glow-strip {
+  opacity: 1;
+  animation: stripScan 1.5s linear infinite;
+}
+
+@keyframes stripScan {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.form-card-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.form-icon-wrap {
+  flex-shrink: 0;
+  width: 64px; height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(249, 115, 22, 0.1));
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.form-card:hover .form-icon-wrap {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(249, 115, 22, 0.2));
+  border-color: var(--orange);
+  transform: rotate(5deg) scale(1.05);
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+}
+
+.form-icon-wrap svg {
+  width: 36px; height: 36px;
+  stroke: var(--yellow-bright);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.3s;
+}
+
+.form-card:hover .form-icon-wrap svg { stroke: var(--orange-bright); }
+
+.form-text { flex: 1; }
+
+.form-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--yellow-bright);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  text-shadow: 0 0 8px rgba(251, 191, 36, 0.3);
+  transition: all 0.3s;
+}
+
+.form-card:hover .form-title {
+  color: var(--orange-bright);
+  text-shadow: 0 0 12px rgba(249, 115, 22, 0.5);
+  letter-spacing: 4px;
+}
+
+.form-desc {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  line-height: 1.5;
+}
+
+.form-arrow {
+  position: absolute;
+  bottom: 16px; right: 20px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--blue-electric);
+  letter-spacing: 2px;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s;
+}
+
+.form-card:hover .form-arrow {
+  opacity: 1;
+  transform: translateX(0);
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  margin-top: auto;
+  padding-top: 32px;
+  text-align: center;
+  border-top: 1px solid rgba(251, 191, 36, 0.2);
+  position: relative;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 50%;
+  transform: translateX(-50%);
+  width: 60%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--orange), transparent);
+}
+
+.footer-text {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.footer-version {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--orange-bright);
+  letter-spacing: 2px;
+  opacity: 0.7;
+}
+
+.footer-version span { color: var(--blue-electric); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .container { padding: 24px 14px; }
+  .company-name { font-size: 1.6rem; letter-spacing: 2px; }
+  .tagline { font-size: 0.7rem; letter-spacing: 3px; }
+  .logo-img { width: 80px; height: 80px; }
+  .form-card { padding: 24px 20px; min-height: 150px; }
+  .form-title { font-size: 0.95rem; letter-spacing: 2px; }
+  .form-icon-wrap { width: 52px; height: 52px; }
+  .form-icon-wrap svg { width: 28px; height: 28px; }
+  .status-bar { gap: 12px; padding: 10px 14px; font-size: 0.6rem; letter-spacing: 1px; }
+}
+</style>
+</head>
+<body>
+
+<!-- OFFLINE BANNER -->
+<div id="offline-banner">No network connection · Hub available offline</div>
+
+<!-- UPDATE TOAST -->
+<div id="update-toast">
+  <div id="update-toast-msg">
+    <strong>Update Available</strong>
+    New version ready to install
+  </div>
+  <button id="update-reload-btn" onclick="window.location.reload()">Reload</button>
+  <button id="update-dismiss-btn" onclick="document.getElementById('update-toast').classList.remove('visible')" title="Dismiss">✕</button>
+</div>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-wrap">
+      <img src="https://raw.githubusercontent.com/BrandonAOG/AOG-Logo/main/logo.png" alt="Always On Generators Logo" class="logo-img">
+      <div class="title-block">
+        <div class="company-name">Always On<br>Generators</div>
+        <div class="tagline">// Power When You Need It //</div>
+      </div>
+    </div>
+    <div class="subtitle">Field <span>Operations</span> Hub</div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="status-item">
+      <span class="status-dot"></span>
+      <span>System Online</span>
+    </div>
+    <div class="status-item">
+      <span class="status-dot yellow"></span>
+      <span>8 Forms Active</span>
+    </div>
+    <div class="status-item">
+      <span class="status-dot orange"></span>
+      <span>Field Ready</span>
+    </div>
+    <div class="status-item" id="sw-status-item">
+      <span class="status-dot blue" id="sw-status-dot"></span>
+      <span id="sw-status-label">Sync Enabled</span>
+    </div>
+  </div>
+
+  <!-- FORMS SECTION -->
+  <div class="forms-section-label">Select Form Module</div>
+
+  <div class="forms-grid">
+
+    <!-- INSTALL FORM -->
+    <a href="#" class="form-card" data-form="install">
+      <div class="glow-strip"></div>
+      <div class="form-card-content">
+        <div class="form-icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+        </div>
+        <div class="form-text">
+          <div class="form-title">Electrical Install Form</div>
+          <div class="form-desc">New generator installation paperwork &amp; checklists</div>
+        </div>
+      </div>
+      <div class="form-arrow">▶ ENTER</div>
+    </a>
+<!-- GAS INSTALL FORM -->
+<a href="#" class="form-card" data-form="gas-install">
+  <div class="glow-strip"></div>
+  <div class="form-card-content">
+    <div class="form-icon-wrap">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2C8 6 6 10 8 14c1 2 3 3 4 3s3-1 4-3c2-4 0-8-4-12z"/>
+        <path d="M8 14c-2 1-3 3-3 5h14c0-2-1-4-3-5"/>
+        <line x1="12" y1="17" x2="12" y2="19"/>
+      </svg>
+    </div>
+    <div class="form-text">
+      <div class="form-title">Gas Installation Form</div>
+      <div class="form-desc">Gas line hookup, connection &amp; installation paperwork</div>
+    </div>
+  </div>
+  <div class="form-arrow">▶ ENTER</div>
+</a>
+    <!-- ESTIMATE FORM -->
+    <a href="#" class="form-card" data-form="estimate">
+      <div class="glow-strip"></div>
+      <div class="form-card-content">
+        <div class="form-icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 2h6a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v0a2 2 0 0 1 2-2z"/>
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+            <line x1="9" y1="12" x2="15" y2="12"/>
+            <line x1="9" y1="16" x2="13" y2="16"/>
+          </svg>
+        </div>
+        <div class="form-text">
+          <div class="form-title">Estimate Form</div>
+          <div class="form-desc">Quote &amp; pricing forms for new estimates</div>
+        </div>
+      </div>
+      <div class="form-arrow">▶ ENTER</div>
+    </a>
+
+    <!-- MAINTENANCE FORM -->
+    <a href="#" class="form-card" data-form="maintenance">
+      <div class="glow-strip"></div>
+      <div class="form-card-content">
+        <div class="form-icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </div>
+        <div class="form-text">
+          <div class="form-title">Maintenance Form</div>
+          <div class="form-desc">Service logs, PMs &amp; repair documentation</div>
+        </div>
+      </div>
+      <div class="form-arrow">▶ ENTER</div>
+    </a>
+
+    <!-- SITE VISITS FORM -->
+    <a href="#" class="form-card" data-form="site-visits">
+      <div class="glow-strip"></div>
+      <div class="form-card-content">
+        <div class="form-icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div class="form-text">
+          <div class="form-title">Site Visit Form</div>
+          <div class="form-desc">On-site inspection &amp; assessment forms</div>
+        </div>
+      </div>
+      <div class="form-arrow">▶ ENTER</div>
+    </a>
+
+    <!-- SKETCH PAD -->
+    <a href="#" class="form-card" data-form="sketch-pad">
+      <div class="glow-strip"></div>
+      <div class="form-card-content">
+        <div class="form-icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 20h9"/>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+        </div>
+        <div class="form-text">
+          <div class="form-title">Sketch Pad</div>
+          <div class="form-desc">Freehand diagrams, site sketches &amp; field drawings</div>
+        </div>
+      </div>
+      <div class="form-arrow">▶ ENTER</div>
+    </a>
+
+    <!-- CONDUIT FILL FORM -->
+    <a href="#" class="form-card" data-form="conduit-fill">
+      <div class="glow-strip"></div>
+      <div class="form-card-content">
+        <div class="form-icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2v20M2 12h20"/>
+            <path d="M7 7h10v10H7z"/>
+            <circle cx="12" cy="12" r="2"/>
+          </svg>
+        </div>
+        <div class="form-text">
+          <div class="form-title">Conduit Fill</div>
+          <div class="form-desc">Electrical conduit sizing &amp; fill calculations</div>
+        </div>
+      </div>
+      <div class="form-arrow">▶ ENTER</div>
+    </a>
+
+    <!-- LOAD CALCULATION -->
+    <a href="#" class="form-card" data-form="load-calc">
+      <div class="glow-strip"></div>
+      <div class="form-card-content">
+        <div class="form-icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+        <div class="form-text">
+          <div class="form-title">Load Calculation</div>
+          <div class="form-desc">[EXPERIMENTAL] Advanced power load analysis &amp; sizing</div>
+        </div>
+      </div>
+      <div class="form-arrow">▶ ENTER</div>
+    </a>
+
+    <!-- BREAKER & CONDUCTOR SIZING -->
+    <a href="#" class="form-card" data-form="breaker-sizing">
+      <div class="glow-strip"></div>
+      <div class="form-card-content">
+        <div class="form-icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+            <line x1="12" y1="12" x2="12" y2="16"/>
+            <line x1="10" y1="14" x2="14" y2="14"/>
+          </svg>
+        </div>
+        <div class="form-text">
+          <div class="form-title">Breaker &amp; Conductor</div>
+          <div class="form-desc">NEC conductor sizing, derating, EGC &amp; parallel sets — 240.6 · 310.16 · 310.12 · 250.122</div>
+        </div>
+      </div>
+      <div class="form-arrow">▶ ENTER</div>
+    </a>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-text">Always On Generators · Field Operations Portal</div>
+    <div class="footer-version">SYSTEM <span>v1.2</span> · OFFLINE READY · GITHUB PAGES</div>
+  </div>
+
+</div>
+
+<script>
+// ── Form URL routing ──────────────────────────────────────
+const FORM_URLS = {
+  'install':         'https://brandonaog.github.io/Installforms/',
+  'estimate':        'https://brandonaog.github.io/Generator-estimate-form/',
+  'maintenance':     'https://brandonaog.github.io/Maintenance/',
+  'site-visits':     'https://brandonaog.github.io/Site-visit/',
+  'sketch-pad':      'https://brandonaog.github.io/Sketchpad/',
+  'conduit-fill':    'https://brandonaog.github.io/conduitfill/',
+  'load-calc':       'https://brandonaog.github.io/loadcalc/',
+  'breaker-sizing':  'https://brandonaog.github.io/breaker-cond/'
+  'gas-install':     'https://brandonaog.github.io/gas-install/',
+};
+
+document.querySelectorAll('.form-card').forEach(function(card) {
+  const formKey = card.getAttribute('data-form');
+  const url = FORM_URLS[formKey];
+  if (url && url !== '#') card.setAttribute('href', url);
+  card.addEventListener('click', function(e) {
+    if (!url || url === '#') {
+      e.preventDefault();
+      const title = this.querySelector('.form-title').textContent;
+      alert('🔧 ' + title + ' - URL not yet configured.\n\nEdit the FORM_URLS section in index.html to set this link.');
+    }
+  });
+});
+
+// ── Card entrance animation ───────────────────────────────
+window.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.form-card').forEach(function(card, i) {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    setTimeout(function() {
+      card.style.transition = 'opacity 0.6s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    }, 100 + (i * 100));
+  });
+});
+
+// ── Online / Offline banner ───────────────────────────────
+const banner       = document.getElementById('offline-banner');
+const swDot        = document.getElementById('sw-status-dot');
+const swLabel      = document.getElementById('sw-status-label');
+
+function setOnline() {
+  banner.classList.remove('visible');
+  swDot.classList.remove('offline-dot');
+  swDot.classList.add('blue');
+  swLabel.textContent = 'Sync Enabled';
+}
+
+function setOffline() {
+  banner.classList.add('visible');
+  swDot.classList.remove('blue');
+  swDot.classList.add('offline-dot');
+  swLabel.textContent = 'Offline Mode';
+}
+
+window.addEventListener('online',  setOnline);
+window.addEventListener('offline', setOffline);
+if (!navigator.onLine) setOffline();
+
+// ── Service Worker registration ───────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js').then(function(reg) {
+
+      // Show update toast when a new SW is waiting
+      reg.addEventListener('updatefound', function() {
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', function() {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            document.getElementById('update-toast').classList.add('visible');
+          }
+        });
+      });
+
+      // Update SW status dot once active
+      if (reg.active) {
+        swDot.classList.remove('offline-dot');
+        swDot.classList.add('blue');
+        swLabel.textContent = navigator.onLine ? 'Sync Enabled' : 'Offline Mode';
+      }
+
+    }).catch(function(err) {
+      console.warn('Service worker registration failed:', err);
+    });
+  });
+}
+</script>
+
+</body>
+</html>
