@@ -576,7 +576,7 @@ body.dark-mode .ts-body { background: transparent; }
 body.dark-mode .notice { color: #7DD3FC; }
 
 /* ==========================================================
-   EVEN TIGHTER PRINT STYLES – Aiming for 2 Pages
+   PRINT STYLES – Desktop perfect + Safari Mobile fixed to 2 pages
    ========================================================== */
 @media print {
   * {
@@ -623,7 +623,7 @@ body.dark-mode .notice { color: #7DD3FC; }
     page-break-after: avoid !important;
   }
 
-  /* ==================== PAGE 1 ==================== */
+  /* PAGE 1 */
   #page1 .checklist-title { font-size: 12.5pt !important; margin-bottom: 6px !important; }
   #page1 .section-title   { font-size: 8.7pt !important; margin: 4px 0 2px !important; }
   #page1 .section-row,
@@ -647,7 +647,7 @@ body.dark-mode .notice { color: #7DD3FC; }
   #page1 .ts-header { padding: 3px 5px !important; font-size: 8.4pt !important; }
   #page1 .ts-body   { padding: 3px 5px !important; }
 
-  /* ==================== PAGE 2 – Tables ==================== */
+  /* PAGE 2 – Tables */
   #page2 {
     break-before: page !important;
     page-break-before: always !important;
@@ -685,7 +685,6 @@ body.dark-mode .notice { color: #7DD3FC; }
   .footer-row { gap: 4px !important; margin-bottom: 2px !important; }
   .footer-field input { font-size: 8.2pt !important; }
 
-  /* Force tight layout */
   .section, .grid-section, .ts-block, .footer-fields, hr.section-hr {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
@@ -695,14 +694,64 @@ body.dark-mode .notice { color: #7DD3FC; }
   hr.section-hr { margin: 3px 0 !important; }
 }
 
-/* Safari iOS Ultra Tight */
+/* ========================================================
+   SAFARI MOBILE / iOS ULTRA-AGGRESSIVE OVERRIDE
+   (This is what fixes the extra pages on iPhone)
+   ======================================================== */
 @media print and (-webkit-min-device-pixel-ratio: 2) {
-  @page { margin: 0.15in; }
+  @page { margin: 0.08in !important; }   /* Almost no margins */
 
-  .form-page { padding: 7px 10px !important; }
+  .form-page {
+    padding: 6px 8px !important;
+  }
+
+  html, body {
+    font-size: 7.8pt !important;
+    line-height: 1.1 !important;
+  }
+
+  #page1 .checklist-title { font-size: 11.5pt !important; }
+  #page1 .section-title   { font-size: 8pt !important; }
+  #page1 .section-row,
+  #page1 .field-row label,
+  #page1 .footer-field label { font-size: 7.6pt !important; }
+
+  #page1 input[type="text"],
+  #page1 textarea,
+  #page1 .inline-input { font-size: 7.6pt !important; }
+
+  #page1 .ts-block { margin-bottom: 2px !important; }
+
+  table.mat-table {
+    font-size: 6.8pt !important;
+  }
 
   table.mat-table th,
-  table.mat-table td { font-size: 7.1pt !important; padding: 0.5px 1.5px !important; }
+  table.mat-table td {
+    padding: 0.5px 1px !important;
+    font-size: 6.8pt !important;
+  }
+
+  table.mat-table td.row-label {
+    font-size: 6.8pt !important;
+    padding: 1px 2px !important;
+  }
+
+  table.mat-table td input[type="text"] {
+    font-size: 6.8pt !important;
+  }
+
+  #fittings-table, #wireway-table, #polaris-table {
+    font-size: 6.5pt !important;
+  }
+
+  .footer-fields { font-size: 7.5pt !important; margin-top: 4px !important; }
+  .footer-row { gap: 3px !important; margin-bottom: 1px !important; }
+  .footer-field input { font-size: 7.5pt !important; }
+
+  .section, .grid-section, .ts-block, .footer-fields, hr.section-hr {
+    margin-bottom: 2px !important;
+  }
 }
 </style>
 </head>
