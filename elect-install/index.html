@@ -571,20 +571,19 @@ body.dark-mode .notice { color: #7DD3FC; }
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-// Your full JavaScript (theme, tables, TS blocks, etc.) is unchanged
-// (All your original script is kept exactly the same)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('../sw.js', { scope: '../' })
+        .then(function(reg) {
+          console.log('[SW] Registered, scope:', reg.scope);
+        })
+        .catch(function(err) {
+          console.warn('[SW] Registration failed:', err);
+        });
+    });
+  }
 </script>
 
-<!-- SERVICE WORKER TEMPORARILY DISABLED so print changes appear immediately -->
-<!--
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('../sw.js', { scope: '../' }).then(...);
-  });
-}
-</script>
--->
 
 </body>
 </html>
