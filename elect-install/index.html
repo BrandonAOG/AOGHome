@@ -1,6 +1,3 @@
-Here is the complete corrected file:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -402,11 +399,17 @@ body.dark-mode .notice { color: #7DD3FC; }
     width: 100% !important; max-width: 100% !important;
     background: #fff !important; color: #1F2937 !important;
     overflow: visible !important;
+    display: block !important;
   }
 
   .action-bar, .theme-toggle-btn, .notice { display: none !important; }
 
-  .page-wrapper { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+  .page-wrapper {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 
   .form-page {
     display: block !important;
@@ -416,17 +419,25 @@ body.dark-mode .notice { color: #7DD3FC; }
     box-shadow: none !important;
     border: none !important;
     overflow: visible !important;
-    page-break-after: always !important;
-    break-after: page !important;
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
     padding: 0 !important;
     margin: 0 !important;
     box-sizing: border-box !important;
+    /* Safari-compatible page break */
+    page-break-inside: avoid !important;
+    page-break-after: always !important;
+    -webkit-column-break-after: always !important;
+    break-after: page !important;
+    /* Force Safari to treat as independent block */
+    position: relative !important;
+    float: none !important;
+    clear: both !important;
   }
 
-  .form-page:last-child { page-break-after: auto !important; break-after: auto !important; }
+  .form-page:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
+    -webkit-column-break-after: auto !important;
+  }
 
   /* ── PAGE 1 ── */
   #page1 * { color: #1F2937 !important; background: transparent !important; box-shadow: none !important; border-color: #555 !important; }
@@ -455,7 +466,11 @@ body.dark-mode .notice { color: #7DD3FC; }
   #page1 input[type="checkbox"] { width: 10px !important; height: 10px !important; }
 
   /* ── PAGE 2 ── */
-  #page2 { page-break-before: always !important; break-before: page !important; }
+  #page2 {
+    page-break-before: always !important;
+    break-before: page !important;
+    -webkit-column-break-before: always !important;
+  }
 
   #page2 .grid-section {
     margin-bottom: 4px !important;
@@ -590,6 +605,7 @@ body.dark-mode .notice { color: #7DD3FC; }
   #page2 .footer-field input.short { width: 40px !important; }
   #page2 .footer-field input.wide  { width: 85px !important; }
 }
+
 </style>
 </head>
 <body>
