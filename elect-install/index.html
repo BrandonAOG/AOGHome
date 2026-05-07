@@ -576,7 +576,7 @@ body.dark-mode .ts-body { background: transparent; }
 body.dark-mode .notice { color: #7DD3FC; }
 
 /* ==========================================================
-   PRINT STYLES – Desktop perfect + Safari Mobile fixed to 2 pages
+   PRINT STYLES – Desktop perfect + Safari Mobile now 2 pages
    ========================================================== */
 @media print {
   * {
@@ -634,15 +634,9 @@ body.dark-mode .notice { color: #7DD3FC; }
   #page1 textarea,
   #page1 .inline-input { font-size: 8.4pt !important; }
 
-  #page1 .two-col {
-    grid-template-columns: 1fr !important;
-    gap: 5px !important;
-  }
+  #page1 .two-col { grid-template-columns: 1fr !important; gap: 5px !important; }
 
-  #page1 .ts-block {
-    margin-bottom: 3px !important;
-    break-inside: avoid !important;
-  }
+  #page1 .ts-block { margin-bottom: 3px !important; break-inside: avoid !important; }
 
   #page1 .ts-header { padding: 3px 5px !important; font-size: 8.4pt !important; }
   #page1 .ts-body   { padding: 3px 5px !important; }
@@ -695,21 +689,17 @@ body.dark-mode .notice { color: #7DD3FC; }
 }
 
 /* ========================================================
-   SAFARI MOBILE / iOS ULTRA-AGGRESSIVE OVERRIDE
-   (This is what fixes the extra pages on iPhone)
+   SAFARI MOBILE / iOS ULTRA-AGGRESSIVE FIX
+   (Stops the 4-line and 7-line table spillover)
    ======================================================== */
 @media print and (-webkit-min-device-pixel-ratio: 2) {
-  @page { margin: 0.08in !important; }   /* Almost no margins */
+  @page { margin: 0.08in !important; }
 
-  .form-page {
-    padding: 6px 8px !important;
-  }
+  .form-page { padding: 6px 8px !important; }
 
-  html, body {
-    font-size: 7.8pt !important;
-    line-height: 1.1 !important;
-  }
+  html, body { font-size: 7.6pt !important; line-height: 1.08 !important; }
 
+  /* Page 1 */
   #page1 .checklist-title { font-size: 11.5pt !important; }
   #page1 .section-title   { font-size: 8pt !important; }
   #page1 .section-row,
@@ -722,34 +712,47 @@ body.dark-mode .notice { color: #7DD3FC; }
 
   #page1 .ts-block { margin-bottom: 2px !important; }
 
+  /* CRITICAL: Table row protection for Safari */
   table.mat-table {
-    font-size: 6.8pt !important;
+    font-size: 6.5pt !important;
+    line-height: 1.05 !important;
   }
 
   table.mat-table th,
   table.mat-table td {
     padding: 0.5px 1px !important;
-    font-size: 6.8pt !important;
+    font-size: 6.5pt !important;
+    border: 1px solid #333 !important;
   }
 
   table.mat-table td.row-label {
-    font-size: 6.8pt !important;
+    font-size: 6.5pt !important;
     padding: 1px 2px !important;
+    line-height: 1.1 !important;
   }
 
   table.mat-table td input[type="text"] {
-    font-size: 6.8pt !important;
+    font-size: 6.5pt !important;
+    padding: 0 !important;
   }
 
   #fittings-table, #wireway-table, #polaris-table {
-    font-size: 6.5pt !important;
+    font-size: 6.2pt !important;
   }
 
-  .footer-fields { font-size: 7.5pt !important; margin-top: 4px !important; }
-  .footer-row { gap: 3px !important; margin-bottom: 1px !important; }
-  .footer-field input { font-size: 7.5pt !important; }
+  /* Force rows not to break */
+  table.mat-table tr {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    page-break-after: auto !important;
+  }
 
-  .section, .grid-section, .ts-block, .footer-fields, hr.section-hr {
+  /* Footer */
+  .footer-fields { margin-top: 3px !important; font-size: 7.3pt !important; }
+  .footer-row { gap: 3px !important; margin-bottom: 1px !important; }
+  .footer-field input { font-size: 7.3pt !important; }
+
+  .grid-section, .section, .ts-block, .footer-fields, hr.section-hr {
     margin-bottom: 2px !important;
   }
 }
