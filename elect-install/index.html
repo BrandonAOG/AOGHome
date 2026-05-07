@@ -576,193 +576,145 @@ body.dark-mode .ts-body { background: transparent; }
 body.dark-mode .notice { color: #7DD3FC; }
 
 /* ==========================================================
-   PRINT STYLES
+   PRINT STYLES – Safari Mobile Fixed (Screen Unchanged)
    ========================================================== */
 @media print {
-
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
   }
 
-  @page { size: 8.5in 11in; margin: 0.2in; }
-
-  html, body {
-    margin: 0 !important; padding: 0 !important;
-    width: 100% !important; max-width: 100% !important;
-    background: #fff !important; color: #1F2937 !important;
-    overflow: visible !important;
+  @page {
+    size: letter portrait;
+    margin: 0.28in;               /* Tight but safe for iOS */
   }
 
-  .action-bar, .theme-toggle-btn, .notice { display: none !important; }
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    color: #1F2937 !important;
+    -webkit-text-size-adjust: 100% !important;
+  }
 
-  .page-wrapper {
-    display: block !important; width: 100% !important;
-    margin: 0 !important; padding: 0 !important;
+  .action-bar, .theme-toggle-btn, .notice, .add-ts-btn {
+    display: none !important;
+  }
+
+  .page-wrapper, .form-page {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    border: none !important;
   }
 
   .form-page {
-    display: block !important; width: 100% !important;
-    background: #fff !important; color: #1F2937 !important;
-    box-shadow: none !important; border: none !important;
-    overflow: visible !important;
-    page-break-after: always !important; break-after: page !important;
-    height: auto !important; min-height: 0 !important;
-    max-height: none !important; padding: 0 !important;
-    margin: 0 !important; box-sizing: border-box !important;
+    padding: 14px 16px !important;   /* Print only */
+    break-after: page !important;
+    page-break-after: always !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
   }
+
   .form-page:last-child {
-    page-break-after: auto !important; break-after: auto !important;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
   }
 
-  /* ── PAGE 1 ── */
-  #page1 * {
-    color: #1F2937 !important; background: transparent !important;
-    box-shadow: none !important; border-color: #555 !important;
+  /* ==================== PAGE 1 ==================== */
+  #page1 .checklist-title { font-size: 14pt !important; }
+  #page1 .section-title   { font-size: 9.8pt !important; margin: 5px 0 3px !important; }
+  #page1 .section-row,
+  #page1 .field-row label,
+  #page1 .footer-field label { font-size: 9.4pt !important; margin-bottom: 2px !important; }
+
+  #page1 input[type="text"],
+  #page1 textarea,
+  #page1 .inline-input { font-size: 9.4pt !important; }
+
+  #page1 .two-col {
+    grid-template-columns: 1fr !important;   /* Prevents wide layout breaking pages */
+    gap: 8px !important;
   }
-  #page1 .checklist-title { border-top-color: #1F2937 !important; font-size: 15px !important; }
-  #page1 .section-title   { font-size: 10px !important; }
-  #page1 .section-row     { font-size: 9px !important; margin-bottom: 2px !important; }
-  #page1 .field-row label { font-size: 9px !important; }
-  #page1 .field-row input[type="text"] { font-size: 9px !important; }
-  #page1 .inline-input    { font-size: 9px !important; border-bottom-color: #1F2937 !important; }
-  #page1 .top-fields      { margin-bottom: 6px !important; gap: 2px 8px !important; }
-  #page1 .two-col         { grid-template-columns: 1fr 1fr !important; gap: 6px 12px !important; }
-  #page1 .section         { margin-bottom: 6px !important; }
-  #page1 hr.section-hr    { margin: 4px 0 !important; border-top-color: #ccc !important; }
-  #page1 .ts-header       { background: #f0f0f0 !important; padding: 3px 6px !important; }
-  #page1 .ts-header-left  { font-size: 9px !important; color: #1F2937 !important; }
-  #page1 .ts-body         { padding: 3px 6px !important; }
-  #page1 .ts-toggle       { color: #555 !important; }
-  #page1 .ts-block        { border-color: #bbb !important; margin-bottom: 4px !important; }
-  #page1 .add-ts-btn      { display: none !important; }
-  #page1 .ts-remove-btn   { display: none !important; }
-  #page1 .textarea-field  { border-color: #aaa !important; min-height: 30px !important; font-size: 9px !important; }
-  #page1 .yn-checkbox-wrap { border-color: #bbb !important; font-size: 8px !important; padding: 1px 3px !important; }
-  #page1 .yn-checkbox-wrap.yn-yes.checked { background: #059669 !important; color: #fff !important; }
-  #page1 .yn-checkbox-wrap.yn-no.checked  { background: #DC2626 !important; color: #fff !important; }
-  #page1 .yn-checkbox-wrap.yn-opt.checked { background: #D97706 !important; color: #fff !important; }
-  #page1 input[type="checkbox"] { width: 10px !important; height: 10px !important; }
 
-  /* ── PAGE 2 ── */
-  #page2 { page-break-before: always !important; break-before: page !important; }
-  #page2 .grid-section { margin-bottom: 4px !important; overflow: visible !important; }
+  #page1 .ts-block {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin-bottom: 6px !important;
+  }
 
-  #page2 table.mat-table {
-    width: 100% !important; border-collapse: collapse !important;
+  /* ==================== PAGE 2 – Tables (Main culprit) ==================== */
+  #page2 {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+
+  table.mat-table {
+    width: 100% !important;
     table-layout: fixed !important;
+    font-size: 8.4pt !important;
+    border-collapse: collapse !important;
   }
 
-  #page2 table.mat-table th,
-  #page2 table.mat-table td {
+  table.mat-table th,
+  table.mat-table td {
+    padding: 1.5px 2px !important;
+    font-size: 8.4pt !important;
     border: 1px solid #333 !important;
-    padding: 0 !important;
+    word-break: break-word !important;
   }
 
-  #page2 table.mat-table td input[type="text"] {
-    width: 100% !important; border: none !important;
-    background: transparent !important; color: #1F2937 !important;
-    padding: 0 !important; text-align: center !important;
-    height: auto !important; -webkit-appearance: none !important;
-    appearance: none !important; outline: none !important;
-    -webkit-box-shadow: none !important; box-shadow: none !important;
+  table.mat-table td input[type="text"] {
+    font-size: 8.4pt !important;
+    padding: 1px !important;
   }
 
-  #page2 table.mat-table th {
-    background: #4B5563 !important; color: #FFFFFF !important;
-    font-weight: bold !important; padding: 2px 2px !important;
+  /* Extra tight for big tables */
+  #fittings-table, #wireway-table, #polaris-table {
+    font-size: 8pt !important;
   }
 
-  #page2 table.mat-table td {
-    background: #ffffff !important; color: #1F2937 !important;
+  #fittings-table td.row-label,
+  #wireway-table td.row-label,
+  #polaris-table td.row-label {
+    font-size: 8.2pt !important;
+    padding: 2px 3px !important;
   }
-
-  #page2 table.mat-table td.row-label {
-    background: #f0f0f0 !important; text-align: left !important;
-    font-weight: bold !important; padding: 2px 3px !important;
-    white-space: normal !important; word-break: break-word !important;
-  }
-
-  /* Wire tables */
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) {
-    font-size: 10px !important;
-  }
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) th {
-    font-size: 10px !important;
-  }
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td.row-label {
-    font-size: 10px !important; width: 72px !important; min-width: 0 !important;
-  }
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td input[type="text"] {
-    font-size: 10px !important;
-  }
-
-  /* Fittings table */
-  #page2 #fittings-table                        { font-size: 8px !important; }
-  #page2 #fittings-table th                     { font-size: 10px !important; }
-  #page2 #fittings-table td.row-label {
-    font-size: 9px !important; font-weight: bold !important;
-    width: 110px !important; min-width: 0 !important;
-    text-align: left !important; padding: 2px 4px !important;
-    white-space: normal !important; word-break: break-word !important;
-    line-height: 1.2 !important;
-  }
-  #page2 #fittings-table td input[type="text"]  { font-size: 8px !important; }
-
-  /* Wireway table */
-  #page2 #wireway-table                         { font-size: 8px !important; }
-  #page2 #wireway-table th                      { font-size: 10px !important; }
-  #page2 #wireway-table td.row-label {
-    font-size: 9px !important; font-weight: bold !important;
-    width: 100px !important; min-width: 0 !important;
-    text-align: left !important; padding: 2px 4px !important;
-    white-space: normal !important; word-break: break-word !important;
-    line-height: 1.2 !important;
-  }
-  #page2 #wireway-table td input[type="text"]   { font-size: 8px !important; }
-
-  /* Polaris table */
-  #page2 #polaris-table                         { font-size: 8px !important; }
-  #page2 #polaris-table th                      { font-size: 10px !important; }
-  #page2 #polaris-table td.row-label {
-    font-size: 9px !important; font-weight: bold !important;
-    width: 100px !important; min-width: 0 !important;
-    text-align: left !important; padding: 2px 4px !important;
-    white-space: normal !important; word-break: break-word !important;
-    line-height: 1.2 !important;
-  }
-  #page2 #polaris-table td input[type="text"]   { font-size: 8px !important; }
 
   /* Footer */
-  #page2 .footer-fields {
-    margin-top: 5px !important; padding-top: 6px !important;
-    border-top: 1px solid #555 !important; font-size: 10px !important;
+  .footer-fields {
+    margin-top: 8px !important;
+    font-size: 9pt !important;
   }
-  #page2 .footer-row {
-    display: flex !important; flex-wrap: wrap !important;
-    gap: 3px 14px !important; margin-bottom: 3px !important;
-    align-items: flex-end !important;
+
+  .footer-row {
+    gap: 6px !important;
+    margin-bottom: 3px !important;
   }
-  #page2 .footer-field {
-    display: inline-flex !important; align-items: flex-end !important;
-    gap: 2px !important; white-space: nowrap !important;
+
+  /* General pagination safety */
+  .section, .grid-section, .ts-block, .footer-fields, .two-col {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
-  #page2 .footer-field label {
-    font-size: 9px !important; font-weight: bold !important;
-    color: #1F2937 !important; white-space: nowrap !important;
-  }
-  #page2 .footer-field input[type="text"] {
-    border: none !important; border-bottom: 1px solid #333 !important;
-    background: transparent !important; color: #1F2937 !important;
-    font-size: 9px !important; padding: 0 1px !important;
-    height: 10px !important; width: 55px !important; min-width: 0 !important;
-    -webkit-appearance: none !important; appearance: none !important;
-    outline: none !important; -webkit-box-shadow: none !important;
-    box-shadow: none !important;
-  }
-  #page2 .footer-field input.short { width: 40px !important; }
-  #page2 .footer-field input.wide  { width: 85px !important; }
+
+  hr.section-hr { margin: 5px 0 !important; }
+}
+
+/* Safari / iOS specific tightening */
+@media print and (-webkit-min-device-pixel-ratio: 2) {
+  @page { margin: 0.25in; }
+
+  .form-page { padding: 12px 14px !important; }
+
+  table.mat-table th,
+  table.mat-table td { padding: 1px 2px !important; font-size: 8pt !important; }
 }
 </style>
 </head>
