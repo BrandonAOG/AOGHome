@@ -576,7 +576,7 @@ body.dark-mode .ts-body { background: transparent; }
 body.dark-mode .notice { color: #7DD3FC; }
 
 /* ==========================================================
-   AGGRESSIVE PRINT STYLES – Target 2 Pages on Safari Mobile
+   EVEN TIGHTER PRINT STYLES – Aiming for 2 Pages
    ========================================================== */
 @media print {
   * {
@@ -587,7 +587,7 @@ body.dark-mode .notice { color: #7DD3FC; }
 
   @page {
     size: letter portrait;
-    margin: 0.22in;               /* Very tight for iOS */
+    margin: 0.18in;
   }
 
   html, body {
@@ -595,8 +595,8 @@ body.dark-mode .notice { color: #7DD3FC; }
     padding: 0 !important;
     background: #fff !important;
     color: #1F2937 !important;
-    font-size: 9pt !important;
-    line-height: 1.25 !important;
+    font-size: 8.7pt !important;
+    line-height: 1.18 !important;
     -webkit-text-size-adjust: 100% !important;
   }
 
@@ -613,10 +613,9 @@ body.dark-mode .notice { color: #7DD3FC; }
   }
 
   .form-page {
-    padding: 10px 12px !important;     /* Much tighter */
+    padding: 8px 11px !important;
     break-after: page !important;
     page-break-after: always !important;
-    height: auto !important;
   }
 
   .form-page:last-child {
@@ -625,31 +624,30 @@ body.dark-mode .notice { color: #7DD3FC; }
   }
 
   /* ==================== PAGE 1 ==================== */
-  #page1 .checklist-title { font-size: 13pt !important; margin-bottom: 8px !important; }
-  #page1 .section-title   { font-size: 9pt !important; margin: 4px 0 2px !important; }
+  #page1 .checklist-title { font-size: 12.5pt !important; margin-bottom: 6px !important; }
+  #page1 .section-title   { font-size: 8.7pt !important; margin: 4px 0 2px !important; }
   #page1 .section-row,
   #page1 .field-row label,
-  #page1 .footer-field label { font-size: 8.8pt !important; margin-bottom: 1px !important; line-height: 1.2 !important; }
+  #page1 .footer-field label { font-size: 8.4pt !important; margin-bottom: 1px !important; line-height: 1.15 !important; }
 
   #page1 input[type="text"],
   #page1 textarea,
-  #page1 .inline-input { font-size: 8.8pt !important; }
+  #page1 .inline-input { font-size: 8.4pt !important; }
 
   #page1 .two-col {
     grid-template-columns: 1fr !important;
-    gap: 6px !important;
+    gap: 5px !important;
   }
 
   #page1 .ts-block {
-    margin-bottom: 4px !important;
+    margin-bottom: 3px !important;
     break-inside: avoid !important;
-    page-break-inside: avoid !important;
   }
 
-  #page1 .ts-header { padding: 3px 5px !important; font-size: 8.8pt !important; }
+  #page1 .ts-header { padding: 3px 5px !important; font-size: 8.4pt !important; }
   #page1 .ts-body   { padding: 3px 5px !important; }
 
-  /* ==================== PAGE 2 – Critical Tables ==================== */
+  /* ==================== PAGE 2 – Tables ==================== */
   #page2 {
     break-before: page !important;
     page-break-before: always !important;
@@ -658,58 +656,53 @@ body.dark-mode .notice { color: #7DD3FC; }
   table.mat-table {
     width: 100% !important;
     table-layout: fixed !important;
-    font-size: 7.8pt !important;
-    border-collapse: collapse !important;
-    line-height: 1.1 !important;
+    font-size: 7.4pt !important;
+    line-height: 1.08 !important;
   }
 
   table.mat-table th,
   table.mat-table td {
-    padding: 1px 2px !important;
-    font-size: 7.8pt !important;
+    padding: 1px 1.5px !important;
+    font-size: 7.4pt !important;
     border: 1px solid #333 !important;
-    word-break: break-word !important;
   }
 
   table.mat-table td.row-label {
-    font-size: 7.8pt !important;
-    padding: 2px 3px !important;
-    line-height: 1.15 !important;
+    font-size: 7.4pt !important;
+    padding: 1.5px 3px !important;
   }
 
   table.mat-table td input[type="text"] {
-    font-size: 7.8pt !important;
-    padding: 0 1px !important;
+    font-size: 7.4pt !important;
   }
 
-  /* Extra compression for large tables */
   #fittings-table, #wireway-table, #polaris-table {
-    font-size: 7.5pt !important;
+    font-size: 7.2pt !important;
   }
 
   /* Footer */
-  .footer-fields { margin-top: 6px !important; font-size: 8.5pt !important; }
+  .footer-fields { margin-top: 5px !important; font-size: 8.2pt !important; }
   .footer-row { gap: 4px !important; margin-bottom: 2px !important; }
-  .footer-field input[type="text"] { font-size: 8.5pt !important; width: auto !important; }
+  .footer-field input { font-size: 8.2pt !important; }
 
-  /* Force everything to stay together */
-  .section, .grid-section, .ts-block, .footer-fields, .two-col, hr.section-hr {
+  /* Force tight layout */
+  .section, .grid-section, .ts-block, .footer-fields, hr.section-hr {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
-    margin-bottom: 4px !important;
+    margin-bottom: 3px !important;
   }
 
-  hr.section-hr { margin: 4px 0 !important; border-color: #999 !important; }
+  hr.section-hr { margin: 3px 0 !important; }
 }
 
-/* Safari iOS Extra Tight */
+/* Safari iOS Ultra Tight */
 @media print and (-webkit-min-device-pixel-ratio: 2) {
-  @page { margin: 0.2in; }
+  @page { margin: 0.15in; }
 
-  .form-page { padding: 9px 11px !important; }
+  .form-page { padding: 7px 10px !important; }
 
   table.mat-table th,
-  table.mat-table td { font-size: 7.5pt !important; padding: 0.5px 1.5px !important; }
+  table.mat-table td { font-size: 7.1pt !important; padding: 0.5px 1.5px !important; }
 }
 </style>
 </head>
