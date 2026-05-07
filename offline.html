@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AOG Hub — Offline</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+    .card {
+      background: #16213e;
+      border: 1px solid #FFB300;
+      border-radius: 16px;
+      padding: 40px 30px;
+      max-width: 400px;
+      width: 100%;
+    }
+    .icon { font-size: 60px; margin-bottom: 16px; }
+    h1 { color: #FFB300; font-size: 1.5rem; margin-bottom: 12px; }
+    p  { color: #aaa; font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; }
+    .btn {
+      display: inline-block;
+      background: #FFB300;
+      color: #1a1a2e;
+      font-weight: bold;
+      padding: 12px 28px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .forms-list {
+      text-align: left;
+      margin: 20px 0;
+      background: #0f3460;
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .forms-list p { color: #FFB300; font-weight: bold; margin-bottom: 8px; }
+    .forms-list a {
+      display: block;
+      color: #e0e0e0;
+      text-decoration: none;
+      padding: 6px 0;
+      border-bottom: 1px solid #1a3a6e;
+      font-size: 0.9rem;
+    }
+    .forms-list a:last-child { border-bottom: none; }
+    .forms-list a:hover { color: #FFB300; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">⚡</div>
+    <h1>You're Offline</h1>
+    <p>No internet connection detected.<br>
+       Cached forms below are still available:</p>
+
+    <div class="forms-list">
+      <p>📋 Available Offline:</p>
+      <a href="../forms/breaker-conductor.html">⚡ Breaker & Conductor Sizing</a>
+      <a href="../forms/conduit-fill.html">🔧 Conduit Fill Calculator</a>
+      <a href="../forms/checklist.html">✅ Installation Checklist</a>
+      <a href="../forms/generator-estimate.html">🏠 Generator Estimate</a>
+    </div>
+
+    <button class="btn" onclick="location.reload()">
+      🔄 Try Again
+    </button>
+  </div>
+</body>
+</html>
