@@ -576,7 +576,7 @@ body.dark-mode .ts-body { background: transparent; }
 body.dark-mode .notice { color: #7DD3FC; }
 
 /* ==========================================================
-   PRINT STYLES – Desktop perfect + Safari Mobile now 2 pages
+   FINAL PRINT STYLES – Forces 2 pages on Safari mobile
    ========================================================== */
 @media print {
   * {
@@ -585,18 +585,12 @@ body.dark-mode .notice { color: #7DD3FC; }
     color-adjust: exact !important;
   }
 
-  @page {
-    size: letter portrait;
-    margin: 0.18in;
-  }
+  @page { size: letter portrait; margin: 0.12in; }
 
   html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    background: #fff !important;
-    color: #1F2937 !important;
-    font-size: 8.7pt !important;
-    line-height: 1.18 !important;
+    margin: 0 !important; padding: 0 !important;
+    background: #fff !important; color: #1F2937 !important;
+    font-size: 8.5pt !important; line-height: 1.12 !important;
     -webkit-text-size-adjust: 100% !important;
   }
 
@@ -604,99 +598,42 @@ body.dark-mode .notice { color: #7DD3FC; }
     display: none !important;
   }
 
-  .page-wrapper, .form-page {
-    display: block !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: #fff !important;
-  }
-
   .form-page {
-    padding: 8px 11px !important;
+    padding: 7px 9px !important;
     break-after: page !important;
     page-break-after: always !important;
   }
 
-  .form-page:last-child {
-    break-after: avoid !important;
-    page-break-after: avoid !important;
-  }
+  .form-page:last-child { break-after: avoid !important; }
 
-  /* PAGE 1 */
-  #page1 .checklist-title { font-size: 12.5pt !important; margin-bottom: 6px !important; }
-  #page1 .section-title   { font-size: 8.7pt !important; margin: 4px 0 2px !important; }
-  #page1 .section-row,
-  #page1 .field-row label,
-  #page1 .footer-field label { font-size: 8.4pt !important; margin-bottom: 1px !important; line-height: 1.15 !important; }
+  /* Page 1 */
+  #page1 .checklist-title { font-size: 12pt !important; }
+  #page1 .section-title { font-size: 8.5pt !important; }
+  #page1 .section-row, #page1 .field-row label, #page1 .footer-field label { font-size: 8pt !important; }
+  #page1 input, #page1 textarea, #page1 .inline-input { font-size: 8pt !important; }
 
-  #page1 input[type="text"],
-  #page1 textarea,
-  #page1 .inline-input { font-size: 8.4pt !important; }
+  /* Page 2 – Tables (this was spilling) */
+  #page2 { break-before: page !important; }
+  table.mat-table { font-size: 6.8pt !important; table-layout: fixed !important; }
+  table.mat-table th, table.mat-table td { padding: 0.5px 1px !important; font-size: 6.8pt !important; }
+  table.mat-table td.row-label { font-size: 6.8pt !important; padding: 1px 2px !important; }
+  table.mat-table td input { font-size: 6.8pt !important; padding: 0 !important; }
 
-  #page1 .two-col { grid-template-columns: 1fr !important; gap: 5px !important; }
+  #fittings-table, #wireway-table, #polaris-table { font-size: 6.5pt !important; }
 
-  #page1 .ts-block { margin-bottom: 3px !important; break-inside: avoid !important; }
+  .footer-fields { margin-top: 4px !important; font-size: 7.5pt !important; }
+  .footer-row { gap: 3px !important; margin-bottom: 1px !important; }
 
-  #page1 .ts-header { padding: 3px 5px !important; font-size: 8.4pt !important; }
-  #page1 .ts-body   { padding: 3px 5px !important; }
-
-  /* PAGE 2 – Tables */
-  #page2 {
-    break-before: page !important;
-    page-break-before: always !important;
-  }
-
-  table.mat-table {
-    width: 100% !important;
-    table-layout: fixed !important;
-    font-size: 7.4pt !important;
-    line-height: 1.08 !important;
-  }
-
-  table.mat-table th,
-  table.mat-table td {
-    padding: 1px 1.5px !important;
-    font-size: 7.4pt !important;
-    border: 1px solid #333 !important;
-  }
-
-  table.mat-table td.row-label {
-    font-size: 7.4pt !important;
-    padding: 1.5px 3px !important;
-  }
-
-  table.mat-table td input[type="text"] {
-    font-size: 7.4pt !important;
-  }
-
-  #fittings-table, #wireway-table, #polaris-table {
-    font-size: 7.2pt !important;
-  }
-
-  /* Footer */
-  .footer-fields { margin-top: 5px !important; font-size: 8.2pt !important; }
-  .footer-row { gap: 4px !important; margin-bottom: 2px !important; }
-  .footer-field input { font-size: 8.2pt !important; }
-
-  .section, .grid-section, .ts-block, .footer-fields, hr.section-hr {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-    margin-bottom: 3px !important;
-  }
-
-  hr.section-hr { margin: 3px 0 !important; }
+  .section, .grid-section, .ts-block, table tr { break-inside: avoid !important; page-break-inside: avoid !important; }
 }
 
-/* ==========================================================
-   DEBUG PRINT STYLES – Test if Safari is seeing the rules
-   ========================================================== */
-@media print {
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    color-adjust: exact !important;
-  }
+/* Safari iOS specific */
+@media print and (-webkit-min-device-pixel-ratio: 2) {
+  @page { margin: 0.06in !important; }
+  .form-page { padding: 5px 7px !important; }
+  html, body { font-size: 7.5pt !important; line-height: 1.05 !important; }
+  table.mat-table { font-size: 6.3pt !important; }
+}
 
   @page { size: letter portrait; margin: 0.1in; }
 
