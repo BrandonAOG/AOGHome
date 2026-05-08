@@ -1179,105 +1179,34 @@ function clearForm() {
 
 // ===== PRINT =====
 function openPrintPreview() {
-  const wasDark = document.body.classList.contains('dark-mode');
-  if (wasDark) document.body.classList.remove('dark-mode');
+  const ua = navigator.userAgent;
+  const isIOS = /iPhone|iPad|iPod/i.test(ua);
+  const isAndroid = /Android/i.test(ua);
 
-  // Detect mobile (iOS Safari / Android Chrome)
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-  if (isMobile) {
-    // Mobile: build a standalone HTML blob and open it in a new tab.
-    // The new tab has NO browser UI injected (no URL bar footer, no date,
-    // no page numbers) so @page margins control everything cleanly.
-    _printViaBlobTab();
-  } else {
-    // Desktop: straightforward window.print()
-    const ab = document.querySelector('.action-bar');
-    const nt = document.querySelector('.notice');
-    if (ab) ab.style.display = 'none';
-    if (nt) nt.style.display = 'none';
-    window.print();
-    if (ab) ab.style.display = '';
-    if (nt) nt.style.display = '';
+  if (isIOS) {
+    // iOS Safari cannot suppress URL/date/page-number footer in window.print().
+    // Route PDF button to the iPhone image-save flow — cleaner result, no browser chrome.
+    saveForIPhone();
+    return;
+  }
+  if (isAndroid) {
+    saveForAndroid();
+    return;
   }
 
+  // Desktop only below
+  const wasDark = document.body.classList.contains('dark-mode');
+  if (wasDark) document.body.classList.remove('dark-mode');
+  const ab = document.querySelector('.action-bar');
+  const nt = document.querySelector('.notice');
+  if (ab) ab.style.display = 'none';
+  if (nt) nt.style.display = 'none';
+  window.print();
+  if (ab) ab.style.display = '';
+  if (nt) nt.style.display = '';
   if (wasDark) document.body.classList.add('dark-mode');
 }
 
-function _printViaBlobTab() {
-  // Collect all <style> tags from current document
-  const styles = Array.from(document.querySelectorAll('style'))
-    .map(s => `<style>${s.innerHTML}</style>`).join('\n');
-
-  // Collect all <link rel="stylesheet"> hrefs
-  const linkTags = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
-    .map(l => `<link rel="stylesheet" href="${l.href}">`)
-    .join('\n');
-
-  // Snapshot the rendered page HTML (includes dynamically built tables, TS blocks etc.)
-  const page1Html = document.getElementById('page1').outerHTML;
-  const page2Html = document.getElementById('page2').outerHTML;
-
-  const blobHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AOG Electrical Installation Forms</title>
-${linkTags}
-${styles}
-<style>
-/* Mobile print overrides — strip all browser chrome */
-@page {
-  size: 8.5in 11in;
-  margin: 0.25in 0.25in 0.3in 0.25in;
-}
-html, body {
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-  background: #fff !important;
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
-}
-.action-bar, .notice, .add-ts-btn, .ts-remove-btn, .theme-toggle-btn {
-  display: none !important;
-}
-/* Auto-trigger print then close */
-</style>
-</head>
-<body>
-<div class="page-wrapper">
-${page1Html}
-${page2Html}
-</div>
-<script>
-window.onload = function() {
-  // Small delay so fonts/images render before print dialog opens
-  setTimeout(function() {
-    window.print();
-    // Close tab after print dialog is dismissed (works on most browsers)
-    setTimeout(function() { window.close(); }, 1000);
-  }, 600);
-};
-<\/script>
-</body>
-</html>`;
-
-  const blob = new Blob([blobHtml], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const tab = window.open(url, '_blank');
-
-  // Revoke the object URL after a delay to free memory
-  setTimeout(() => URL.revokeObjectURL(url), 30000);
-
-  if (!tab) {
-    // Popup blocked — fall back to direct window.print()
-    alert('Please allow popups for this site, then tap PDF again.');
-  }
-}
-
-// ===== IPHONE =====
 function saveForIPhone() {
   setStatus('Rendering pages, please wait…');
   const pages = document.querySelectorAll('.form-page');
