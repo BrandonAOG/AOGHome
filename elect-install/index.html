@@ -1095,7 +1095,7 @@ function isMobileSafari() {
 }
 
 function openPrintPreview() {
-  setStatus('Opening print preview…');
+  setStatus('Preparing to print…');
   const wasDark = document.body.classList.contains('dark-mode');
   if (wasDark) document.body.classList.remove('dark-mode');
 
@@ -1104,34 +1104,38 @@ function openPrintPreview() {
   if (ab) ab.style.display = 'none';
   if (nt) nt.style.display = 'none';
 
-  // On mobile Safari, inject a temporary print scale so content fits without
-  // the user needing to manually set 94% scale in the print dialog.
-  // We zoom `html` (not a child div) so Safari scales the entire render
-  // canvas — this works correctly with natural-height pages and portrait lock.
+  // Inject mobile Safari print scale BEFORE any reflow
   let mobilePrintStyle = null;
   if (isMobileSafari()) {
     mobilePrintStyle = document.createElement('style');
     mobilePrintStyle.id = 'mobile-safari-print-scale';
-    mobilePrintStyle.textContent = `
-      @media print {
-        html {
-          zoom: 0.98;
-        }
-      }
-    `;
+    mobilePrintStyle.textContent = '@media print { html { zoom: 0.94; } }';
     document.head.appendChild(mobilePrintStyle);
   }
 
-  setTimeout(() => {
-    window.print();
-    setTimeout(() => {
-      if (ab) ab.style.display = '';
-      if (nt) nt.style.display = '';
-      if (wasDark) document.body.classList.add('dark-mode');
-      if (mobilePrintStyle) mobilePrintStyle.remove();
+  // Force a synchronous reflow so all style changes (display:none on action bar,
+  // injected zoom style, dark mode removal) are fully committed to layout
+  // before Safari snapshots the page for printing.
+  // Reading offsetHeight is the most reliable way to flush pending layout in WebKit.
+  void document.body.offsetHeight;
+
+  // Two rAFs: first ensures the reflow is painted, second gives WebKit
+  // an extra frame to fully settle — this eliminates the race condition
+  // that caused inconsistent page counts in Safari.
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
       setStatus('');
-    }, 500);
-  }, 300);
+      window.print();
+
+      // Restore everything after the print dialog closes
+      setTimeout(() => {
+        if (ab) ab.style.display = '';
+        if (nt) nt.style.display = '';
+        if (wasDark) document.body.classList.add('dark-mode');
+        if (mobilePrintStyle) mobilePrintStyle.remove();
+      }, 500);
+    });
+  });
 }
 
 // ===== IPHONE =====
