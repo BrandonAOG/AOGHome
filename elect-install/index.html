@@ -1009,6 +1009,7 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
 <p class="notice">📱 iPhone: press &amp; hold images to save  |  🤖 Android: images download to gallery</p>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 // ===== THEME =====
 const THEME_KEY = 'aog_forms_theme_preference';
@@ -1180,21 +1181,18 @@ function clearForm() {
 // ===== PRINT =====
 function openPrintPreview() {
   const ua = navigator.userAgent;
-  const isIOS = /iPhone|iPad|iPod/i.test(ua);
+  const isIOS     = /iPhone|iPad|iPod/i.test(ua);
   const isAndroid = /Android/i.test(ua);
 
-  if (isIOS) {
-    // iOS Safari cannot suppress URL/date/page-number footer in window.print().
-    // Route PDF button to the iPhone image-save flow — cleaner result, no browser chrome.
-    saveForIPhone();
-    return;
-  }
-  if (isAndroid) {
-    saveForAndroid();
+  if (isIOS || isAndroid) {
+    // Mobile Safari / Android Chrome inject URL + date headers into window.print().
+    // Instead, render both pages to canvas → embed in a real PDF blob →
+    // open via object URL. Safari presents its PDF viewer (Share → Print = clean AirPrint).
+    generateAndOpenPDF();
     return;
   }
 
-  // Desktop only below
+  // Desktop: standard CSS print — @page rules work perfectly here.
   const wasDark = document.body.classList.contains('dark-mode');
   if (wasDark) document.body.classList.remove('dark-mode');
   const ab = document.querySelector('.action-bar');
@@ -1205,6 +1203,89 @@ function openPrintPreview() {
   if (ab) ab.style.display = '';
   if (nt) nt.style.display = '';
   if (wasDark) document.body.classList.add('dark-mode');
+}
+
+async function generateAndOpenPDF() {
+  setStatus('Building PDF…');
+  const wasDark = document.body.classList.contains('dark-mode');
+  if (wasDark) document.body.classList.remove('dark-mode');
+
+  try {
+    const { jsPDF } = window.jspdf;
+
+    // Letter size in points: 8.5in × 11in @ 72pt/in = 612 × 792
+    const PDF_W = 612, PDF_H = 792;
+    // Margins: 0.25in sides/top, 0.3in bottom → in points
+    const ML = 18, MR = 18, MT = 18, MB = 21.6;
+    const CONTENT_W = PDF_W - ML - MR;
+    const CONTENT_H = PDF_H - MT - MB;
+
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
+
+    const pages = document.querySelectorAll('.form-page');
+
+    for (let i = 0; i < pages.length; i++) {
+      setStatus(`Rendering page ${i + 1} of ${pages.length}…`);
+
+      if (i > 0) pdf.addPage();
+
+      const canvas = await html2canvas(pages[i], {
+        scale: 2,                  // retina for sharp text
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        // Render at exactly the content width so tables don't wrap
+        width: pages[i].scrollWidth,
+        windowWidth: pages[i].scrollWidth,
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+
+      // Scale the canvas to fit within the content area, preserving aspect ratio
+      const canvasAspect = canvas.height / canvas.width;
+      let imgW = CONTENT_W;
+      let imgH = imgW * canvasAspect;
+
+      // If taller than content area, scale down to fit height
+      if (imgH > CONTENT_H) {
+        imgH = CONTENT_H;
+        imgW = imgH / canvasAspect;
+      }
+
+      // Center horizontally
+      const x = ML + (CONTENT_W - imgW) / 2;
+
+      pdf.addImage(imgData, 'JPEG', x, MT, imgW, imgH);
+    }
+
+    setStatus('Opening PDF…');
+    const pdfBlob = pdf.output('blob');
+    const pdfUrl  = URL.createObjectURL(pdfBlob);
+
+    // Open in same tab on iOS so Safari's PDF viewer activates (Share → Print)
+    // On Android open in new tab so Chrome's PDF viewer handles it
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isIOS) {
+      window.location.href = pdfUrl;
+    } else {
+      const a = document.createElement('a');
+      a.href = pdfUrl;
+      a.download = 'AlwaysOn_Generators_Electrical_Install.pdf';
+      a.click();
+    }
+
+    setTimeout(() => {
+      URL.revokeObjectURL(pdfUrl);
+      setStatus('');
+    }, 60000);
+
+  } catch (err) {
+    console.error('PDF generation error:', err);
+    setStatus('PDF failed — try the iPhone/Android buttons instead.');
+    setTimeout(() => setStatus(''), 4000);
+  } finally {
+    if (wasDark) document.body.classList.add('dark-mode');
+  }
 }
 
 function saveForIPhone() {
