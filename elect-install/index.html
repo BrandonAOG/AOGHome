@@ -533,7 +533,7 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
 
   html, body {
     margin: 0 !important; padding: 0 !important;
-    width: 1050px !important; max-width: 1050px !important;
+    width: 100% !important; max-width: 100% !important;
     background: #ffffff !important; color: #1F2937 !important;
     overflow: visible !important; -webkit-text-size-adjust: 100% !important;
   }
@@ -1187,37 +1187,43 @@ function openPrintPreview() {
   if (ab) ab.style.display = 'none';
   if (nt) nt.style.display = 'none';
 
-  // Mobile Safari prints at the viewport width (~390px), collapsing the
-  // two-column layout and spilling to 4 pages. Force body to 1050px wide
-  // before printing so the desktop layout is what gets sent to the printer.
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  const metaVP   = document.querySelector('meta[name="viewport"]');
-  const origVP   = metaVP ? metaVP.content : null;
-  const origBodyW = document.body.style.width;
+  const metaVP   = document.querySelector('meta[name=\'viewport\']');
+  const origVP       = metaVP ? metaVP.content : null;
+  const origBodyW    = document.body.style.width;
   const origBodyMaxW = document.body.style.maxWidth;
-  const origBodyOverflow = document.body.style.overflow;
+  const origBodyOvf  = document.body.style.overflow;
+
+  function restore() {
+    if (isMobile) {
+      if (metaVP && origVP !== null) metaVP.content = origVP;
+      document.body.style.width    = origBodyW;
+      document.body.style.maxWidth = origBodyMaxW;
+      document.body.style.overflow = origBodyOvf;
+    }
+    if (ab) ab.style.display = '';
+    if (nt) nt.style.display = '';
+    if (wasDark) document.body.classList.add('dark-mode');
+    window.removeEventListener('afterprint', restore);
+  }
+
+  // Restore after print dialog closes
+  window.addEventListener('afterprint', restore);
+  // Fallback: restore after 30s if afterprint never fires
+  setTimeout(restore, 30000);
 
   if (isMobile) {
-    // Override viewport so browser renders at 1050px for printing
+    // Force desktop layout width so Safari prints 2-column, not mobile single-column
     if (metaVP) metaVP.content = 'width=1050';
-    document.body.style.width = '1050px';
+    document.body.style.width    = '1050px';
     document.body.style.maxWidth = '1050px';
     document.body.style.overflow = 'visible';
+    // Safari needs a repaint cycle after viewport/DOM changes before
+    // window.print() will open the sheet — without this it fires silently
+    setTimeout(function() { window.print(); }, 500);
+  } else {
+    window.print();
   }
-
-  window.print();
-
-  // Restore everything after print dialog closes
-  if (isMobile) {
-    if (metaVP && origVP !== null) metaVP.content = origVP;
-    document.body.style.width = origBodyW;
-    document.body.style.maxWidth = origBodyMaxW;
-    document.body.style.overflow = origBodyOverflow;
-  }
-
-  if (ab) ab.style.display = '';
-  if (nt) nt.style.display = '';
-  if (wasDark) document.body.classList.add('dark-mode');
 }
 
 
