@@ -464,41 +464,45 @@ body.dark-mode .notice { color: #7DD3FC; }
   #page2 .grid-section { margin-bottom: 4px !important; overflow: visible !important; }
 
   #page2 table.mat-table { width: 100% !important; border-collapse: collapse !important; table-layout: fixed !important; }
-  #page2 table.mat-table th, #page2 table.mat-table td { border: 1px solid #333 !important; padding: 0 !important; }
+  #page2 table.mat-table th, #page2 table.mat-table td { border: 1px solid #333 !important; padding: 2px 2px !important; text-align: center !important; height: auto !important; min-height: 0 !important; line-height: 1.15 !important; overflow: hidden !important; word-break: break-word !important; vertical-align: middle !important; }
   #page2 table.mat-table td input[type="text"] {
     width: 100% !important; border: none !important; background: transparent !important;
     color: #1F2937 !important; padding: 0 !important; text-align: center !important; height: auto !important;
     -webkit-appearance: none !important; appearance: none !important; outline: none !important;
     -webkit-box-shadow: none !important; box-shadow: none !important;
   }
-  #page2 table.mat-table th { background: #4B5563 !important; color: #FFFFFF !important; font-weight: bold !important; padding: 2px 2px !important; }
+  #page2 table.mat-table th { background: #4B5563 !important; color: #FFFFFF !important; font-weight: bold !important; padding: 2px 2px !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   #page2 table.mat-table td { background: #ffffff !important; color: #1F2937 !important; }
-  #page2 table.mat-table td.row-label { background: #f0f0f0 !important; text-align: left !important; font-weight: bold !important; padding: 2px 3px !important; white-space: normal !important; word-break: break-word !important; }
+  #page2 table.mat-table td.row-label { background: #f0f0f0 !important; text-align: left !important; font-weight: bold !important; padding: 2px 3px !important; white-space: normal !important; word-break: break-word !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) { font-size: 10px !important; }
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) th { font-size: 10px !important; }
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td.row-label { font-size: 10px !important; width: 72px !important; min-width: 0 !important; }
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td input[type="text"] { font-size: 10px !important; }
+  /* Wire tables (CU / AL / THHN) */
+  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) { font-size: 16px !important; }
+  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) th { font-size: 16px !important; }
+  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td.row-label { font-size: 16px !important; width: 72px !important; min-width: 0 !important; }
+  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td input[type="text"] { font-size: 12px !important; }
 
+  /* Fittings */
   #page2 #fittings-table { font-size: 8px !important; }
-  #page2 #fittings-table th { font-size: 10px !important; }
-  #page2 #fittings-table td.row-label { font-size: 9px !important; font-weight: bold !important; width: 110px !important; min-width: 0 !important; text-align: left !important; padding: 2px 4px !important; white-space: normal !important; word-break: break-word !important; line-height: 1.2 !important; }
+  #page2 #fittings-table th { font-size: 17px !important; }
+  #page2 #fittings-table td.row-label { font-size: 16px !important; font-weight: bold !important; width: 150px !important; min-width: 0 !important; text-align: left !important; padding: 2px 4px !important; white-space: normal !important; word-break: break-word !important; line-height: 1.2 !important; }
   #page2 #fittings-table td input[type="text"] { font-size: 8px !important; }
 
+  /* Wireway */
   #page2 #wireway-table { font-size: 8px !important; }
-  #page2 #wireway-table th { font-size: 10px !important; }
-  #page2 #wireway-table td.row-label { font-size: 9px !important; font-weight: bold !important; width: 100px !important; min-width: 0 !important; text-align: left !important; padding: 2px 4px !important; white-space: normal !important; word-break: break-word !important; line-height: 1.2 !important; }
+  #page2 #wireway-table th { font-size: 15px !important; }
+  #page2 #wireway-table td.row-label { font-size: 15px !important; font-weight: bold !important; width: 130px !important; min-width: 0 !important; text-align: left !important; padding: 2px 4px !important; white-space: normal !important; word-break: break-word !important; line-height: 1.2 !important; }
   #page2 #wireway-table td input[type="text"] { font-size: 8px !important; }
 
+  /* Polaris */
   #page2 #polaris-table { font-size: 8px !important; }
-  #page2 #polaris-table th { font-size: 10px !important; }
-  #page2 #polaris-table td.row-label { font-size: 9px !important; font-weight: bold !important; width: 100px !important; min-width: 0 !important; text-align: left !important; padding: 2px 4px !important; white-space: normal !important; word-break: break-word !important; line-height: 1.2 !important; }
+  #page2 #polaris-table th { font-size: 15px !important; }
+  #page2 #polaris-table td.row-label { font-size: 15px !important; font-weight: bold !important; width: 130px !important; min-width: 0 !important; text-align: left !important; padding: 2px 4px !important; white-space: normal !important; word-break: break-word !important; line-height: 1.2 !important; }
   #page2 #polaris-table td input[type="text"] { font-size: 8px !important; }
 
-  #page2 .footer-fields { margin-top: 5px !important; padding-top: 6px !important; border-top: 1px solid #555 !important; font-size: 10px !important; }
+  #page2 .footer-fields { margin-top: 5px !important; padding-top: 6px !important; border-top: 1px solid #555 !important; font-size: 15px !important; }
   #page2 .footer-row { display: flex !important; flex-wrap: wrap !important; gap: 3px 14px !important; margin-bottom: 3px !important; align-items: flex-end !important; }
   #page2 .footer-field { display: inline-flex !important; align-items: flex-end !important; gap: 2px !important; white-space: nowrap !important; }
-  #page2 .footer-field label { font-size: 9px !important; font-weight: bold !important; color: #1F2937 !important; white-space: nowrap !important; }
+  #page2 .footer-field label { font-size: 15px !important; font-weight: bold !important; color: #1F2937 !important; white-space: nowrap !important; }
   #page2 .footer-field input[type="text"] { border: none !important; border-bottom: 1px solid #333 !important; background: transparent !important; color: #1F2937 !important; font-size: 9px !important; padding: 0 1px !important; height: 10px !important; width: 55px !important; min-width: 0 !important; -webkit-appearance: none !important; appearance: none !important; outline: none !important; -webkit-box-shadow: none !important; box-shadow: none !important; }
   #page2 .footer-field input.short { width: 40px !important; }
   #page2 .footer-field input.wide  { width: 85px !important; }
