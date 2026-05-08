@@ -228,17 +228,22 @@ select:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 2px rgba(2
       <div class="field">
         <label>Ambient Temperature (310.15(B)(1))</label>
         <select id="ambient">
-          <option value="30">30&deg;C / 86&deg;F (standard)</option>
-          <option value="35">35&deg;C / 95&deg;F</option>
-          <option value="40">40&deg;C / 104&deg;F</option>
-          <option value="45">45&deg;C / 113&deg;F</option>
-          <option value="50">50&deg;C / 122&deg;F</option>
-          <option value="55">55&deg;C / 131&deg;F</option>
-          <option value="60">60&deg;C / 140&deg;F</option>
-          <option value="65">65&deg;C / 149&deg;F</option>
-          <option value="70">70&deg;C / 158&deg;F</option>
-          <option value="75">75&deg;C / 167&deg;F</option>
-          <option value="80">80&deg;C / 176&deg;F</option>
+          <option value="10">10&deg;C or less / 50&deg;F or less</option>
+          <option value="15">11&ndash;15&deg;C / 51&ndash;59&deg;F</option>
+          <option value="20">16&ndash;20&deg;C / 60&ndash;68&deg;F</option>
+          <option value="25">21&ndash;25&deg;C / 69&ndash;77&deg;F</option>
+          <option value="30" selected>26&ndash;30&deg;C / 78&ndash;86&deg;F (standard)</option>
+          <option value="35">31&ndash;35&deg;C / 87&ndash;95&deg;F</option>
+          <option value="40">36&ndash;40&deg;C / 96&ndash;104&deg;F</option>
+          <option value="45">41&ndash;45&deg;C / 105&ndash;113&deg;F</option>
+          <option value="50">46&ndash;50&deg;C / 114&ndash;122&deg;F</option>
+          <option value="55">51&ndash;55&deg;C / 123&ndash;131&deg;F</option>
+          <option value="60">56&ndash;60&deg;C / 132&ndash;140&deg;F</option>
+          <option value="65">61&ndash;65&deg;C / 141&ndash;149&deg;F</option>
+          <option value="70">66&ndash;70&deg;C / 150&ndash;158&deg;F</option>
+          <option value="75">71&ndash;75&deg;C / 159&ndash;167&deg;F</option>
+          <option value="80">76&ndash;80&deg;C / 168&ndash;176&deg;F</option>
+          <option value="85">81&ndash;85&deg;C / 177&ndash;185&deg;F</option>
         </select>
       </div>
 
@@ -393,9 +398,10 @@ function ambientFactor(ambientC, tc){
     55: [0.41, 0.67, 0.76],
     60: [0.00, 0.58, 0.71],
     65: [0.00, 0.47, 0.65],
-    70: [0.00, 0.35, 0.58],
+    70: [0.00, 0.33, 0.58],
     75: [0.00, 0.00, 0.50],
-    80: [0.00, 0.00, 0.41]
+    80: [0.00, 0.00, 0.41],
+    85: [0.00, 0.00, 0.29]
   };
   var row=table[ambientC];
   if(!row) return 1.00;
@@ -455,7 +461,25 @@ function calc(){
   var combinedFactor = parseFloat((df.factor * af).toFixed(4));
   var matLabel     = mat==='copper'?'Copper':'Aluminum / CU-clad AL';
   var tcLabel      = tc===60?'60\u00b0C':tc===90?'90\u00b0C':'75\u00b0C';
-  var ambLabel     = ambC+'\u00b0C / '+(Math.round(ambC*9/5+32))+'\u00b0F';
+  var ambLabels={
+    10:'10\u00b0C or less / 50\u00b0F or less',
+    15:'11\u201315\u00b0C / 51\u201359\u00b0F',
+    20:'16\u201320\u00b0C / 60\u201368\u00b0F',
+    25:'21\u201325\u00b0C / 69\u201377\u00b0F',
+    30:'26\u201330\u00b0C / 78\u201386\u00b0F',
+    35:'31\u201335\u00b0C / 87\u201395\u00b0F',
+    40:'36\u201340\u00b0C / 96\u2013104\u00b0F',
+    45:'41\u201345\u00b0C / 105\u2013113\u00b0F',
+    50:'46\u201350\u00b0C / 114\u2013122\u00b0F',
+    55:'51\u201355\u00b0C / 123\u2013131\u00b0F',
+    60:'56\u201360\u00b0C / 132\u2013140\u00b0F',
+    65:'61\u201365\u00b0C / 141\u2013149\u00b0F',
+    70:'66\u201370\u00b0C / 150\u2013158\u00b0F',
+    75:'71\u201375\u00b0C / 159\u2013167\u00b0F',
+    80:'76\u201380\u00b0C / 168\u2013176\u00b0F',
+    85:'81\u201385\u00b0C / 177\u2013185\u00b0F'
+  };
+  var ambLabel = ambLabels[ambC]||ambC+'\u00b0C';
   var ampPerSet    = Math.ceil(breaker/sets);
 
   var dwellingRange    = isDwelling&&(breaker<100||breaker>400);
