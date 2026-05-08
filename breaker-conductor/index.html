@@ -226,6 +226,23 @@ select:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 2px rgba(2
       </div>
 
       <div class="field">
+        <label>Ambient Temperature (310.15(B)(1))</label>
+        <select id="ambient">
+          <option value="30">30&deg;C / 86&deg;F (standard)</option>
+          <option value="35">35&deg;C / 95&deg;F</option>
+          <option value="40">40&deg;C / 104&deg;F</option>
+          <option value="45">45&deg;C / 113&deg;F</option>
+          <option value="50">50&deg;C / 122&deg;F</option>
+          <option value="55">55&deg;C / 131&deg;F</option>
+          <option value="60">60&deg;C / 140&deg;F</option>
+          <option value="65">65&deg;C / 149&deg;F</option>
+          <option value="70">70&deg;C / 158&deg;F</option>
+          <option value="75">75&deg;C / 167&deg;F</option>
+          <option value="80">80&deg;C / 176&deg;F</option>
+        </select>
+      </div>
+
+      <div class="field">
         <label>Current-Carrying Conductors in Raceway</label>
         <select id="ccc">
           <option value="3">1&#x2013;3 (no derating)</option>
@@ -239,6 +256,12 @@ select:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 2px rgba(2
       </div>
 
     </div>
+
+    <!-- Neutral note — shown only when >3 CCC selected -->
+    <div id="neutralNote" style="display:none;margin-top:14px;padding:10px 14px;background:var(--note-bg);border-left:2px solid var(--blue-electric);border-radius:0 var(--radius) var(--radius) 0;font-family:var(--font-mono);font-size:0.68rem;line-height:1.65;color:var(--text-dim);">
+      <strong style="display:block;font-size:0.62rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);margin-bottom:3px;">&#9432; Neutral Conductors &mdash; 310.15(E)</strong>
+      A neutral that carries only the unbalanced load from other conductors in the same circuit is <em>not</em> counted as a current-carrying conductor for derating purposes. A neutral supplying predominantly non-linear loads (e.g. electric discharge lighting, harmonics-producing equipment) <em>is</em> counted per 310.15(E).
+    </div>
   </div>
 
   <!-- RESULT -->
@@ -247,7 +270,7 @@ select:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 2px rgba(2
   <!-- FOOTER -->
   <div class="footer">
     <div class="footer-text">Always On Generators &middot; Field Operations Portal</div>
-    <div class="footer-version">NEC <span>2023</span> &middot; 240.6 &middot; 240.4 &middot; 310.16 &middot; 310.12 &middot; 250.122</div>
+    <div class="footer-version">NEC <span>2023</span> &middot; 240.6 &middot; 240.4 &middot; 310.16 &middot; 310.12 &middot; 310.15(B)(1) &middot; 310.15(C)(1) &middot; 250.122</div>
   </div>
 
 </div>
@@ -350,6 +373,35 @@ var egcTable=[
 function getAmpacity(row,tc){
   return tc===60?row.a60:tc===90?row.a90:row.a75;
 }
+
+/* NEC Table 310.15(B)(1) — Ambient temperature correction factors
+   Based on 30°C reference. Returns factor for given ambient and conductor temp rating. */
+function ambientFactor(ambientC, tc){
+  if(ambientC===30) return 1.00; /* reference temp, no correction */
+  /* Table 310.15(B)(1) values */
+  var table={
+    /* ambient: [f60, f75, f90] */
+    10: [1.29, 1.20, 1.15],
+    15: [1.22, 1.15, 1.12],
+    20: [1.15, 1.11, 1.08],
+    25: [1.08, 1.05, 1.04],
+    30: [1.00, 1.00, 1.00],
+    35: [0.91, 0.94, 0.96],
+    40: [0.82, 0.88, 0.91],
+    45: [0.71, 0.82, 0.87],
+    50: [0.58, 0.75, 0.82],
+    55: [0.41, 0.67, 0.76],
+    60: [0.00, 0.58, 0.71],
+    65: [0.00, 0.47, 0.65],
+    70: [0.00, 0.35, 0.58],
+    75: [0.00, 0.00, 0.50],
+    80: [0.00, 0.00, 0.41]
+  };
+  var row=table[ambientC];
+  if(!row) return 1.00;
+  var idx=tc===60?0:tc===90?2:1;
+  return row[idx];
+}
 function derateFactor(v){
   v=parseInt(v);
   if(v<=3) return{factor:1.00,label:'No derating',    pct:'100%'};
@@ -364,10 +416,12 @@ function pickConductor75(tbl,min){
   for(var i=0;i<tbl.length;i++){if(tbl[i].amps>=min)return tbl[i];}
   return null;
 }
-/* Find smallest conductor: ampacity(tempCol) × factor >= required */
-function pickDerated(base,tc,factor,required){
+/* Find smallest conductor where:
+   ampacity(tempCol) × ambientFactor × cccFactor >= required
+   Final usable value capped at 75°C column per 110.14(C)          */
+function pickDerated(base,tc,combinedFactor,required){
   for(var i=0;i<base.length;i++){
-    if(Math.floor(getAmpacity(base[i],tc)*factor)>=required)return base[i];
+    if(Math.floor(getAmpacity(base[i],tc)*combinedFactor)>=required)return base[i];
   }
   return null;
 }
@@ -387,16 +441,22 @@ function calc(){
   var app     = document.getElementById('application').value;
   var sets    = parseInt(document.getElementById('sets').value);
   var tc      = parseInt(document.getElementById('tempCol').value);
+  var ambC    = parseInt(document.getElementById('ambient').value);
   var cccVal  = document.getElementById('ccc').value;
 
-  var isDwelling = app==='dwelling';
-  var baseTable  = mat==='copper'?cuTable:alTable;
-  var table75    = mat==='copper'?cu75:al75;
-  var df         = derateFactor(cccVal);
-  var isDerating = df.factor<1.0;
-  var matLabel   = mat==='copper'?'Copper':'Aluminum / CU-clad AL';
-  var tcLabel    = tc===60?'60\u00b0C':tc===90?'90\u00b0C':'75\u00b0C';
-  var ampPerSet  = Math.ceil(breaker/sets);
+  var isDwelling   = app==='dwelling';
+  var baseTable    = mat==='copper'?cuTable:alTable;
+  var table75      = mat==='copper'?cu75:al75;
+  var df           = derateFactor(cccVal);
+  var af           = ambientFactor(ambC, tc);
+  var isDerating   = df.factor<1.0;
+  var isTempCorr   = ambC!==30;
+  /* Both factors stack — multiply together */
+  var combinedFactor = parseFloat((df.factor * af).toFixed(4));
+  var matLabel     = mat==='copper'?'Copper':'Aluminum / CU-clad AL';
+  var tcLabel      = tc===60?'60\u00b0C':tc===90?'90\u00b0C':'75\u00b0C';
+  var ambLabel     = ambC+'\u00b0C / '+(Math.round(ambC*9/5+32))+'\u00b0F';
+  var ampPerSet    = Math.ceil(breaker/sets);
 
   var dwellingRange    = isDwelling&&(breaker<100||breaker>400);
   var dwellingParallel = isDwelling&&sets>1;
@@ -416,23 +476,29 @@ function calc(){
                 'Conductor selected from Table 310.16, 75\u00b0C column. '+
                 'Applies only when conductors supply the entire load of a 1 or 2 family dwelling.';
     } else {
-      /* General — selected temp column + derating, usable ampacity capped at 75°C */
-      var row2=pickDerated(baseTable,tc,df.factor,ampPerSet);
+      /* General — temp column × ambient correction × CCC derating, capped at 75°C */
+      var row2=pickDerated(baseTable,tc,combinedFactor,ampPerSet);
       if(!row2){exceeded=true;}else{conductor=row2.size;}
       var tcNote=tc===90
-        ?' Starting from 90\u00b0C column, derated by '+df.pct+', usable ampacity capped at 75\u00b0C per 110.14(C).'
+        ?' Starting from 90\u00b0C column, capped at 75\u00b0C per 110.14(C).'
         :tc===60?' Using 60\u00b0C column ampacity as starting point.':'';
+      var ambNote=isTempCorr
+        ?' Ambient correction factor: '+af.toFixed(2)+' ('+ambLabel+').':'';
       if(breaker<=800){
         method   ='240.4(B) \u2014 Next standard size \u2264 800A';
         tableUsed='Table 310.16, '+tcLabel+' col.';
         ruleNote ='Breaker '+breaker+'A'+(sets>1?' \u00f7 '+sets+' sets = '+ampPerSet+'A/set':'')+
-                  (isDerating?' \u2192 '+tcLabel+' ampacity \u00d7 '+df.pct+' derate \u2265 '+ampPerSet+'A/set required.':'.')+
-                  tcNote+' Next standard size up permitted per 240.4(B).';
+                  ((isDerating||isTempCorr)
+                    ?' \u2192 combined factor '+combinedFactor.toFixed(2)+
+                      (isDerating?' (CCC: '+df.pct+')':'')+
+                      (isTempCorr?' (ambient: '+af.toFixed(2)+')':'')+
+                      ' \u2265 '+ampPerSet+'A/set required.':'.')+
+                  tcNote+ambNote+' Next standard size up permitted per 240.4(B).';
       }else{
         method   ='240.4(C) \u2014 Exact ampacity required > 800A';
         tableUsed='Table 310.16, '+tcLabel+' col.';
         ruleNote ='Over 800A \u2014 derated ampacity must equal or exceed '+ampPerSet+'A/set.'+
-                  tcNote+' Next standard size NOT allowed per 240.4(C).';
+                  tcNote+ambNote+' Next standard size NOT allowed per 240.4(C).';
       }
     }
   }
@@ -443,8 +509,8 @@ function calc(){
     for(var j=0;j<baseTable.length;j++){
       if(baseTable[j].size===conductor){
         baseAmpacity=getAmpacity(baseTable[j],tc);
-        var raw=Math.floor(baseAmpacity*df.factor);
-        deratedAmpacity=Math.min(raw,baseTable[j].a75); /* cap at 75°C */
+        var raw=Math.floor(baseAmpacity*combinedFactor);
+        deratedAmpacity=Math.min(raw,baseTable[j].a75); /* cap at 75°C per 110.14(C) */
         break;
       }
     }
@@ -459,13 +525,24 @@ function calc(){
   /* ════ BUILD HTML ════ */
   var h='';
 
+  /* invalid ambient check — factor of 0 means ambient >= conductor rating */
+  var invalidAmbient = af<=0;
+
   /* derating / temp banner */
-  h+='<div class="derate-flag '+(isDerating?'active':'inactive')+'">' +
-     '<span class="derate-dot"></span><span>'+
-     (isDerating
-       ?'Derating active \u2014 '+df.pct+' factor ('+df.label+') \u00d7 '+tcLabel+' column per Table 310.15(C)(1)'
-       :'No derating \u2014 1\u20133 current-carrying conductors. '+tcLabel+' column.')+
-     '</span></div>';
+  var anyDerating = isDerating||isTempCorr;
+  h+='<div class="derate-flag '+(anyDerating?'active':'inactive')+'">' +
+     '<span class="derate-dot"></span><span>';
+  if(invalidAmbient){
+    h+='INVALID \u2014 ambient temperature meets or exceeds conductor temp rating. Select a higher-rated conductor.';
+  }else if(anyDerating){
+    h+='Derating active \u2014 combined factor: '+combinedFactor.toFixed(2);
+    if(isDerating) h+=' | CCC: '+df.pct+' ('+df.label+')';
+    if(isTempCorr) h+=' | Ambient: '+af.toFixed(2)+' ('+ambLabel+', '+tcLabel+' rated)';
+    h+=' | Table 310.15(B)(1)+(C)(1)';
+  }else{
+    h+='No derating \u2014 1\u20133 CCC, 30\u00b0C standard ambient. '+tcLabel+' column.';
+  }
+  h+='</span></div>';
 
   h+='<div class="metrics">';
 
@@ -503,17 +580,26 @@ function calc(){
 
   /* OCPD card */
   h+='<div class="metric">'+
-     '<div class="metric-label">OCPD Rating</div>'+
-     '<div class="metric-value">'+breaker+'A</div>'+
-     '<div class="metric-sub">'+(sets>1?ampPerSet+'A min per set ('+sets+' sets)':'Single conductor set')+'</div></div>';
+    '<div class="metric-label">OCPD Rating</div>'+
+    '<div class="metric-value">'+breaker+'A</div>'+
+    '<div class="metric-sub">'+(sets>1?ampPerSet+'A min per set ('+sets+' sets)':'Single conductor set')+'</div>'+
+    (isTempCorr&&!isDwelling?'<div class="metric-sub">Ambient factor: '+af.toFixed(2)+' ('+ambLabel+')</div>':'')+
+    (isDerating&&!isDwelling?'<div class="metric-sub">CCC factor: '+df.pct+'</div>':'')+
+    ((isTempCorr||isDerating)&&!isDwelling?'<div class="metric-sub">Combined: \u00d7'+combinedFactor.toFixed(2)+'</div>':'')+
+    '</div>';
 
   /* derated ampacity card */
   if(!isDwelling&&!exceeded&&deratedAmpacity!==null){
     var ok=deratedAmpacity>=ampPerSet;
+    var mathStr=baseAmpacity+'A ('+tcLabel+')';
+    if(isTempCorr) mathStr+=' \u00d7 '+af.toFixed(2)+' (ambient)';
+    if(isDerating) mathStr+=' \u00d7 '+df.pct+' (CCC)';
+    mathStr+=' = '+Math.floor(baseAmpacity*combinedFactor)+'A';
+    if(tc===90||isTempCorr) mathStr+=', capped at 75\u00b0C';
     h+='<div class="metric">'+
        '<div class="metric-label">Derated Ampacity</div>'+
        '<div class="metric-value">'+deratedAmpacity+'A</div>'+
-       '<div class="metric-sub">'+baseAmpacity+'A ('+tcLabel+') \u00d7 '+df.pct+' = '+Math.floor(baseAmpacity*df.factor)+'A'+(tc===90?', capped at 75\u00b0C':'')+' </div>'+
+       '<div class="metric-sub">'+mathStr+'</div>'+
        '<span class="tag '+(ok?'tag-ok':'tag-err')+'">'+(ok?'Adequate':'Insufficient')+'</span></div>';
   }
 
@@ -530,11 +616,18 @@ function calc(){
   if(!dwellingRange&&!dwellingParallel&&!parallelViol){
     h+='<div class="note-block"><strong>Code basis \u2014 conductor sizing</strong>'+ruleNote+'</div>';
   }
-  if(isDerating){
-    h+='<div class="note-block warn"><strong>Derating \u2014 Table 310.15(C)(1)</strong>'+
-       'More than 3 current-carrying conductors in a raceway. '+df.pct+' adjustment factor applied to the '+tcLabel+' column ampacity.'+
-       (tc===90?' Per 110.14(C), the final usable ampacity is capped at the 75\u00b0C column value.':'')+
-       '</div>';
+  if(invalidAmbient){
+    h+='<div class="note-block err"><strong>Invalid \u2014 Ambient Temperature Exceeds Conductor Rating</strong>'+
+       'The selected ambient temperature ('+ambLabel+') meets or exceeds the '+tcLabel+' conductor temperature rating. '+
+       'The correction factor is 0. Select a conductor with a higher temperature rating (e.g. 90\u00b0C) or reduce the ambient temperature classification.</div>';
+  } else if(anyDerating){
+    h+='<div class="note-block warn"><strong>Derating \u2014 Table 310.15(B)(1) + (C)(1)</strong>'+
+       'Both correction factors are applied and multiplied together per 310.15: ';
+    if(isTempCorr) h+='Ambient correction: '+af.toFixed(2)+' ('+ambLabel+' at '+tcLabel+' rating). ';
+    if(isDerating) h+='CCC adjustment: '+df.pct+' ('+df.label+'). ';
+    h+='Combined factor: '+combinedFactor.toFixed(2)+'.';
+    if(tc===90) h+=' Per 110.14(C), the final usable ampacity is capped at the 75\u00b0C column value.';
+    h+='</div>';
   }
   if(sets>1){
     if(dwellingParallel){
@@ -584,10 +677,17 @@ function toggleTheme(){
 }
 
 /* ════ INIT ════ */
-['breaker','material','application','sets','tempCol','ccc'].forEach(function(id){
+function updateNeutralNote(){
+  var ccc=parseInt(document.getElementById('ccc').value);
+  document.getElementById('neutralNote').style.display=ccc>3?'block':'none';
+}
+
+['breaker','material','application','sets','tempCol','ambient','ccc'].forEach(function(id){
   document.getElementById(id).addEventListener('change',calc);
 });
+document.getElementById('ccc').addEventListener('change',updateNeutralNote);
 calc();
+updateNeutralNote();
 </script>
 
 <script>
