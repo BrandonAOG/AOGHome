@@ -1346,6 +1346,81 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     background: white !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MOBILE SAFARI PRINT — tighten everything so footer stays on page 1
+   ══════════════════════════════════════════════════════════════════════════ */
+@media print and (max-width: 767px) {
+
+  html, body {
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .page {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    padding: 0.01in !important;
+  }
+
+  .content {
+    overflow: visible !important;
+    padding: 1px 3px !important;
+  }
+
+  /* Shrink section spacing */
+  .section { margin-bottom: 1px !important; padding: 0 !important; }
+  .section-header { padding: 1px 4px !important; font-size: 0.42rem !important; }
+  .section-body { padding: 1px 3px !important; }
+  .field-row { margin-bottom: 0px !important; gap: 1px !important; }
+
+  /* Shrink inputs */
+  input[type="text"], input[type="date"], input[type="number"], textarea, select {
+    min-height: 12px !important;
+    font-size: 0.5rem !important;
+    padding: 0 1px !important;
+  }
+
+  /* Shrink textareas */
+  textarea { min-height: 20px !important; font-size: 0.45rem !important; }
+  #batnotes, #gennotes { height: 30px !important; min-height: 30px !important; }
+  #oilnotes, #gasnotes, #tsnotes { height: 18px !important; min-height: 18px !important; }
+
+  /* Shrink labels */
+  label { font-size: 0.38rem !important; letter-spacing: 0.1px !important; }
+
+  /* Shrink check pills */
+  .check-item { min-height: 16px !important; padding: 0px 3px 0px 2px !important; }
+  .check-item span { font-size: 0.38rem !important; }
+  .check-item input[type="checkbox"],
+  .check-item input[type="radio"] { width: 8px !important; height: 8px !important; min-height: 8px !important; min-width: 8px !important; }
+
+  /* Shrink Y/N toggles */
+  .yn-group { height: 14px !important; }
+  .yn-group .yn-label { min-height: 14px !important; font-size: 0.38rem !important; padding: 0 3px !important; }
+
+  /* Shrink two-column gap */
+  .two-column { gap: 1px !important; margin-bottom: 1px !important; }
+
+  /* Shrink test grid */
+  .test-grid { gap: 1px 2px !important; margin-top: 1px !important; }
+  .test-item label { font-size: 0.38rem !important; }
+
+  /* Header compact */
+  .header { padding: 2px 6px !important; min-height: auto !important; }
+  .logo-img { width: 30px !important; height: 30px !important; }
+  .company-name { font-size: 0.65rem !important; letter-spacing: 0.5px !important; }
+  .doc-title { font-size: 0.65rem !important; letter-spacing: 1px !important; }
+
+  /* Footer always visible */
+  .footer {
+    margin-top: 2px !important;
+    padding: 2px 8px !important;
+    padding-bottom: 2px !important;
+  }
+}
 </style>
 </head>
 
@@ -1939,11 +2014,22 @@ function setStatus(msg) {
 function capturePageToCanvas() {
   return new Promise((resolve, reject) => {
     const page = document.getElementById('page');
+
+    // Save original styles
     const prevWidth = page.style.width;
     const prevMaxWidth = page.style.maxWidth;
-    page.style.width = '850px';
-    page.style.maxWidth = '850px';
-    // Two rAF to ensure repaint at 850px before capture
+    const prevBodyPad = document.body.style.padding;
+
+    // 816px = 8.5in @ 96dpi — exact letter width
+    // Scale 2 means canvas = 1632px wide, matching 8.5in @ 192dpi
+    const CAPTURE_WIDTH = 816;
+    const PAPER_RATIO = 11 / 8.5; // letter height/width ratio
+
+    page.style.width = CAPTURE_WIDTH + 'px';
+    page.style.maxWidth = CAPTURE_WIDTH + 'px';
+    document.body.style.padding = '0';
+
+    // Two rAF: first triggers layout, second confirms paint
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         html2canvas(page, {
@@ -1952,19 +2038,41 @@ function capturePageToCanvas() {
           allowTaint: true,
           backgroundColor: '#ffffff',
           logging: false,
-          width: 850,
+          width: CAPTURE_WIDTH,
           height: page.scrollHeight,
-          windowWidth: 850,
+          windowWidth: CAPTURE_WIDTH,
           scrollX: 0,
           scrollY: 0,
           ignoreElements: el => el.classList.contains('toolbar')
-        }).then(canvas => {
+        }).then(srcCanvas => {
+          // Restore styles immediately
           page.style.width = prevWidth;
           page.style.maxWidth = prevMaxWidth;
-          resolve(canvas);
+          document.body.style.padding = prevBodyPad;
+
+          // Scale canvas to exact 8.5x11 letter proportions
+          const outW = srcCanvas.width;               // 1632px at scale:2
+          const outH = Math.round(outW * PAPER_RATIO); // 11/8.5 ratio
+
+          const letterCanvas = document.createElement('canvas');
+          letterCanvas.width = outW;
+          letterCanvas.height = outH;
+          const ctx = letterCanvas.getContext('2d');
+
+          // White background
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, outW, outH);
+
+          // Draw captured content at top — center horizontally if narrower
+          const srcH = srcCanvas.height;
+          const drawH = Math.min(srcH, outH); // don't exceed paper
+          ctx.drawImage(srcCanvas, 0, 0, srcCanvas.width, drawH, 0, 0, outW, drawH);
+
+          resolve(letterCanvas);
         }).catch(err => {
           page.style.width = prevWidth;
           page.style.maxWidth = prevMaxWidth;
+          document.body.style.padding = prevBodyPad;
           reject(err);
         });
       });
