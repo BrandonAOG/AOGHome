@@ -7,6 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title>Always On Generators - Maintenance Report</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <link rel="manifest" href="../manifest.json">
 <meta name="theme-color" content="#FBBF24">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1379,7 +1380,10 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
   <div class="toolbar">
     <button class="btn" onclick="window.location.href='../'">🏠</button>
     <button class="btn" onclick="printForm()" title="Print or save as PDF">📄 PDF</button>
+    <button class="btn" onclick="saveForIPhone()" title="Save as image for iPhone">📱 iPhone</button>
+    <button class="btn" onclick="saveForAndroid()" title="Save as image for Android">🤖 Android</button>
     <button class="btn" onclick="clearForm()" title="Clear all fields">🗑 CLEAR</button>
+    <span id="save-status" style="font-family:var(--font-display);font-size:0.45rem;color:var(--text-muted);letter-spacing:1px;align-self:center;"></span>
   </div>
 
   <div class="content">
@@ -1923,6 +1927,89 @@ function printForm() {
       if (wasDark) document.body.classList.add('dark-mode');
     }, 1000);
   }, 250);
+}
+
+function setStatus(msg) {
+  const el = document.getElementById('save-status');
+  if (el) el.textContent = msg;
+}
+
+function saveForIPhone() {
+  setStatus('Rendering, please wait…');
+  const page = document.getElementById('page');
+  const wasDark = document.body.classList.contains('dark-mode');
+  if (wasDark) document.body.classList.remove('dark-mode');
+  const toolbar = document.querySelector('.toolbar');
+  if (toolbar) toolbar.style.display = 'none';
+  // Force page to its natural width so zoomed viewports don't produce a narrow capture
+  const prevWidth = page.style.width;
+  const prevMaxWidth = page.style.maxWidth;
+  page.style.width = '850px';
+  page.style.maxWidth = '850px';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px;overflow-y:auto;';
+  const closeBtn = document.createElement('button');
+  closeBtn.style.cssText = 'position:sticky;top:16px;background:#DC2626;color:#fff;border:none;border-radius:4px;padding:8px 16px;font-size:12px;cursor:pointer;font-weight:bold;z-index:10000;margin-bottom:12px;';
+  closeBtn.textContent = '✕ Close';
+  const lbl = document.createElement('div');
+  lbl.style.cssText = 'color:#ccc;font-size:11px;margin-bottom:8px;text-align:center;';
+  lbl.textContent = 'Long-press the image below to save to Photos';
+  const img = document.createElement('img');
+  overlay.appendChild(closeBtn);
+  overlay.appendChild(lbl);
+  overlay.appendChild(img);
+  document.body.appendChild(overlay);
+  html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false, width: page.scrollWidth, windowWidth: 850 }).then(canvas => {
+    img.style.cssText = 'max-width:100%;border:2px solid #555;border-radius:4px;display:block;margin:0 auto;';
+    img.alt = 'Maintenance Report';
+    setStatus('Image ready — long-press to save to Photos.');
+    page.style.width = prevWidth;
+    page.style.maxWidth = prevMaxWidth;
+    if (toolbar) toolbar.style.display = '';
+    if (wasDark) document.body.classList.add('dark-mode');
+  }).catch(() => {
+    setStatus('Render failed. Try PDF instead.');
+    page.style.width = prevWidth;
+    page.style.maxWidth = prevMaxWidth;
+    if (toolbar) toolbar.style.display = '';
+    if (wasDark) document.body.classList.add('dark-mode');
+  });
+  closeBtn.onclick = () => {
+    setStatus('');
+    if (toolbar) toolbar.style.display = '';
+    if (wasDark) document.body.classList.add('dark-mode');
+    document.body.removeChild(overlay);
+  };
+}
+
+function saveForAndroid() {
+  setStatus('Rendering, please wait…');
+  const page = document.getElementById('page');
+  const wasDark = document.body.classList.contains('dark-mode');
+  if (wasDark) document.body.classList.remove('dark-mode');
+  const toolbar = document.querySelector('.toolbar');
+  if (toolbar) toolbar.style.display = 'none';
+  const prevWidth = page.style.width;
+  const prevMaxWidth = page.style.maxWidth;
+  page.style.width = '850px';
+  page.style.maxWidth = '850px';
+  html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false, width: page.scrollWidth, windowWidth: 850 }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = 'AOG_Maintenance_Report.jpg';
+    link.href = canvas.toDataURL('image/jpeg', 0.88);
+    link.click();
+    setStatus('Image sent to Downloads folder.');
+    setTimeout(() => setStatus(''), 4000);
+    page.style.width = prevWidth;
+    page.style.maxWidth = prevMaxWidth;
+    if (toolbar) toolbar.style.display = '';
+    if (wasDark) document.body.classList.add('dark-mode');
+  }).catch(() => {
+    setStatus('Render failed. Try PDF instead.');
+    page.style.width = prevWidth;
+    page.style.maxWidth = prevMaxWidth;
+    if (toolbar) toolbar.style.display = '';
+    if (wasDark) document.body.classList.add('dark-mode');
+  });
 }
 
 // Auto-save every 30 seconds
