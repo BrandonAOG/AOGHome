@@ -246,10 +246,7 @@ table.mat-table th, table.mat-table td {
 @media (max-width: 480px) { table.mat-table th, table.mat-table td { padding: 2px 2px; min-height: 18px; } }
 
 table.mat-table th {
-  background: #4B5563;
-  color: #FFFFFF;
-  font-weight: bold;
-  font-size: 9px;
+  background: #4B5563; color: #FFFFFF; font-weight: bold; font-size: 9px;
 }
 @media (max-width: 480px) { table.mat-table th { font-size: 8px; } }
 
@@ -382,10 +379,19 @@ body.dark-mode .ts-body { background: transparent; }
 body.dark-mode .notice { color: #7DD3FC; }
 
 /* ==========================================================
-   PRINT STYLES — SAFARI MOBILE COMPATIBLE
-   Key fix: use explicit page dimensions + avoid page-break
-   on elements with dynamic height. Instead, wrap each page
-   in a fixed-height block that forces Safari to paginate.
+   PRINT STYLES — MOBILE SAFARI COMPATIBLE
+   
+   ROOT CAUSE: Mobile Safari lays out the page at the screen
+   viewport width (e.g. 390px on iPhone 14), not at paper width.
+   At 390px, the two-column layout collapses to single-column,
+   roughly doubling the page height → 4 printed pages instead of 2.
+   
+   THE FIX: At print time, force the layout to render as if the
+   viewport is 816px wide (8.5in at 96dpi) using a combination of:
+   1. Set html/body width to exact paper width in px
+   2. Force two-column layouts to stay two-column
+   3. Scale down font sizes & spacing to match desktop print output
+   4. Use explicit heights + break-after:page on each .form-page
    ========================================================== */
 @media print {
 
@@ -395,31 +401,38 @@ body.dark-mode .notice { color: #7DD3FC; }
     color-adjust: exact !important;
   }
 
-  /* Letter paper: 8.5in × 11in at 96dpi = 816 × 1056px
-     With 0.2in margins each side = 0.4in total = 38.4px per axis
-     Usable: 777.6 × 979.2px — we set page height to fill exactly one sheet */
   @page {
     size: 8.5in 11in;
-    margin: 0.2in;
+    margin: 0.25in;
   }
 
   html {
-    width: 100% !important;
+    /* Force Safari to treat the print canvas as 8in wide (paper minus margins) */
+    width: 8in !important;
+    min-width: 8in !important;
+    max-width: 8in !important;
     height: auto !important;
     overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    /* Prevent Safari from auto-scaling text */
+    -webkit-text-size-adjust: none !important;
+    text-size-adjust: none !important;
   }
 
   body {
+    width: 8in !important;
+    min-width: 8in !important;
+    max-width: 8in !important;
     margin: 0 !important;
     padding: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
     background: #fff !important;
     color: #1F2937 !important;
     overflow: visible !important;
     display: block !important;
-    /* Remove min-height so body doesn't stretch */
     min-height: 0 !important;
+    -webkit-text-size-adjust: none !important;
+    text-size-adjust: none !important;
   }
 
   .action-bar, .theme-toggle-btn, .notice { display: none !important; }
@@ -432,44 +445,36 @@ body.dark-mode .notice { color: #7DD3FC; }
   }
 
   /*
-   * THE SAFARI FIX:
-   * Safari Mobile (WebKit) only reliably breaks pages when
-   * the element has an explicit height that fills the page.
-   * We use height: 100vh which at print time = one page height.
-   * overflow: hidden prevents content from bleeding across.
-   * Combined with break-after: page this forces a clean break.
-   *
-   * Each .form-page becomes exactly one printed sheet.
+   * Each .form-page = exactly one printed sheet.
+   * height: 10.5in fills the page (11in - 0.5in total margins).
+   * overflow: hidden clips anything that would bleed to next sheet.
+   * break-after: page forces Safari to start a new sheet after each div.
    */
   .form-page {
     display: block !important;
     width: 100% !important;
-    /* Explicit height = printable area height (11in - 0.4in margins) */
-    height: 10.6in !important;
-    max-height: 10.6in !important;
+    height: 10.5in !important;
+    max-height: 10.5in !important;
     overflow: hidden !important;
     background: #fff !important;
     color: #1F2937 !important;
     box-shadow: none !important;
     border: none !important;
-    padding: 0 !important;
     margin: 0 !important;
     box-sizing: border-box !important;
     position: relative !important;
     float: none !important;
     clear: both !important;
-    /* All the break variants for cross-browser Safari support */
-    page-break-inside: avoid !important;
     page-break-after: always !important;
     -webkit-column-break-after: always !important;
     break-after: page !important;
+    page-break-inside: avoid !important;
   }
 
   .form-page:last-child {
     page-break-after: auto !important;
     break-after: auto !important;
     -webkit-column-break-after: auto !important;
-    /* Let last page use its natural height */
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
@@ -477,47 +482,60 @@ body.dark-mode .notice { color: #7DD3FC; }
 
   /* ── PAGE 1 ── */
   #page1 {
-    /* Page 1 inner padding */
-    padding: 10px 12px 8px !important;
+    padding: 10px 14px 6px !important;
   }
 
-  #page1 * { color: #1F2937 !important; background: transparent !important; box-shadow: none !important; border-color: #555 !important; }
-  #page1 .checklist-title { border-top-color: #1F2937 !important; font-size: 15px !important; }
-  #page1 .section-title { font-size: 10px !important; }
-  #page1 .section-row { font-size: 9px !important; margin-bottom: 2px !important; }
+  #page1 * {
+    color: #1F2937 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-color: #555 !important;
+  }
+
+  /* Force two-column grid — critical for mobile Safari */
+  #page1 .top-fields {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2px 8px !important;
+    margin-bottom: 6px !important;
+  }
+  #page1 .two-col {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 4px 10px !important;
+  }
+
+  #page1 .checklist-title { border-top-color: #1F2937 !important; font-size: 14px !important; margin-bottom: 6px !important; padding-top: 4px !important; }
+  #page1 .logo-area { margin-bottom: 6px !important; }
+  #page1 .page1-header { margin-bottom: 6px !important; }
+  #page1 .section-title { font-size: 10px !important; margin-bottom: 3px !important; }
+  #page1 .section { margin-bottom: 5px !important; }
+  #page1 .section-row { font-size: 9px !important; margin-bottom: 2px !important; line-height: 1.3 !important; }
   #page1 .field-row label { font-size: 9px !important; }
   #page1 .field-row input[type="text"] { font-size: 9px !important; }
   #page1 .inline-input { font-size: 9px !important; border-bottom-color: #1F2937 !important; }
-  #page1 .top-fields { margin-bottom: 6px !important; gap: 2px 8px !important; grid-template-columns: 1fr 1fr !important; }
-  #page1 .two-col { grid-template-columns: 1fr 1fr !important; gap: 6px 12px !important; }
-  #page1 .section { margin-bottom: 6px !important; }
-  #page1 hr.section-hr { margin: 4px 0 !important; border-top-color: #ccc !important; }
-  #page1 .ts-header { background: #f0f0f0 !important; padding: 3px 6px !important; }
+  #page1 hr.section-hr { margin: 3px 0 !important; border-top-color: #ccc !important; }
+  #page1 .ts-header { background: #f0f0f0 !important; padding: 2px 5px !important; }
   #page1 .ts-header-left { font-size: 9px !important; color: #1F2937 !important; }
-  #page1 .ts-body { padding: 3px 6px !important; }
+  #page1 .ts-body { padding: 2px 5px 2px !important; }
   #page1 .ts-toggle { color: #555 !important; }
-  #page1 .ts-block { border-color: #bbb !important; margin-bottom: 4px !important; }
+  #page1 .ts-block { border-color: #bbb !important; margin-bottom: 3px !important; }
   #page1 .add-ts-btn { display: none !important; }
   #page1 .ts-remove-btn { display: none !important; }
-  #page1 .textarea-field { border-color: #aaa !important; min-height: 30px !important; font-size: 9px !important; }
+  #page1 .textarea-field { border-color: #aaa !important; min-height: 28px !important; font-size: 9px !important; }
   #page1 .yn-checkbox-wrap { border-color: #bbb !important; font-size: 8px !important; padding: 1px 3px !important; }
   #page1 .yn-checkbox-wrap.yn-yes.checked { background: #059669 !important; color: #fff !important; }
   #page1 .yn-checkbox-wrap.yn-no.checked  { background: #DC2626 !important; color: #fff !important; }
   #page1 .yn-checkbox-wrap.yn-opt.checked { background: #D97706 !important; color: #fff !important; }
   #page1 input[type="checkbox"] { width: 10px !important; height: 10px !important; }
 
-  /* Logo area compact */
-  #page1 .logo-area { margin-bottom: 6px !important; }
-  #page1 .page1-header { margin-bottom: 6px !important; }
-  #page1 .checklist-title { margin-bottom: 8px !important; padding-top: 6px !important; }
-
   /* ── PAGE 2 ── */
   #page2 {
-    padding: 10px 12px 8px !important;
+    padding: 8px 14px 6px !important;
   }
 
   #page2 .grid-section {
-    margin-bottom: 4px !important;
+    margin-bottom: 3px !important;
     overflow: visible !important;
   }
 
@@ -552,7 +570,7 @@ body.dark-mode .notice { color: #7DD3FC; }
     background: #4B5563 !important;
     color: #FFFFFF !important;
     font-weight: bold !important;
-    padding: 2px 2px !important;
+    padding: 1px 2px !important;
   }
 
   #page2 table.mat-table td {
@@ -564,70 +582,75 @@ body.dark-mode .notice { color: #7DD3FC; }
     background: #f0f0f0 !important;
     text-align: left !important;
     font-weight: bold !important;
-    padding: 2px 3px !important;
+    padding: 1px 3px !important;
     white-space: normal !important;
     word-break: break-word !important;
   }
 
+  /* Standard wire tables */
   #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) {
-    font-size: 10px !important;
+    font-size: 9px !important;
   }
   #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) th {
-    font-size: 10px !important;
+    font-size: 9px !important;
   }
   #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td.row-label {
-    font-size: 10px !important;
-    width: 72px !important;
+    font-size: 9px !important;
+    width: 64px !important;
     min-width: 0 !important;
   }
   #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td input[type="text"] {
-    font-size: 10px !important;
+    font-size: 9px !important;
   }
 
-  #page2 #fittings-table { font-size: 8px !important; }
-  #page2 #fittings-table th { font-size: 10px !important; }
+  /* Fittings table */
+  #page2 #fittings-table { font-size: 7px !important; }
+  #page2 #fittings-table th { font-size: 8px !important; }
   #page2 #fittings-table td.row-label {
-    font-size: 9px !important; font-weight: bold !important;
-    width: 110px !important; min-width: 0 !important;
-    text-align: left !important; padding: 2px 4px !important;
-    white-space: normal !important; word-break: break-word !important; line-height: 1.2 !important;
+    font-size: 7px !important; font-weight: bold !important;
+    width: 90px !important; min-width: 0 !important;
+    text-align: left !important; padding: 1px 3px !important;
+    white-space: normal !important; word-break: break-word !important; line-height: 1.1 !important;
   }
-  #page2 #fittings-table td input[type="text"] { font-size: 8px !important; }
+  #page2 #fittings-table td input[type="text"] { font-size: 7px !important; }
 
-  #page2 #wireway-table { font-size: 8px !important; }
-  #page2 #wireway-table th { font-size: 10px !important; }
+  /* Wireway table */
+  #page2 #wireway-table { font-size: 7px !important; }
+  #page2 #wireway-table th { font-size: 8px !important; }
   #page2 #wireway-table td.row-label {
-    font-size: 9px !important; font-weight: bold !important;
-    width: 100px !important; min-width: 0 !important;
-    text-align: left !important; padding: 2px 4px !important;
-    white-space: normal !important; word-break: break-word !important; line-height: 1.2 !important;
+    font-size: 7px !important; font-weight: bold !important;
+    width: 80px !important; min-width: 0 !important;
+    text-align: left !important; padding: 1px 3px !important;
+    white-space: normal !important; word-break: break-word !important; line-height: 1.1 !important;
   }
-  #page2 #wireway-table td input[type="text"] { font-size: 8px !important; }
+  #page2 #wireway-table td input[type="text"] { font-size: 7px !important; }
 
-  #page2 #polaris-table { font-size: 8px !important; }
-  #page2 #polaris-table th { font-size: 10px !important; }
+  /* Polaris table */
+  #page2 #polaris-table { font-size: 7px !important; }
+  #page2 #polaris-table th { font-size: 8px !important; }
   #page2 #polaris-table td.row-label {
-    font-size: 9px !important; font-weight: bold !important;
-    width: 100px !important; min-width: 0 !important;
-    text-align: left !important; padding: 2px 4px !important;
-    white-space: normal !important; word-break: break-word !important; line-height: 1.2 !important;
+    font-size: 7px !important; font-weight: bold !important;
+    width: 80px !important; min-width: 0 !important;
+    text-align: left !important; padding: 1px 3px !important;
+    white-space: normal !important; word-break: break-word !important; line-height: 1.1 !important;
   }
-  #page2 #polaris-table td input[type="text"] { font-size: 8px !important; }
+  #page2 #polaris-table td input[type="text"] { font-size: 7px !important; }
 
+  /* Footer */
   #page2 .footer-fields {
-    margin-top: 5px !important; padding-top: 6px !important;
-    border-top: 1px solid #555 !important; font-size: 10px !important;
+    margin-top: 4px !important; padding-top: 4px !important;
+    border-top: 1px solid #555 !important; font-size: 9px !important;
   }
   #page2 .footer-row {
     display: flex !important; flex-wrap: wrap !important;
-    gap: 3px 14px !important; margin-bottom: 3px !important; align-items: flex-end !important;
+    gap: 2px 10px !important; margin-bottom: 2px !important; align-items: flex-end !important;
   }
   #page2 .footer-field {
     display: inline-flex !important; align-items: flex-end !important;
     gap: 2px !important; white-space: nowrap !important;
   }
   #page2 .footer-field label {
-    font-size: 9px !important; font-weight: bold !important;
+    font-size: 8px !important; font-weight: bold !important;
     color: #1F2937 !important; white-space: nowrap !important;
   }
   #page2 .footer-field input[type="text"] {
@@ -635,10 +658,10 @@ body.dark-mode .notice { color: #7DD3FC; }
     border-bottom: 1px solid #333 !important;
     background: transparent !important;
     color: #1F2937 !important;
-    font-size: 9px !important;
+    font-size: 8px !important;
     padding: 0 1px !important;
     height: 10px !important;
-    width: 55px !important;
+    width: 50px !important;
     min-width: 0 !important;
     -webkit-appearance: none !important;
     appearance: none !important;
@@ -646,8 +669,8 @@ body.dark-mode .notice { color: #7DD3FC; }
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
   }
-  #page2 .footer-field input.short { width: 40px !important; }
-  #page2 .footer-field input.wide  { width: 85px !important; }
+  #page2 .footer-field input.short { width: 35px !important; }
+  #page2 .footer-field input.wide  { width: 75px !important; }
 }
 
 </style>
@@ -682,9 +705,7 @@ body.dark-mode .notice { color: #7DD3FC; }
 
 <div class="page-wrapper">
 
-  <!-- ═══════════════════════════════════════════════
-       PAGE 1
-       ═══════════════════════════════════════════════ -->
+  <!-- PAGE 1 -->
   <div class="form-page" id="page1">
     <div class="page1-header">
       <div class="logo-area">
@@ -774,12 +795,9 @@ body.dark-mode .notice { color: #7DD3FC; }
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════
-       PAGE 2
-       ═══════════════════════════════════════════════ -->
+  <!-- PAGE 2 -->
   <div class="form-page" id="page2">
 
-    <!-- CU Wire -->
     <div class="grid-section">
       <table class="mat-table">
         <thead><tr>
@@ -800,7 +818,6 @@ body.dark-mode .notice { color: #7DD3FC; }
       </table>
     </div>
 
-    <!-- AL Wire -->
     <div class="grid-section">
       <table class="mat-table">
         <thead><tr>
@@ -820,7 +837,6 @@ body.dark-mode .notice { color: #7DD3FC; }
       </table>
     </div>
 
-    <!-- THHN -->
     <div class="grid-section">
       <table class="mat-table">
         <thead><tr>
@@ -838,7 +854,6 @@ body.dark-mode .notice { color: #7DD3FC; }
       </table>
     </div>
 
-    <!-- FITTINGS -->
     <div class="grid-section">
       <table class="mat-table" id="fittings-table">
         <thead><tr>
@@ -850,7 +865,6 @@ body.dark-mode .notice { color: #7DD3FC; }
       </table>
     </div>
 
-    <!-- WIREWAY -->
     <div class="grid-section">
       <table class="mat-table" id="wireway-table">
         <thead><tr>
@@ -861,7 +875,6 @@ body.dark-mode .notice { color: #7DD3FC; }
       </table>
     </div>
 
-    <!-- POLARIS TAPS -->
     <div class="grid-section">
       <table class="mat-table" id="polaris-table">
         <thead><tr>
@@ -872,7 +885,6 @@ body.dark-mode .notice { color: #7DD3FC; }
       </table>
     </div>
 
-    <!-- FOOTER -->
     <div class="footer-fields">
       <div class="footer-row">
         <div class="footer-field"><label>12"x12"x4" JBOX PVC (Qty):</label><input type="text" class="short" inputmode="numeric"></div>
