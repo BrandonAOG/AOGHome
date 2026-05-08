@@ -72,12 +72,15 @@ body {
   color: var(--text);
   width: 100%;
   margin: 0 auto;
-  min-height: 100vh;
+  /* FIX: was env(safe-area-inset-bottom, 24px) — causes reflow gap on Safari refresh */
   padding: 0;
-  padding-bottom: env(safe-area-inset-bottom, 24px);
+  padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
   -webkit-text-size-adjust: 100%;
   overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
+  /* FIX: -webkit-fill-available prevents vh recalc gaps on Safari refresh */
+  min-height: -webkit-fill-available;
+  min-height: 100vh;
 }
 
 body.dark-mode {
@@ -103,10 +106,15 @@ body.dark-mode {
   position: relative;
   display: flex;
   flex-direction: column;
+  /* FIX: match body — use -webkit-fill-available to stay stable */
+  min-height: -webkit-fill-available;
   min-height: 100vh;
   padding: 0;
   box-sizing: border-box;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  /* FIX: prevent flex stretch adding phantom bottom gap */
+  flex-shrink: 0;
+  overflow-x: hidden;
 }
 
 body.dark-mode .page {
@@ -814,26 +822,33 @@ body.dark-mode .check-item:has(input:checked) span {
 .test-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 8px;
+  gap: 3px 6px;
+  margin-top: 2px;
   width: 100%;
 }
 
 .test-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
+  flex-wrap: nowrap;
 }
 
 .test-item label {
-  min-width: 75px;
+  font-size: 0.5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
   white-space: nowrap;
+  flex-shrink: 1;
+  font-family: var(--font-display);
+  min-width: 0;
 }
 
 @media (max-width: 768px) {
   .test-grid {
     grid-template-columns: 1fr;
-    gap: 10px;
   }
 }
 
@@ -931,6 +946,8 @@ body.dark-mode .yn-group .yn-n:checked + .yn-label-n {
 .footer {
   background: var(--panel);
   padding: 4px 10px;
+  /* FIX: absorb safe-area here, not on body — prevents body reflow gap */
+  padding-bottom: max(4px, env(safe-area-inset-bottom, 4px));
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -988,7 +1005,9 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
   box-shadow: 0 0 10px rgba(0, 255, 200, 0.5);
 }
 
-/* ── PRINT STYLES ── */
+/* ══════════════════════════════════════════════════════════════════════════
+   PRINT STYLES — rebuilt for mobile Safari stability
+   ══════════════════════════════════════════════════════════════════════════ */
 @media print {
   @page {
     size: 8.5in 11in;
@@ -996,17 +1015,38 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     padding: 0;
   }
 
-  input::placeholder, textarea::placeholder { 
-    color: transparent !important; 
-    opacity: 0 !important;
-  }
-
-  html, body {
-    width: 8.5in;
-    height: 10.96in;
+  /* FIX: lock html to exact page height — Safari print engine needs this explicit */
+  html {
+    width: 8.5in !important;
+    height: 10.96in !important;
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* FIX: min-height: 0 cancels -webkit-fill-available for print context */
+  body {
+    width: 8.5in !important;
+    height: 10.96in !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* FIX: kill all animations — Safari re-ticks @keyframes during print layout */
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  input::placeholder, textarea::placeholder { 
+    color: transparent !important; 
+    opacity: 0 !important;
   }
 
   .page {
@@ -1021,14 +1061,18 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     padding: 0.02in !important;
     border: 1.5px solid #D97706 !important;
     box-shadow: none !important;
+    /* FIX: reset Safari-specific values to explicit units for print */
+    min-height: 0 !important;
+    flex-shrink: 0 !important;
   }
 
   .header {
-    flex-shrink: 0;
+    flex-shrink: 0 !important;
     margin-bottom: 2px !important;
     padding: 3px 8px !important;
     border-bottom: 0.5px solid #D97706 !important;
     background: white !important;
+    min-height: auto !important;
   }
 
   .logo-img {
@@ -1064,21 +1108,25 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     display: none !important; 
   }
 
+  /* FIX: flex-grow:0 prevents Safari from distributing phantom whitespace as bottom gap */
   .content {
-    flex: 1 !important;
+    flex: 0 1 auto !important;
     overflow: hidden !important;
     padding: 2px 4px !important;
     margin: 0 !important;
   }
-.footer {
+
+  .footer {
     margin-top: auto !important;
     flex-shrink: 0 !important;
     padding: 4px 20px !important;
+    /* FIX: hard value — env() resolves unpredictably in Safari print context */
+    padding-bottom: 4px !important;
     border-top: 1px solid #D97706 !important;
     background: white !important;
     line-height: 1.4 !important;
     overflow: visible !important;
-    min-height: 22px !important;
+    min-height: auto !important;
     box-sizing: border-box !important;
   }
 
@@ -1089,6 +1137,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     white-space: nowrap !important;
     font-size: 0.50rem !important;
   }
+
   .two-column {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
@@ -1120,11 +1169,13 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     min-height: auto !important;
   }
 
+  /* FIX: pulse dot was animating during print layout — now a static 2px square */
   .section-header::before { 
     width: 2px !important;
-    height: 0 !important;
+    height: 2px !important;
     background: #D97706 !important;
     box-shadow: none !important;
+    animation: none !important;
   }
 
   .section-body { 
@@ -1190,7 +1241,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
   .test-grid {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
-    gap: 2px !important;
+    gap: 2px 4px !important;
     margin-top: 2px !important;
   }
 
@@ -1201,8 +1252,8 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
   }
 
   .test-item label {
-    min-width: 50px !important;
     font-size: 0.45rem !important;
+    white-space: nowrap !important;
   }
 
   .yn-group { 
@@ -1227,12 +1278,12 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     border-right: none !important;
   }
 
- .yn-group .yn-y:checked + .yn-label-y {
+  .yn-group .yn-y:checked + .yn-label-y {
     background: #f0f0f0 !important;
     color: #059669 !important;
   }
 
-  /* Nuclear light mode override - beats dark-mode class at any scale */
+  /* Nuclear light-mode override — beats dark-mode class at print time */
   body.dark-mode,
   body.dark-mode .page,
   body.dark-mode .header,
@@ -1350,16 +1401,16 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
           <label for="address">Address</label>
           <input type="text" id="address" class="long" placeholder="Address">
           <label for="tech">Tech</label>
-          <input type="text" id="tech" class="med" placeholder="Tech"style="width: 165px;">
+          <input type="text" id="tech" class="med" placeholder="Tech" style="width: 165px;">
         </div>
 
         <div class="field-row">
           <label for="model">Model</label>
-          <input type="text" id="model" class="med" placeholder="Model"style="width: 100px;">
+          <input type="text" id="model" class="med" placeholder="Model" style="width: 100px;">
           <label for="serial">Serial #</label>
-          <input type="text" id="serial" class="med" placeholder="Serial number"style="width: 100px;">
+          <input type="text" id="serial" class="med" placeholder="Serial number" style="width: 100px;">
           <label for="hours">Hrs</label>
-          <input type="number" id="hours" class="med" placeholder="500"style="width: 60px;">
+          <input type="number" id="hours" class="med" placeholder="500" style="width: 60px;">
         </div>
       </div>
     </div>
@@ -1411,7 +1462,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
 
           <div class="field-row">
             <label for="brand">Brand</label>
-            <input type="text" id="dare" class="med" placeholder="Brand"style="width: 135px;">
+            <input type="text" id="dare" class="med" placeholder="Brand" style="width: 135px;">
             <label for="batt-date">Date</label>
             <input type="text" id="batt-date" class="med" placeholder="xx/xx">
           </div>
@@ -1428,7 +1479,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
           <div class="field-row">
             <label for="batnotes"></label>
           </div>
-         <textarea id="batnotes" placeholder="Battery notes..." style="height:60px;"></textarea>
+          <textarea id="batnotes" placeholder="Battery notes..." style="height:60px;"></textarea>
 
         </div>
       </div>
@@ -1508,7 +1559,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
           <div class="field-row">
             <label for="gennotes"></label>
           </div>
-         <textarea id="gennotes" placeholder="Generator notes..." style="height:60px;"></textarea>
+          <textarea id="gennotes" placeholder="Generator notes..." style="height:60px;"></textarea>
 
         </div>
       </div>
@@ -1533,7 +1584,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
             <label class="yn-label yn-label-n" for="of_n">N</label>
           </div>
           <label for="filterpart">Part #</label>
-          <input type="text" id="filterpart" class="med" placeholder="Part #"style="width: 135px;">
+          <input type="text" id="filterpart" class="med" placeholder="Part #" style="width: 135px;">
         </div>
 
         <div class="field-row">
@@ -1569,7 +1620,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
           </div>
 
           <div class="test-item">
-            <label>transfered back to line power?</label>
+            <label>Transfered back to line power?</label>
             <div class="yn-group">
               <input type="radio" name="sim3" id="sim3_y" value="Y" class="yn-y">
               <label class="yn-label yn-label-y" for="sim3_y">Y</label>
@@ -1625,12 +1676,13 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
             <label class="check-item"><input type="checkbox" name="gasvisual" value="straps"><span>Straps</span></label>
             <label class="check-item"><input type="checkbox" name="gasvisual" value="flex"><span>Flex connection</span></label>
             <label class="check-item"><input type="checkbox" name="gasvisual" value="reg"><span>Regulator</span></label>
-<label>VENTED?</label>
-          <div class="yn-group">
-            <input type="radio" name="vented" id="vl_y" value="Y" class="yn-y">
-            <label class="yn-label yn-label-y" for="vl_y">Y</label>
-            <input type="radio" name="vented" id="vl_n" value="N" class="yn-n">
-            <label class="yn-label yn-label-n" for="vl_n">N</label>
+            <label>VENTED?</label>
+            <div class="yn-group">
+              <input type="radio" name="vented" id="vl_y" value="Y" class="yn-y">
+              <label class="yn-label yn-label-y" for="vl_y">Y</label>
+              <input type="radio" name="vented" id="vl_n" value="N" class="yn-n">
+              <label class="yn-label yn-label-n" for="vl_n">N</label>
+            </div>
           </div>
         </div>
 
@@ -1640,114 +1692,103 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
         <textarea id="gasnotes" placeholder="Gas system notes..." style="min-height: 50px;"></textarea>
       </div>
     </div>
-</div>
 
-<!-- Transfer Switch Section -->
-<div class="section">
-  <div class="section-header">Transfer Switch</div>
-  <div class="section-body">
-    
-    <!-- Field Row #1 -->
-    <div class="field-row">
-      <div class="field-group">
-        <label for="tsserial1">TS Serial # 1</label>
-        <input type="text" id="tsserial1" placeholder="SN">
-      </div>
-      <div class="field-group">
-        <label>Condition</label>
-        <div class="radio-group">
-          <label><input type="radio" name="tscond1"> Good</label>
-          <label><input type="radio" name="tscond1"> Avg</label>
-          <label><input type="radio" name="tscond1"> Poor</label>
-          <label><input type="radio" name="tscond1"> Needs Replaced</label>
+    <!-- Transfer Switch Section -->
+    <div class="section">
+      <div class="section-header">Transfer Switch</div>
+      <div class="section-body">
+        
+        <div class="field-row">
+          <label for="tsserial1">TS Serial # 1</label>
+          <input type="text" id="tsserial1" placeholder="SN" style="width:100px;">
+          <label>Condition</label>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="tscond1" value="good"><span>Good</span></label>
+            <label class="check-item"><input type="radio" name="tscond1" value="avg"><span>Avg</span></label>
+            <label class="check-item"><input type="radio" name="tscond1" value="poor"><span>Poor</span></label>
+            <label class="check-item"><input type="radio" name="tscond1" value="replace"><span>Needs Replaced</span></label>
+          </div>
         </div>
-      </div>
+
+        <div class="field-row">
+          <label for="tsserial2">TS Serial # 2</label>
+          <input type="text" id="tsserial2" placeholder="SN" style="width:100px;">
+          <label>Condition</label>
+          <div class="check-group">
+            <label class="check-item"><input type="radio" name="tscond2" value="good"><span>Good</span></label>
+            <label class="check-item"><input type="radio" name="tscond2" value="avg"><span>Avg</span></label>
+            <label class="check-item"><input type="radio" name="tscond2" value="poor"><span>Poor</span></label>
+            <label class="check-item"><input type="radio" name="tscond2" value="replace"><span>Needs Replaced</span></label>
+          </div>
+        </div>  
+        
+        <div class="field-row">
+          <label for="tsnotes"></label>
+          <textarea id="tsnotes" placeholder="Transfer Switch notes..."></textarea>
+        </div> 
+        
+      </div>  
     </div>  
-    
-    <!-- Field Row #2 -->
-    <div class="field-row">
-      <div class="field-group">
-        <label for="tsserial2">TS Serial # 2</label>
-        <input type="text" id="tsserial2" placeholder="SN">
-      </div>
-      <div class="field-group">
-        <label>Condition</label>
-        <div class="radio-group">
-          <label><input type="radio" name="tscond2"> Good</label>
-          <label><input type="radio" name="tscond2"> Avg</label>
-          <label><input type="radio" name="tscond2"> Poor</label>
-          <label><input type="radio" name="tscond2"> Needs Replaced</label>
-        </div>
-      </div>
-    </div>  
-    
-    <!-- Notes Textarea -->
-    <div class="field-row">
-      <label for="tsnotes"></label>
-      <textarea id="tsnotes" placeholder="Transfer Switch notes..."></textarea>
-    </div> 
-    
-  </div>  
-</div>  
 
-<!-- Other Section (SEPARATE) -->
-<div class="section">
-  <div class="section-header">Other</div>
-  <div class="section-body">
-    
-    <div class="field-row">
-      <div class="field-group">
-        <label>Surge Protection</label>
-        <div class="yn-group">
-          <input type="radio" id="surge_y" name="surge" value="Y">
-          <label class="yn-label yn-label-y" for="surge_y">Y</label>
-          <input type="radio" id="surge_n" name="surge" value="N">
-          <label class="yn-label yn-label-n" for="surge_n">N</label>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>Green Light</label>
-        <div class="yn-group">
-          <input type="radio" id="green_y" name="green" value="Y">
-          <label class="yn-label yn-label-y" for="green_y">Y</label>
-          <input type="radio" id="green_n" name="green" value="N">
-          <label class="yn-label yn-label-n" for="green_n">N</label>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>Monitor Ready</label>
-        <div class="yn-group">
-          <input type="radio" id="monitor_y" name="monitor" value="Y">
-          <label class="yn-label yn-label-y" for="monitor_y">Y</label>
-          <input type="radio" id="monitor_n" name="monitor" value="N">
-          <label class="yn-label yn-label-n" for="monitor_n">N</label>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>Connected</label>
-        <div class="yn-group">
-          <input type="radio" id="conn_y" name="connected" value="Y">
-          <label class="yn-label yn-label-y" for="conn_y">Y</label>
-          <input type="radio" id="conn_n" name="connected" value="N">
-          <label class="yn-label yn-label-n" for="conn_n">N</label>
-        </div>
-      </div>
-      <div class="field-group" style="display:flex; align-items:center; gap:8px;">
-  <label for="signal">Signal %</label>
- <input type="number" id="signal" placeholder="100" style="width:40px;">
+    <!-- Other Section -->
+    <div class="section">
+      <div class="section-header">Other</div>
+      <div class="section-body">
+        
+        <div class="field-row">
+          <div class="field-group">
+            <label>Surge Protection</label>
+            <div class="yn-group">
+              <input type="radio" id="surge_y" name="surge" value="Y">
+              <label class="yn-label yn-label-y" for="surge_y">Y</label>
+              <input type="radio" id="surge_n" name="surge" value="N">
+              <label class="yn-label yn-label-n" for="surge_n">N</label>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Green Light</label>
+            <div class="yn-group">
+              <input type="radio" id="green_y" name="green" value="Y">
+              <label class="yn-label yn-label-y" for="green_y">Y</label>
+              <input type="radio" id="green_n" name="green" value="N">
+              <label class="yn-label yn-label-n" for="green_n">N</label>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Monitor Ready</label>
+            <div class="yn-group">
+              <input type="radio" id="monitor_y" name="monitor" value="Y">
+              <label class="yn-label yn-label-y" for="monitor_y">Y</label>
+              <input type="radio" id="monitor_n" name="monitor" value="N">
+              <label class="yn-label yn-label-n" for="monitor_n">N</label>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Connected</label>
+            <div class="yn-group">
+              <input type="radio" id="conn_y" name="connected" value="Y">
+              <label class="yn-label yn-label-y" for="conn_y">Y</label>
+              <input type="radio" id="conn_n" name="connected" value="N">
+              <label class="yn-label yn-label-n" for="conn_n">N</label>
+            </div>
+          </div>
+          <div class="field-group" style="display:flex; align-items:center; gap:8px;">
+            <label for="signal">Signal %</label>
+            <input type="number" id="signal" placeholder="100" style="width:40px;">
+          </div>
+        </div>  
+        
+      </div>  
+    </div>
 
-</div>
+  </div><!-- /.content -->
 
-    </div>  
-    
-  </div>  
-</div>
-<div class="footer">
-  <span class="footer-text">GENERATOR MAINTENANCE REPORT · CONFIDENTIAL</span>
-  <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);">Ver 1.0B</span>
-</div>
-<div class="page-corner-bl"></div>
-<div class="page-corner-br"></div>
+  <div class="footer">
+    <span class="footer-text">GENERATOR MAINTENANCE REPORT · CONFIDENTIAL</span>
+    <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);">Ver 1.0B</span>
+  </div>
+  <div class="page-corner-bl"></div>
+  <div class="page-corner-br"></div>
 </div>
 
 <script>
@@ -1830,7 +1871,6 @@ function restoreDraft() {
   } catch (e) {}
 }
 
-// CLEAR FORM - Only define once
 function clearForm() {
   if (!confirm('Clear all fields?')) return;
   document.querySelectorAll('input[type="text"], input[type="date"], input[type="number"], textarea').forEach(el => {
@@ -1842,18 +1882,15 @@ function clearForm() {
   localStorage.removeItem(DRAFT_KEY);
 }
 
-// PRINT FORM - Safari fix
 function printForm() {
   const wasDark = document.body.classList.contains('dark-mode');
 
-  // Detect Safari (excluding Chrome which also has "Safari" in UA)
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
   if (isSafari) {
     alert('⚠️ SAFARI PRINT TIP\n\nFor best results, in the print preview:\n\n1. Tap the scale slider/zoom\n2. Scale DOWN by 1\n3. Then scale BACK UP by 1\n\nThis ensures the page fits properly on one page.');
   }
 
-  // Inject forced light styles
   const printStyle = document.createElement('style');
   printStyle.id = 'force-print-light';
   printStyle.textContent = `
@@ -1863,11 +1900,15 @@ function printForm() {
       box-shadow: none !important;
       text-shadow: none !important;
       border-color: rgba(217,119,6,0.4) !important;
+      animation: none !important;
+      transition: none !important;
     }
-    .page { border: 1.5px solid #D97706 !important; }
+    .page { border: 1.5px solid #D97706 !important; min-height: 0 !important; }
     .company-name, .doc-title { color: #D97706 !important; }
     .section-header { background: #f5f5f5 !important; color: #D97706 !important; }
     .footer-text { color: #9CA3AF !important; }
+    .footer { padding-bottom: 4px !important; }
+    .content { flex-grow: 0 !important; }
     .toolbar, button, .theme-toggle-btn { display: none !important; }
   `;
   document.head.appendChild(printStyle);
@@ -1882,7 +1923,9 @@ function printForm() {
       if (wasDark) document.body.classList.add('dark-mode');
     }, 1000);
   }, 250);
-}// Auto-save every 30 seconds
+}
+
+// Auto-save every 30 seconds
 setInterval(saveDraft, 30000);
 document.addEventListener('change', saveDraft);
 document.addEventListener('input', saveDraft);
@@ -1899,7 +1942,8 @@ document.addEventListener('DOMContentLoaded', function() {
   setupThemeToggle();
   restoreDraft();
 });
-// ── SERVICE WORKER ──
+
+// Service Worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
     navigator.serviceWorker.register('./sw.js').then(function (reg) {
@@ -1916,7 +1960,6 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
-
 </script>
 <script>
   if ('serviceWorker' in navigator) {
