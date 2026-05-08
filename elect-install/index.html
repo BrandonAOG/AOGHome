@@ -363,7 +363,7 @@ body.dark-mode .notice { color: #7DD3FC; }
     color-adjust: exact !important;
   }
 
-  @page { size: 8.5in 11in; margin: 0.2in; }
+  @page { size: 8.5in 11in; margin: 0.0in; }
 
   html, body {
     margin: 0 !important; padding: 0 !important;
@@ -516,7 +516,7 @@ body.dark-mode .notice { color: #7DD3FC; }
   <div style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:100%;">
     <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
       <button class="btn" onclick="window.location.href='../'">🏠</button>
-      <button onclick="window.print()">📄 PDF</button>
+      <button class="btn" id="btn-pdf" onclick="openPrintPreview()">📄 PDF</button>
       <button class="btn" onclick="clearForm()">🗑 CLEAR</button>
       <button class="btn" id="btn-iphone" onclick="saveForIPhone()">📱 iPhone</button>
       <button class="btn" id="btn-android" onclick="saveForAndroid()">🤖 Android</button>
