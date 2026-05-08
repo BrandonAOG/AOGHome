@@ -363,9 +363,8 @@ body.dark-mode .notice { color: #7DD3FC; }
     color-adjust: exact !important;
   }
 
-  @page { size: 8.5in 11in; margin: 0.0in; }
+  @page { size: 8.5in 11in; margin: 0.2in; }
 
- 
   html, body {
     margin: 0 !important; padding: 0 !important;
     width: 100% !important; max-width: 100% !important;
@@ -507,11 +506,6 @@ body.dark-mode .notice { color: #7DD3FC; }
   .form-page * { box-shadow: none !important; }
   .logo-text { color: #D97706 !important; }
   .logo-text span { color: #1F2937 !important; }
-  /* Mobile Print Settings */
-@media print and (max-width: 767px) {
-  @page {
-    size: 5.5in 8.5in; /* Example: Half-letter size for mobile */
-    margin: 0.2in;
 }
 </style>
 </head>
@@ -521,7 +515,7 @@ body.dark-mode .notice { color: #7DD3FC; }
 <div class="action-bar">
   <div style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:100%;">
     <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
-      <button class="btn" onclick="window.location.href='../'">🏠</button>
+      <button class="btn" onclick="window.location.href='../'">🏠 HOME</button>
       <button class="btn" id="btn-pdf" onclick="openPrintPreview()">📄 PDF</button>
       <button class="btn" onclick="clearForm()">🗑 CLEAR</button>
       <button class="btn" id="btn-iphone" onclick="saveForIPhone()">📱 iPhone</button>
@@ -958,7 +952,7 @@ function saveForIPhone() {
     const wrapper = document.createElement('div'); wrapper.style.cssText = 'text-align:center;';
     const lbl = document.createElement('div'); lbl.style.cssText = 'color:#ccc;font-size:11px;margin-bottom:8px;'; lbl.textContent = `Page ${idx+1} of ${pages.length}`;
     const img = document.createElement('img');
-    html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false }).then(canvas => {
+    html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false, width: 1050, windowWidth: 1050 }).then(canvas => {
       img.src = canvas.toDataURL('image/jpeg', 0.85);
       img.style.cssText = 'max-width:100%;border:2px solid #555;border-radius:4px;display:block;margin:0 auto;';
       img.alt = `Form page ${idx+1}`;
@@ -978,7 +972,7 @@ function saveForAndroid() {
   if (wasDark) document.body.classList.remove('dark-mode');
   let completed = 0;
   pages.forEach((page, idx) => {
-    html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false }).then(canvas => {
+    html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false, width: 1050, windowWidth: 1050 }).then(canvas => {
       const link = document.createElement('a');
       link.download = pages.length === 1 ? 'AlwaysOn_Generators_Form.jpg' : `AlwaysOn_Generators_Form_Page${idx+1}.jpg`;
       link.href = canvas.toDataURL('image/jpeg', 0.85); link.click();
@@ -1013,44 +1007,6 @@ if ('serviceWorker' in navigator) {
       .then(reg => console.log('SW registered:', reg.scope))
       .catch(err => console.warn('SW registration failed:', err));
   });
-  function printIframeSafari(iframe) {
-  if (!iframe || !iframe.contentWindow) {
-    console.error("Invalid iframe element provided.");
-    return;
-  }
-
-  // Temporarily show the iframe off-screen for rendering
-  iframe.style.display = 'block';
-  iframe.style.position = 'absolute';
-  iframe.style.left = '-9999px';
-  iframe.style.top = '0';
-  iframe.style.width = '100%';
-  iframe.style.height = '100%';
-  iframe.style.visibility = 'visible';
-
-  // Ensure iframe content is fully loaded before printing
-  const printWhenReady = () => {
-    try {
-      iframe.contentWindow.focus(); // Safari sometimes needs focus
-      iframe.contentWindow.print();
-
-      // Hide the iframe again after printing
-      setTimeout(() => {
-        iframe.style.display = 'none';
-      }, 200);
-    } catch (err) {
-      console.error("Error printing iframe:", err);
-    }
-  };
-
-  // If iframe is already loaded, print immediately after delay
-  if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
-    setTimeout(printWhenReady, 500); // Delay to allow Safari to render
-  } else {
-    // Wait for iframe to load before printing
-    iframe.onload = () => setTimeout(printWhenReady, 500);
-  }
-
 }
 </script>
 </body>
