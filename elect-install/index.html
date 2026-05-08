@@ -1084,6 +1084,16 @@ function clearForm() {
 }
 
 // ===== PRINT =====
+// Detect mobile Safari (iPhone/iPad, not desktop Safari)
+function isMobileSafari() {
+  const ua = navigator.userAgent;
+  const isIOS = /iPhone|iPad|iPod/.test(ua);
+  const isSafari = /Safari/.test(ua) && !/Chrome|CriOS|FxiOS|EdgiOS/.test(ua);
+  // Also catch iPad in desktop mode (iOS 13+) via maxTouchPoints
+  const isIPadDesktopMode = navigator.maxTouchPoints > 1 && /Macintosh/.test(ua) && isSafari;
+  return (isIOS && isSafari) || isIPadDesktopMode;
+}
+
 function openPrintPreview() {
   setStatus('Opening print preview…');
   const wasDark = document.body.classList.contains('dark-mode');
@@ -1094,12 +1104,29 @@ function openPrintPreview() {
   if (ab) ab.style.display = 'none';
   if (nt) nt.style.display = 'none';
 
+  // Inject a temporary mobile-Safari-only print scale style
+  // 0.94 scale fits both pages perfectly without touching desktop output
+  let mobilePrintStyle = null;
+  if (isMobileSafari()) {
+    mobilePrintStyle = document.createElement('style');
+    mobilePrintStyle.id = 'mobile-safari-print-scale';
+    mobilePrintStyle.textContent = `
+      @media print {
+        .page-wrapper {
+          zoom: 0.94;
+        }
+      }
+    `;
+    document.head.appendChild(mobilePrintStyle);
+  }
+
   setTimeout(() => {
     window.print();
     setTimeout(() => {
       if (ab) ab.style.display = '';
       if (nt) nt.style.display = '';
       if (wasDark) document.body.classList.add('dark-mode');
+      if (mobilePrintStyle) mobilePrintStyle.remove();
       setStatus('');
     }, 500);
   }, 300);
