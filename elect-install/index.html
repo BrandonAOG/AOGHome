@@ -402,7 +402,7 @@ body.dark-mode .notice { color: #7DD3FC; }
   }
 
   @page {
-    size: 8.5in 11in;
+    size: letter portrait;
     margin: 0.25in;
   }
 
@@ -411,8 +411,8 @@ body.dark-mode .notice { color: #7DD3FC; }
     width: 8in !important;
     min-width: 8in !important;
     max-width: 8in !important;
-    height: auto !important;
-    overflow: visible !important;
+
+
     margin: 0 !important;
     padding: 0 !important;
     /* Prevent Safari from auto-scaling text */
@@ -428,7 +428,7 @@ body.dark-mode .notice { color: #7DD3FC; }
     padding: 0 !important;
     background: #fff !important;
     color: #1F2937 !important;
-    overflow: visible !important;
+
     display: block !important;
     min-height: 0 !important;
     -webkit-text-size-adjust: none !important;
@@ -453,9 +453,9 @@ body.dark-mode .notice { color: #7DD3FC; }
   .form-page {
     display: block !important;
     width: 100% !important;
-    height: 10.5in !important;
-    max-height: 10.5in !important;
-    overflow: hidden !important;
+
+
+
     background: #fff !important;
     color: #1F2937 !important;
     box-shadow: none !important;
@@ -475,9 +475,9 @@ body.dark-mode .notice { color: #7DD3FC; }
     page-break-after: auto !important;
     break-after: auto !important;
     -webkit-column-break-after: auto !important;
-    height: auto !important;
-    max-height: none !important;
-    overflow: visible !important;
+
+
+
   }
 
   /* ── PAGE 1 ── */
@@ -536,7 +536,7 @@ body.dark-mode .notice { color: #7DD3FC; }
 
   #page2 .grid-section {
     margin-bottom: 3px !important;
-    overflow: visible !important;
+
   }
 
   #page2 table.mat-table {
@@ -558,7 +558,7 @@ body.dark-mode .notice { color: #7DD3FC; }
     color: #1F2937 !important;
     padding: 0 !important;
     text-align: center !important;
-    height: auto !important;
+
     -webkit-appearance: none !important;
     appearance: none !important;
     outline: none !important;
@@ -1104,16 +1104,18 @@ function openPrintPreview() {
   if (ab) ab.style.display = 'none';
   if (nt) nt.style.display = 'none';
 
-  // Inject a temporary mobile-Safari-only print scale style
-  // 0.96 scale fits both pages perfectly without touching desktop output
+  // On mobile Safari, inject a temporary print scale so content fits without
+  // the user needing to manually set 94% scale in the print dialog.
+  // We zoom `html` (not a child div) so Safari scales the entire render
+  // canvas — this works correctly with natural-height pages and portrait lock.
   let mobilePrintStyle = null;
   if (isMobileSafari()) {
     mobilePrintStyle = document.createElement('style');
     mobilePrintStyle.id = 'mobile-safari-print-scale';
     mobilePrintStyle.textContent = `
       @media print {
-        .page-wrapper {
-          zoom: 0.96;
+        html {
+          zoom: 0.94;
         }
       }
     `;
