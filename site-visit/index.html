@@ -12,7 +12,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AOG Forms">
 
-
 <style>
 :root {
   --cyan: #D97706;
@@ -470,7 +469,7 @@ body.dark-mode .permit-section-header {
 body.dark-mode .notice { color: #7DD3FC; }
 
 /* ==========================================================
-   PRINT STYLES
+   PRINT STYLES — desktop (untouched from original)
    ========================================================== */
 @media print {
 
@@ -496,7 +495,6 @@ body.dark-mode .notice { color: #7DD3FC; }
     max-width: 100% !important; margin: 0 !important; padding: 0 !important;
   }
 
-  /* ── Both pages: block layout, auto height, page break ── */
   .form-page {
     display: block !important;
     width: 100% !important;
@@ -521,11 +519,6 @@ body.dark-mode .notice { color: #7DD3FC; }
     break-after: auto !important;
   }
 
-  /* ══════════════════════════════════════
-     PAGE 1 — fixed height + flex stretch
-     (page 1 has lots of content that needs
-      to fill the sheet vertically)
-     ══════════════════════════════════════ */
   #page1 {
     height: 10.7in !important;
     min-height: 10.7in !important;
@@ -613,12 +606,6 @@ body.dark-mode .notice { color: #7DD3FC; }
     accent-color: #000 !important; margin: 1px 3px 1px 0 !important;
   }
 
-  /* ══════════════════════════════════════
-     PAGE 2 — block layout, natural height
-     Tables render at their own height;
-     24 fittings rows fill the page without
-     needing flex or fixed height tricks.
-     ══════════════════════════════════════ */
   #page2 {
     display: block !important;
     page-break-before: always !important;
@@ -630,17 +617,9 @@ body.dark-mode .notice { color: #7DD3FC; }
     margin: 0 !important;
   }
 
-  #page2 .grid-section {
-    margin-bottom: 4px !important;
-    overflow: visible !important;
-  }
+  #page2 .grid-section { margin-bottom: 4px !important; overflow: visible !important; }
 
-  /* ── All tables base ── */
-  #page2 table.mat-table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    table-layout: fixed !important;
-  }
+  #page2 table.mat-table { width: 100% !important; border-collapse: collapse !important; table-layout: fixed !important; }
 
   #page2 table.mat-table th,
   #page2 table.mat-table td {
@@ -655,7 +634,6 @@ body.dark-mode .notice { color: #7DD3FC; }
     vertical-align: middle !important;
   }
 
-  /* ── Header rows: dark gray bg, white text ── */
   #page2 table.mat-table th {
     background: #4B5563 !important;
     color: #FFFFFF !important;
@@ -665,13 +643,8 @@ body.dark-mode .notice { color: #7DD3FC; }
     print-color-adjust: exact !important;
   }
 
-  /* ── Data cells ── */
-  #page2 table.mat-table td {
-    background: #ffffff !important;
-    color: #1F2937 !important;
-  }
+  #page2 table.mat-table td { background: #ffffff !important; color: #1F2937 !important; }
 
-  /* ── Row labels: light grey ── */
   #page2 table.mat-table td.row-label {
     background: #f0f0f0 !important;
     text-align: left !important;
@@ -683,93 +656,40 @@ body.dark-mode .notice { color: #7DD3FC; }
     print-color-adjust: exact !important;
   }
 
-  /* ── Wire tables (CU / AL / THHN) ── */
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) {
-    font-size: 15px !important;
-  }
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) th {
-    font-size: 15px !important;
-  }
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td.row-label {
-    font-size: 15px !important;
-    width: 72px !important;
-    min-width: 0 !important;
-  }
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td input[type="text"] {
-    font-size: 12px !important;
-  }
+  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) { font-size: 15px !important; }
+  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) th { font-size: 15px !important; }
+  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td.row-label { font-size: 15px !important; width: 72px !important; min-width: 0 !important; }
+  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td input[type="text"] { font-size: 12px !important; }
 
-  /* ── FITTINGS table ── */
   #page2 #fittings-table { font-size: 8px !important; }
   #page2 #fittings-table th { font-size: 16px !important; }
-  #page2 #fittings-table td.row-label {
-    font-size: 16px !important; font-weight: bold !important;
-    width: 150px !important; min-width: 0 !important;
-    text-align: left !important; padding: 2px 4px !important;
-    white-space: normal !important; word-break: break-word !important;
-    line-height: 1.2 !important;
-  }
+  #page2 #fittings-table td.row-label { font-size: 16px !important; font-weight: bold !important; width: 150px !important; min-width: 0 !important; text-align: left !important; padding: 2px 4px !important; white-space: normal !important; word-break: break-word !important; line-height: 1.2 !important; }
   #page2 #fittings-table td input[type="text"] { font-size: 8px !important; }
 
-  /* ── WIREWAY table ── */
   #page2 #wireway-table { font-size: 8px !important; }
   #page2 #wireway-table th { font-size: 15px !important; }
-  #page2 #wireway-table td.row-label {
-    font-size: 15px !important; font-weight: bold !important;
-    width: 130px !important; min-width: 0 !important;
-    text-align: left !important; padding: 2px 4px !important;
-    white-space: normal !important; word-break: break-word !important;
-    line-height: 1.2 !important;
-  }
+  #page2 #wireway-table td.row-label { font-size: 15px !important; font-weight: bold !important; width: 130px !important; min-width: 0 !important; text-align: left !important; padding: 2px 4px !important; white-space: normal !important; word-break: break-word !important; line-height: 1.2 !important; }
   #page2 #wireway-table td input[type="text"] { font-size: 8px !important; }
 
-  /* ── POLARIS table ── */
   #page2 #polaris-table { font-size: 8px !important; }
   #page2 #polaris-table th { font-size: 15px !important; }
-  #page2 #polaris-table td.row-label {
-    font-size: 15px !important; font-weight: bold !important;
-    width: 130px !important; min-width: 0 !important;
-    text-align: left !important; padding: 2px 4px !important;
-    white-space: normal !important; word-break: break-word !important;
-    line-height: 1.2 !important;
-  }
+  #page2 #polaris-table td.row-label { font-size: 15px !important; font-weight: bold !important; width: 130px !important; min-width: 0 !important; text-align: left !important; padding: 2px 4px !important; white-space: normal !important; word-break: break-word !important; line-height: 1.2 !important; }
   #page2 #polaris-table td input[type="text"] { font-size: 8px !important; }
 
-  /* ── Input cells transparent ── */
   #page2 table.mat-table td input[type="text"] {
     width: 100% !important; border: none !important;
     background: transparent !important; color: #1F2937 !important;
     padding: 0 !important; text-align: center !important; height: auto !important;
   }
 
-  /* ── Footer ── */
-  #page2 .footer-fields {
-    margin-top: 5px !important; padding-top: 6px !important;
-    border-top: 1px solid #555 !important; font-size: 15px !important;
-  }
-  #page2 .footer-row {
-    display: flex !important; flex-wrap: wrap !important;
-    gap: 3px 14px !important; margin-bottom: 3px !important;
-    align-items: flex-end !important;
-  }
-  #page2 .footer-field {
-    display: inline-flex !important; align-items: flex-end !important;
-    gap: 2px !important; white-space: nowrap !important;
-  }
-  #page2 .footer-field label {
-    font-size: 15px !important; font-weight: bold !important;
-    color: #1F2937 !important; white-space: nowrap !important;
-  }
-  #page2 .footer-field input[type="text"] {
-    border: none !important; border-bottom: 1px solid #333 !important;
-    background: transparent !important; color: #1F2937 !important;
-    font-size: 9px !important; padding: 0 1px !important;
-    height: 10px !important; width: 55px !important; min-width: 0 !important;
-  }
+  #page2 .footer-fields { margin-top: 5px !important; padding-top: 6px !important; border-top: 1px solid #555 !important; font-size: 15px !important; }
+  #page2 .footer-row { display: flex !important; flex-wrap: wrap !important; gap: 3px 14px !important; margin-bottom: 3px !important; align-items: flex-end !important; }
+  #page2 .footer-field { display: inline-flex !important; align-items: flex-end !important; gap: 2px !important; white-space: nowrap !important; }
+  #page2 .footer-field label { font-size: 15px !important; font-weight: bold !important; color: #1F2937 !important; white-space: nowrap !important; }
+  #page2 .footer-field input[type="text"] { border: none !important; border-bottom: 1px solid #333 !important; background: transparent !important; color: #1F2937 !important; font-size: 9px !important; padding: 0 1px !important; height: 10px !important; width: 55px !important; min-width: 0 !important; }
   #page2 .footer-field input.short { width: 40px !important; }
   #page2 .footer-field input.wide  { width: 85px !important; }
 
-  /* ── Global print resets ── */
   input[type="text"], input[type="email"], input[type="tel"],
   input[type="date"], input[type="number"], textarea, select {
     background: #ffffff !important; color: #1F2937 !important;
@@ -780,9 +700,57 @@ body.dark-mode .notice { color: #7DD3FC; }
   .form-page * { box-shadow: none !important; }
   .logo-text { color: #D97706 !important; }
   .logo-text span { color: #1F2937 !important; }
-
-} 
+}
 /* end @media print */
+
+/* ===== MOBILE-ONLY PRINT RULES (max-width: 767px) =====
+   Desktop print above is untouched.
+   Tightens page 2 on mobile so footer stays on page 2.
+   ===================================================== */
+@media print and (max-width: 767px) {
+
+  @page { size: 8.5in 11in; margin: 0.15in; }
+
+  #page2 .grid-section { margin-bottom: 2px !important; }
+
+  #page2 table.mat-table th,
+  #page2 table.mat-table td {
+    padding: 1px 1px !important;
+    font-size: 8px !important;
+    line-height: 1.1 !important;
+  }
+
+  #page2 table.mat-table th { font-size: 8px !important; }
+
+  #page2 table.mat-table td.row-label {
+    font-size: 8px !important;
+    padding: 1px 2px !important;
+  }
+
+  #page2 table.mat-table td input[type="text"] { font-size: 8px !important; }
+
+  #page2 #fittings-table td.row-label { width: 80px !important; }
+  #page2 #wireway-table  td.row-label { width: 70px !important; }
+  #page2 #polaris-table  td.row-label { width: 70px !important; }
+
+  #page2 .footer-fields {
+    margin-top: 3px !important;
+    padding-top: 3px !important;
+    font-size: 8px !important;
+  }
+  #page2 .footer-row {
+    gap: 1px 8px !important;
+    margin-bottom: 2px !important;
+  }
+  #page2 .footer-field label { font-size: 8px !important; }
+  #page2 .footer-field input[type="text"] {
+    font-size: 8px !important;
+    height: 9px !important;
+    width: 45px !important;
+  }
+  #page2 .footer-field input.short { width: 32px !important; }
+  #page2 .footer-field input.wide  { width: 65px !important; }
+}
 </style>
 </head>
 <body>
@@ -977,12 +945,9 @@ body.dark-mode .notice { color: #7DD3FC; }
     </div>
   </div><!-- end page1 -->
 
-   <!-- ═══════════════════════════════════════════════
-       PAGE 2
-       ═══════════════════════════════════════════════ -->
+  <!-- PAGE 2 -->
   <div class="form-page" id="page2">
 
-    <!-- CU Wire -->
     <div class="grid-section">
       <table class="mat-table">
         <thead><tr>
@@ -1003,7 +968,6 @@ body.dark-mode .notice { color: #7DD3FC; }
       </table>
     </div>
 
-    <!-- AL Wire -->
     <div class="grid-section">
       <table class="mat-table">
         <thead><tr>
@@ -1023,7 +987,6 @@ body.dark-mode .notice { color: #7DD3FC; }
       </table>
     </div>
 
-    <!-- THHN -->
     <div class="grid-section">
       <table class="mat-table">
         <thead><tr>
@@ -1041,7 +1004,6 @@ body.dark-mode .notice { color: #7DD3FC; }
       </table>
     </div>
 
-    <!-- FITTINGS -->
     <div class="grid-section">
       <table class="mat-table" id="fittings-table">
         <thead><tr>
@@ -1053,7 +1015,6 @@ body.dark-mode .notice { color: #7DD3FC; }
       </table>
     </div>
 
-    <!-- WIREWAY -->
     <div class="grid-section">
       <table class="mat-table" id="wireway-table">
         <thead><tr>
@@ -1064,7 +1025,6 @@ body.dark-mode .notice { color: #7DD3FC; }
       </table>
     </div>
 
-    <!-- POLARIS TAPS -->
     <div class="grid-section">
       <table class="mat-table" id="polaris-table">
         <thead><tr>
@@ -1075,7 +1035,6 @@ body.dark-mode .notice { color: #7DD3FC; }
       </table>
     </div>
 
-    <!-- FOOTER -->
     <div class="footer-fields">
       <div class="footer-row">
         <div class="footer-field"><label>12"x12"x4" JBOX PVC (Qty):</label><input type="text" class="short" inputmode="numeric"></div>
@@ -1102,9 +1061,6 @@ body.dark-mode .notice { color: #7DD3FC; }
 
   </div>
 </div>
-
-
-</div><!-- end page-wrapper -->
 
 <p class="notice">📱 iPhone: press &amp; hold images to save &nbsp;|&nbsp; 🤖 Android: images download to gallery</p>
 
@@ -1152,8 +1108,7 @@ fittings.forEach(name => {
   lbl.className = "row-label"; lbl.textContent = name; tr.appendChild(lbl);
   fittingSizes.forEach(() => {
     const td = document.createElement("td");
-    const inp = document.createElement("input");
-    inp.type = "text";
+    const inp = document.createElement("input"); inp.type = "text";
     td.appendChild(inp); tr.appendChild(td);
   });
   document.getElementById("fittings-body").appendChild(tr);
@@ -1165,8 +1120,7 @@ fittings.forEach(name => {
   lbl.className = "row-label"; lbl.textContent = name; tr.appendChild(lbl);
   ["3'","4'","5'","6'"].forEach(() => {
     const td = document.createElement("td");
-    const inp = document.createElement("input");
-    inp.type = "text"; 
+    const inp = document.createElement("input"); inp.type = "text";
     td.appendChild(inp); tr.appendChild(td);
   });
   document.getElementById("wireway-body").appendChild(tr);
@@ -1178,8 +1132,7 @@ fittings.forEach(name => {
   lbl.className = "row-label"; lbl.textContent = name; tr.appendChild(lbl);
   ["2-Port","3-Port","4-Port","5-Port","6-Port"].forEach(() => {
     const td = document.createElement("td");
-    const inp = document.createElement("input");
-    inp.type = "text"; 
+    const inp = document.createElement("input"); inp.type = "text";
     td.appendChild(inp); tr.appendChild(td);
   });
   document.getElementById("polaris-body").appendChild(tr);
@@ -1223,7 +1176,7 @@ function clearForm() {
   });
 }
 
-// ===== PRINT — Safari-safe =====
+// ===== PRINT =====
 function openPrintPreview() {
   setStatus('Opening print preview…');
   const wasDark = document.body.classList.contains('dark-mode');
@@ -1232,16 +1185,14 @@ function openPrintPreview() {
   const note = document.querySelector('.notice');
   if (bar)  bar.style.display  = 'none';
   if (note) note.style.display = 'none';
-
   window.print();
-
   if (bar)  bar.style.display  = '';
   if (note) note.style.display = '';
   if (wasDark) document.body.classList.add('dark-mode');
   setStatus('');
 }
 
-// ===== iPHONE =====
+// ===== iPHONE — FIX: windowWidth:1050 forces desktop layout =====
 function saveForIPhone() {
   setStatus('Rendering pages, please wait…');
   const pages = document.querySelectorAll('.form-page');
@@ -1262,7 +1213,7 @@ function saveForIPhone() {
     lbl.style.cssText = 'color:#ccc;font-size:11px;margin-bottom:8px;';
     lbl.textContent = `Page ${idx+1} of ${pages.length}`;
     const img = document.createElement('img');
-    html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false }).then(canvas => {
+    html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false, width: 1050, windowWidth: 1050 }).then(canvas => {
       img.src = canvas.toDataURL('image/jpeg', 0.85);
       img.style.cssText = 'max-width:100%;border:2px solid #555;border-radius:4px;display:block;margin:0 auto;';
       img.alt = `Form page ${idx+1}`;
@@ -1280,7 +1231,7 @@ function saveForIPhone() {
   };
 }
 
-// ===== ANDROID =====
+// ===== ANDROID — FIX: windowWidth:1050 forces desktop layout =====
 function saveForAndroid() {
   setStatus('Rendering pages, please wait…');
   const pages = document.querySelectorAll('.form-page');
@@ -1288,7 +1239,7 @@ function saveForAndroid() {
   if (wasDark) document.body.classList.remove('dark-mode');
   let completed = 0;
   pages.forEach((page, idx) => {
-    html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false }).then(canvas => {
+    html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false, width: 1050, windowWidth: 1050 }).then(canvas => {
       const link = document.createElement('a');
       link.download = pages.length === 1
         ? 'AlwaysOn_Generators_Form.jpg'
@@ -1305,17 +1256,13 @@ function saveForAndroid() {
 
 function setStatus(msg) { document.getElementById('save-status').textContent = msg; }
 </script>
-  
+
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
       navigator.serviceWorker.register('../sw.js', { scope: '../' })
-        .then(function(reg) {
-          console.log('[SW] Registered, scope:', reg.scope);
-        })
-        .catch(function(err) {
-          console.warn('[SW] Registration failed:', err);
-        });
+        .then(function(reg) { console.log('[SW] Registered, scope:', reg.scope); })
+        .catch(function(err) { console.warn('[SW] Registration failed:', err); });
     });
   }
 </script>
