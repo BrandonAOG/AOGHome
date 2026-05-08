@@ -507,6 +507,60 @@ body.dark-mode .notice { color: #7DD3FC; }
   .logo-text { color: #D97706 !important; }
   .logo-text span { color: #1F2937 !important; }
 }
+
+/* ===== MOBILE-ONLY PRINT RULES (max-width: 767px) =====
+   Desktop print above is untouched.
+   These rules tighten page 2 on mobile so the footer
+   stays on page 2 and doesn't spill to a 3rd page.
+   ===================================================== */
+@media print and (max-width: 767px) {
+
+  @page { size: 8.5in 11in; margin: 0.15in; }
+
+  /* Tighten grid sections so everything fits */
+  #page2 .grid-section { margin-bottom: 2px !important; }
+
+  /* Smaller cell padding on mobile print */
+  #page2 table.mat-table th,
+  #page2 table.mat-table td {
+    padding: 1px 1px !important;
+    font-size: 8px !important;
+    line-height: 1.1 !important;
+  }
+
+  #page2 table.mat-table th { font-size: 8px !important; }
+
+  #page2 table.mat-table td.row-label {
+    font-size: 8px !important;
+    padding: 1px 2px !important;
+  }
+
+  #page2 table.mat-table td input[type="text"] { font-size: 8px !important; }
+
+  /* Tighten fittings/wireway/polaris row labels */
+  #page2 #fittings-table td.row-label { width: 80px !important; }
+  #page2 #wireway-table  td.row-label { width: 70px !important; }
+  #page2 #polaris-table  td.row-label { width: 70px !important; }
+
+  /* Compact footer */
+  #page2 .footer-fields {
+    margin-top: 3px !important;
+    padding-top: 3px !important;
+    font-size: 8px !important;
+  }
+  #page2 .footer-row {
+    gap: 1px 8px !important;
+    margin-bottom: 2px !important;
+  }
+  #page2 .footer-field label { font-size: 8px !important; }
+  #page2 .footer-field input[type="text"] {
+    font-size: 8px !important;
+    height: 9px !important;
+    width: 45px !important;
+  }
+  #page2 .footer-field input.short { width: 32px !important; }
+  #page2 .footer-field input.wide  { width: 65px !important; }
+}
 </style>
 </head>
 <body>
