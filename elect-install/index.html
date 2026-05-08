@@ -528,8 +528,9 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
     color-adjust: exact !important;
   }
 
-  /* Letter page, tight margins to maximize usable area */
-  @page { size: 8.5in 11in; margin: 0.25in 0.25in 0.3in 0.25in; }
+  /* margin:0 removes Safari URL/date/page-number headers entirely.
+     Content padding is handled by .page-wrapper padding below. */
+  @page { size: 8.5in 11in; margin: 0; }
 
   html, body {
     margin: 0 !important; padding: 0 !important;
@@ -544,7 +545,10 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
 
   .page-wrapper {
     display: block !important; width: 100% !important;
-    max-width: 100% !important; margin: 0 !important; padding: 0 !important;
+    max-width: 100% !important; margin: 0 !important;
+    /* Padding replaces @page margins (which are 0 to suppress Safari headers) */
+    padding: 0.25in 0.25in 0.3in 0.25in !important;
+    box-sizing: border-box !important;
   }
 
   /* ── SHARED PAGE RULES ── */
@@ -560,10 +564,15 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
     box-shadow: none !important;
     border: none !important;
     overflow: hidden !important;
-    max-height: 10.45in !important;
+    max-height: 9.95in !important;  /* 10.45 minus 0.25+0.3 vertical padding */
     page-break-after: always !important;
     break-after: page !important;
   }
+
+  /* Force 2-column layouts in print regardless of viewport width.
+     Safari mobile prints at ~320pt so without this the grid collapses. */
+  #page1 .two-col { grid-template-columns: 1fr 1fr !important; }
+  #page1 .top-fields { grid-template-columns: 1fr 1fr !important; }
 
   .form-page:last-child {
     page-break-after: auto !important;
@@ -604,7 +613,7 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
     break-before: page !important;
     width: 8in !important;
     height: 10.45in !important;
-    max-height: 10.45in !important;
+    max-height: 9.95in !important;  /* 10.45 minus 0.25+0.3 vertical padding */
     overflow: hidden !important;
     position: relative !important;
   }
@@ -1181,51 +1190,18 @@ function clearForm() {
 function openPrintPreview() {
   const wasDark = document.body.classList.contains('dark-mode');
   if (wasDark) document.body.classList.remove('dark-mode');
-
   const ab = document.querySelector('.action-bar');
   const nt = document.querySelector('.notice');
   if (ab) ab.style.display = 'none';
   if (nt) nt.style.display = 'none';
-
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  const metaVP   = document.querySelector('meta[name=\'viewport\']');
-  const origVP       = metaVP ? metaVP.content : null;
-  const origBodyW    = document.body.style.width;
-  const origBodyMaxW = document.body.style.maxWidth;
-  const origBodyOvf  = document.body.style.overflow;
-
-  function restore() {
-    if (isMobile) {
-      if (metaVP && origVP !== null) metaVP.content = origVP;
-      document.body.style.width    = origBodyW;
-      document.body.style.maxWidth = origBodyMaxW;
-      document.body.style.overflow = origBodyOvf;
-    }
+  window.addEventListener('afterprint', function onAP() {
     if (ab) ab.style.display = '';
     if (nt) nt.style.display = '';
     if (wasDark) document.body.classList.add('dark-mode');
-    window.removeEventListener('afterprint', restore);
-  }
-
-  // Restore after print dialog closes
-  window.addEventListener('afterprint', restore);
-  // Fallback: restore after 30s if afterprint never fires
-  setTimeout(restore, 30000);
-
-  if (isMobile) {
-    // Force desktop layout width so Safari prints 2-column, not mobile single-column
-    if (metaVP) metaVP.content = 'width=1050';
-    document.body.style.width    = '1050px';
-    document.body.style.maxWidth = '1050px';
-    document.body.style.overflow = 'visible';
-    // Safari needs a repaint cycle after viewport/DOM changes before
-    // window.print() will open the sheet — without this it fires silently
-    setTimeout(function() { window.print(); }, 500);
-  } else {
-    window.print();
-  }
+    window.removeEventListener('afterprint', onAP);
+  });
+  window.print();
 }
-
 
 function saveForIPhone() {
   setStatus('Rendering pages, please wait…');
