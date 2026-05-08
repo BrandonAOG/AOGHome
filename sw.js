@@ -1,6 +1,6 @@
 // ============================================================
 //  Always On Generators – Field Hub
-//  Service Worker  |  sw.js  |  Version: aog-forms-v2.0.0.57
+//  Service Worker  |  sw.js  |  Version: aog-forms-v2.0.0.58
 //  Scope: root (../)
 //  Strategy: Network-First for HTML, Stale-While-Revalidate
 //  for assets, with full offline fallback
