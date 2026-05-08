@@ -529,7 +529,7 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
   }
 
   /* Letter page, tight margins to maximize usable area */
-  @page { size: 8.5in 11in; margin: 0.25in; }
+  @page { size: 8.5in 11in; margin: 0.25in 0.25in 0.3in 0.25in; }
 
   html, body {
     margin: 0 !important; padding: 0 !important;
@@ -548,8 +548,6 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
   }
 
   /* ── SHARED PAGE RULES ── */
-  /* No fixed height + no page-break-inside:avoid = no Safari blank pages.
-     overflow:hidden clips any overflow within the scaled content. */
   .form-page {
     display: block !important;
     width: 100% !important;
@@ -562,7 +560,7 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
     box-shadow: none !important;
     border: none !important;
     overflow: hidden !important;
-    max-height: 10.5in !important;
+    max-height: 10.45in !important;
     page-break-after: always !important;
     break-after: page !important;
   }
@@ -599,15 +597,28 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
   #page1 .yn-checkbox-wrap.yn-opt.checked { background: #D97706 !important; color: #fff !important; }
   #page1 input[type="checkbox"] { width: 10px !important; height: 10px !important; margin: 1px 2px 1px 0 !important; }
 
-  /* ── PAGE 2 ── */
+  /* ── PAGE 2 — Scale to fill the full print page ── */
   #page2 {
     display: block !important;
     page-break-before: always !important;
     break-before: page !important;
+    width: 8in !important;
+    height: 10.45in !important;
+    max-height: 10.45in !important;
     overflow: hidden !important;
+    position: relative !important;
   }
 
-  /* Compress grid spacing on page 2 */
+  /* Inner wrapper scaled up to fill the page */
+  #page2-inner {
+    display: block !important;
+    width: 7.4in !important;
+    transform-origin: top left !important;
+    /* Scale factor: 8in / 7.4in ≈ 1.081 — fills width, keeps footer on page */
+    transform: scale(1.081) !important;
+  }
+
+  /* Reset all page2 content to reasonable base sizes that pack well */
   #page2 .grid-section {
     margin-bottom: 3px !important;
     overflow: visible !important;
@@ -622,23 +633,24 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
   #page2 table.mat-table th,
   #page2 table.mat-table td {
     border: 1px solid #333 !important;
-    padding: 1px 1px !important;
+    padding: 2px 2px !important;
     text-align: center !important;
     height: auto !important;
     min-height: 0 !important;
-    line-height: 1.1 !important;
+    line-height: 1.2 !important;
     overflow: hidden !important;
     word-break: break-word !important;
     vertical-align: middle !important;
     white-space: normal !important;
+    font-size: 10px !important;
   }
 
   #page2 table.mat-table th {
     background: #4B5563 !important;
     color: #FFFFFF !important;
     font-weight: bold !important;
-    font-size: 9px !important;
-    padding: 1px !important;
+    font-size: 10px !important;
+    padding: 2px 2px !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -646,67 +658,45 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
   #page2 table.mat-table td {
     background: #ffffff !important;
     color: #1F2937 !important;
-    font-size: 9px !important;
+    font-size: 10px !important;
   }
 
   #page2 table.mat-table td.row-label {
     background: #f0f0f0 !important;
     text-align: left !important;
     font-weight: bold !important;
-    padding: 1px 2px !important;
+    padding: 2px 3px !important;
     white-space: normal !important;
     word-break: break-word !important;
-    font-size: 9px !important;
-    line-height: 1.15 !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* Wire tables — compact */
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) {
-    font-size: 9px !important;
-  }
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) th {
-    font-size: 9px !important;
-  }
+  /* Wire tables */
   #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td.row-label {
-    font-size: 9px !important;
-    width: 60px !important;
+    width: 68px !important;
     min-width: 0 !important;
-  }
-  #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td input[type="text"] {
-    font-size: 9px !important;
   }
 
   /* Fittings table */
-  #page2 #fittings-table { font-size: 9px !important; }
-  #page2 #fittings-table th { font-size: 9px !important; }
   #page2 #fittings-table td.row-label {
-    font-size: 9px !important;
-    width: 90px !important;
+    width: 100px !important;
     min-width: 0 !important;
   }
-  #page2 #fittings-table td input[type="text"] { font-size: 9px !important; }
 
   /* Wireway table */
-  #page2 #wireway-table { font-size: 9px !important; }
-  #page2 #wireway-table th { font-size: 9px !important; }
   #page2 #wireway-table td.row-label {
-    font-size: 9px !important;
-    width: 80px !important;
+    width: 85px !important;
     min-width: 0 !important;
   }
-  #page2 #wireway-table td input[type="text"] { font-size: 9px !important; }
 
   /* Polaris table */
-  #page2 #polaris-table { font-size: 9px !important; }
-  #page2 #polaris-table th { font-size: 9px !important; }
   #page2 #polaris-table td.row-label {
-    font-size: 9px !important;
-    width: 80px !important;
+    width: 85px !important;
     min-width: 0 !important;
   }
-  #page2 #polaris-table td input[type="text"] { font-size: 9px !important; }
 
   /* All table inputs */
   #page2 table.mat-table td input[type="text"] {
@@ -717,31 +707,31 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
     padding: 0 !important;
     text-align: center !important;
     height: auto !important;
-    font-size: 9px !important;
+    font-size: 10px !important;
   }
 
   /* Footer */
   #page2 .footer-fields {
-    margin-top: 3px !important;
-    padding-top: 3px !important;
+    margin-top: 5px !important;
+    padding-top: 4px !important;
     border-top: 1px solid #555 !important;
-    font-size: 9px !important;
+    font-size: 10px !important;
   }
   #page2 .footer-row {
     display: flex !important;
     flex-wrap: wrap !important;
-    gap: 2px 10px !important;
-    margin-bottom: 2px !important;
+    gap: 2px 12px !important;
+    margin-bottom: 3px !important;
     align-items: flex-end !important;
   }
   #page2 .footer-field {
     display: inline-flex !important;
     align-items: flex-end !important;
-    gap: 2px !important;
+    gap: 3px !important;
     white-space: nowrap !important;
   }
   #page2 .footer-field label {
-    font-size: 9px !important;
+    font-size: 10px !important;
     font-weight: bold !important;
     color: #1F2937 !important;
     white-space: nowrap !important;
@@ -751,14 +741,14 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
     border-bottom: 1px solid #333 !important;
     background: transparent !important;
     color: #1F2937 !important;
-    font-size: 9px !important;
+    font-size: 10px !important;
     padding: 0 1px !important;
-    height: 11px !important;
-    width: 55px !important;
+    height: 13px !important;
+    width: 60px !important;
     min-width: 0 !important;
   }
-  #page2 .footer-field input.short { width: 36px !important; }
-  #page2 .footer-field input.wide  { width: 80px !important; }
+  #page2 .footer-field input.short { width: 40px !important; }
+  #page2 .footer-field input.wide  { width: 90px !important; }
 
   /* Global print resets */
   input[type="text"], input[type="email"], input[type="tel"],
@@ -898,6 +888,8 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
 
   <!-- PAGE 2 -->
   <div class="form-page" id="page2">
+    <!-- Inner wrapper: scaled up in print to fill the page -->
+    <div id="page2-inner">
 
     <div class="grid-section">
       <table class="mat-table">
@@ -1010,6 +1002,7 @@ body.dark-mode .footer-field label { color: #E0F7FF; }
       </div>
     </div>
 
+    </div><!-- end #page2-inner -->
   </div>
 </div>
 
