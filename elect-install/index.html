@@ -1105,7 +1105,7 @@ function openPrintPreview() {
   if (nt) nt.style.display = 'none';
 
   // Inject a temporary mobile-Safari-only print scale style
-  // 0.98 scale fits both pages perfectly without touching desktop output
+  // 0.96 scale fits both pages perfectly without touching desktop output
   let mobilePrintStyle = null;
   if (isMobileSafari()) {
     mobilePrintStyle = document.createElement('style');
@@ -1113,7 +1113,7 @@ function openPrintPreview() {
     mobilePrintStyle.textContent = `
       @media print {
         .page-wrapper {
-          zoom: 0.98;
+          zoom: 0.96;
         }
       }
     `;
