@@ -1213,12 +1213,10 @@ async function generateAndOpenPDF() {
   try {
     const { jsPDF } = window.jspdf;
 
-    // Letter size in points: 8.5in × 11in @ 72pt/in = 612 × 792
+    // Letter: 612pt × 792pt. No margins — image fills full page edge-to-edge
+    // (jsPDF page IS the paper; no extra white border needed since the form
+    //  already has internal padding in its rendered pixels)
     const PDF_W = 612, PDF_H = 792;
-    // Margins: 0.25in sides/top, 0.3in bottom → in points
-    const ML = 18, MR = 18, MT = 18, MB = 21.6;
-    const CONTENT_W = PDF_W - ML - MR;
-    const CONTENT_H = PDF_H - MT - MB;
 
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
 
@@ -1230,59 +1228,77 @@ async function generateAndOpenPDF() {
       if (i > 0) pdf.addPage();
 
       const canvas = await html2canvas(pages[i], {
-        scale: 2,                  // retina for sharp text
+        scale: 2,
         useCORS: true,
         backgroundColor: '#ffffff',
         logging: false,
-        // Render at exactly the content width so tables don't wrap
-        width: pages[i].scrollWidth,
-        windowWidth: pages[i].scrollWidth,
+        // CRITICAL: force render at 1050px — the desktop form width.
+        // Without this, mobile viewport (~390px) makes everything skinny.
+        width: 1050,
+        windowWidth: 1050,
       });
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      const imgData = canvas.toDataURL('image/jpeg', 0.93);
 
-      // Scale the canvas to fit within the content area, preserving aspect ratio
-      const canvasAspect = canvas.height / canvas.width;
-      let imgW = CONTENT_W;
-      let imgH = imgW * canvasAspect;
+      // Fit image to full page width, scale height proportionally
+      const ratio = canvas.height / canvas.width;
+      const imgW = PDF_W;
+      const imgH = Math.min(PDF_H, imgW * ratio);
 
-      // If taller than content area, scale down to fit height
-      if (imgH > CONTENT_H) {
-        imgH = CONTENT_H;
-        imgW = imgH / canvasAspect;
-      }
-
-      // Center horizontally
-      const x = ML + (CONTENT_W - imgW) / 2;
-
-      pdf.addImage(imgData, 'JPEG', x, MT, imgW, imgH);
+      pdf.addImage(imgData, 'JPEG', 0, 0, imgW, imgH);
     }
 
     setStatus('Opening PDF…');
     const pdfBlob = pdf.output('blob');
     const pdfUrl  = URL.createObjectURL(pdfBlob);
 
-    // Open in same tab on iOS so Safari's PDF viewer activates (Share → Print)
-    // On Android open in new tab so Chrome's PDF viewer handles it
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
     if (isIOS) {
-      window.location.href = pdfUrl;
+      // iOS: open PDF blob in a new tab. Safari's PDF viewer appears.
+      // User taps Share → Print for a clean AirPrint dialog (no URL/date headers).
+      // We wrap in a tiny HTML page so we can also call window.print() automatically.
+      const wrapHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>AOG Electrical Install – Print</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#fff; display:flex; flex-direction:column;
+         align-items:center; justify-content:flex-start; min-height:100vh; }
+  embed { width:100vw; height:100vh; border:none; display:block; }
+  #printbtn {
+    position:fixed; bottom:24px; right:20px; z-index:999;
+    background:#D97706; color:#fff; border:none; border-radius:8px;
+    padding:14px 22px; font-size:16px; font-weight:bold;
+    font-family:Arial,sans-serif; cursor:pointer;
+    box-shadow:0 4px 16px rgba(0,0,0,0.3);
+  }
+</style>
+</head><body>
+<embed src="${pdfUrl}" type="application/pdf" />
+<button id="printbtn" onclick="window.print()">🖨️ Print / Save PDF</button>
+</body></html>`;
+      const wrapBlob = new Blob([wrapHtml], { type: 'text/html' });
+      const wrapUrl  = URL.createObjectURL(wrapBlob);
+      window.open(wrapUrl, '_blank');
+      setTimeout(() => {
+        URL.revokeObjectURL(wrapUrl);
+        URL.revokeObjectURL(pdfUrl);
+      }, 120000);
     } else {
+      // Android: direct PDF download
       const a = document.createElement('a');
       a.href = pdfUrl;
       a.download = 'AlwaysOn_Generators_Electrical_Install.pdf';
       a.click();
+      setTimeout(() => URL.revokeObjectURL(pdfUrl), 60000);
     }
 
-    setTimeout(() => {
-      URL.revokeObjectURL(pdfUrl);
-      setStatus('');
-    }, 60000);
+    setStatus('');
 
   } catch (err) {
     console.error('PDF generation error:', err);
     setStatus('PDF failed — try the iPhone/Android buttons instead.');
-    setTimeout(() => setStatus(''), 4000);
+    setTimeout(() => setStatus(''), 5000);
   } finally {
     if (wasDark) document.body.classList.add('dark-mode');
   }
