@@ -363,14 +363,9 @@ body.dark-mode .notice { color: #7DD3FC; }
     color-adjust: exact !important;
   }
 
-  @page { size: 8.5in 11in; margin: 0.1in; }
+  @page { size: 8.5in 11in; margin: 0.0in; }
 
-  /* Mobile Print Settings */
-@media print and (max-width: 767px) {
-  @page {
-    size: 5.5in 8.5in; /* Example: Half-letter size for mobile */
-    margin: 0.1in;
-
+ 
   html, body {
     margin: 0 !important; padding: 0 !important;
     width: 100% !important; max-width: 100% !important;
@@ -512,6 +507,11 @@ body.dark-mode .notice { color: #7DD3FC; }
   .form-page * { box-shadow: none !important; }
   .logo-text { color: #D97706 !important; }
   .logo-text span { color: #1F2937 !important; }
+  /* Mobile Print Settings */
+@media print and (max-width: 767px) {
+  @page {
+    size: 5.5in 8.5in; /* Example: Half-letter size for mobile */
+    margin: 0.2in;
 }
 </style>
 </head>
