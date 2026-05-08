@@ -1013,6 +1013,44 @@ if ('serviceWorker' in navigator) {
       .then(reg => console.log('SW registered:', reg.scope))
       .catch(err => console.warn('SW registration failed:', err));
   });
+  function printIframeSafari(iframe) {
+  if (!iframe || !iframe.contentWindow) {
+    console.error("Invalid iframe element provided.");
+    return;
+  }
+
+  // Temporarily show the iframe off-screen for rendering
+  iframe.style.display = 'block';
+  iframe.style.position = 'absolute';
+  iframe.style.left = '-9999px';
+  iframe.style.top = '0';
+  iframe.style.width = '100%';
+  iframe.style.height = '100%';
+  iframe.style.visibility = 'visible';
+
+  // Ensure iframe content is fully loaded before printing
+  const printWhenReady = () => {
+    try {
+      iframe.contentWindow.focus(); // Safari sometimes needs focus
+      iframe.contentWindow.print();
+
+      // Hide the iframe again after printing
+      setTimeout(() => {
+        iframe.style.display = 'none';
+      }, 200);
+    } catch (err) {
+      console.error("Error printing iframe:", err);
+    }
+  };
+
+  // If iframe is already loaded, print immediately after delay
+  if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+    setTimeout(printWhenReady, 500); // Delay to allow Safari to render
+  } else {
+    // Wait for iframe to load before printing
+    iframe.onload = () => setTimeout(printWhenReady, 500);
+  }
+
 }
 </script>
 </body>
