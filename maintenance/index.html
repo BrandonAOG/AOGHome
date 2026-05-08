@@ -823,33 +823,26 @@ body.dark-mode .check-item:has(input:checked) span {
 .test-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3px 6px;
-  margin-top: 2px;
+  gap: 12px;
+  margin-top: 8px;
   width: 100%;
 }
 
 .test-item {
   display: flex;
   align-items: center;
-  gap: 4px;
-  flex-wrap: nowrap;
+  gap: 8px;
 }
 
 .test-item label {
-  font-size: 0.5rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--text-muted);
+  min-width: 75px;
   white-space: nowrap;
-  flex-shrink: 1;
-  font-family: var(--font-display);
-  min-width: 0;
 }
 
 @media (max-width: 768px) {
   .test-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 }
 
@@ -1242,7 +1235,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
   .test-grid {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
-    gap: 2px 4px !important;
+    gap: 2px !important;
     margin-top: 2px !important;
   }
 
@@ -1253,8 +1246,8 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
   }
 
   .test-item label {
+    min-width: 50px !important;
     font-size: 0.45rem !important;
-    white-space: nowrap !important;
   }
 
   .yn-group { 
@@ -1383,7 +1376,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     <button class="btn" onclick="saveForIPhone()" title="Save as image for iPhone">📱 iPhone</button>
     <button class="btn" onclick="saveForAndroid()" title="Save as image for Android">🤖 Android</button>
     <button class="btn" onclick="clearForm()" title="Clear all fields">🗑 CLEAR</button>
-    <span id="save-status" style="font-family:var(--font-display);font-size:0.45rem;color:var(--text-muted);letter-spacing:1px;align-self:center;"></span>
+    <span id="save-status" style="font-family:var(--font-display);font-size:0.45rem;color:var(--text-muted);letter-spacing:1px;align-self:center;margin-left:4px;"></span>
   </div>
 
   <div class="content">
@@ -1703,26 +1696,34 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
       <div class="section-body">
         
         <div class="field-row">
-          <label for="tsserial1">TS Serial # 1</label>
-          <input type="text" id="tsserial1" placeholder="SN" style="width:100px;">
-          <label>Condition</label>
-          <div class="check-group">
-            <label class="check-item"><input type="radio" name="tscond1" value="good"><span>Good</span></label>
-            <label class="check-item"><input type="radio" name="tscond1" value="avg"><span>Avg</span></label>
-            <label class="check-item"><input type="radio" name="tscond1" value="poor"><span>Poor</span></label>
-            <label class="check-item"><input type="radio" name="tscond1" value="replace"><span>Needs Replaced</span></label>
+          <div class="field-group">
+            <label for="tsserial1">TS Serial # 1</label>
+            <input type="text" id="tsserial1" placeholder="SN">
           </div>
-        </div>
-
+          <div class="field-group">
+            <label>Condition</label>
+            <div class="radio-group">
+              <label><input type="radio" name="tscond1"> Good</label>
+              <label><input type="radio" name="tscond1"> Avg</label>
+              <label><input type="radio" name="tscond1"> Poor</label>
+              <label><input type="radio" name="tscond1"> Needs Replaced</label>
+            </div>
+          </div>
+        </div>  
+        
         <div class="field-row">
-          <label for="tsserial2">TS Serial # 2</label>
-          <input type="text" id="tsserial2" placeholder="SN" style="width:100px;">
-          <label>Condition</label>
-          <div class="check-group">
-            <label class="check-item"><input type="radio" name="tscond2" value="good"><span>Good</span></label>
-            <label class="check-item"><input type="radio" name="tscond2" value="avg"><span>Avg</span></label>
-            <label class="check-item"><input type="radio" name="tscond2" value="poor"><span>Poor</span></label>
-            <label class="check-item"><input type="radio" name="tscond2" value="replace"><span>Needs Replaced</span></label>
+          <div class="field-group">
+            <label for="tsserial2">TS Serial # 2</label>
+            <input type="text" id="tsserial2" placeholder="SN">
+          </div>
+          <div class="field-group">
+            <label>Condition</label>
+            <div class="radio-group">
+              <label><input type="radio" name="tscond2"> Good</label>
+              <label><input type="radio" name="tscond2"> Avg</label>
+              <label><input type="radio" name="tscond2"> Poor</label>
+              <label><input type="radio" name="tscond2"> Needs Replaced</label>
+            </div>
           </div>
         </div>  
         
@@ -1929,87 +1930,115 @@ function printForm() {
   }, 250);
 }
 
+
 function setStatus(msg) {
   const el = document.getElementById('save-status');
   if (el) el.textContent = msg;
 }
 
+function capturePageToCanvas() {
+  return new Promise((resolve, reject) => {
+    const page = document.getElementById('page');
+    const prevWidth = page.style.width;
+    const prevMaxWidth = page.style.maxWidth;
+    page.style.width = '850px';
+    page.style.maxWidth = '850px';
+    // Two rAF to ensure repaint at 850px before capture
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        html2canvas(page, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          logging: false,
+          width: 850,
+          height: page.scrollHeight,
+          windowWidth: 850,
+          scrollX: 0,
+          scrollY: 0,
+          ignoreElements: el => el.classList.contains('toolbar')
+        }).then(canvas => {
+          page.style.width = prevWidth;
+          page.style.maxWidth = prevMaxWidth;
+          resolve(canvas);
+        }).catch(err => {
+          page.style.width = prevWidth;
+          page.style.maxWidth = prevMaxWidth;
+          reject(err);
+        });
+      });
+    });
+  });
+}
+
 function saveForIPhone() {
-  setStatus('Rendering, please wait…');
-  const page = document.getElementById('page');
+  setStatus('Rendering... please wait');
   const wasDark = document.body.classList.contains('dark-mode');
   if (wasDark) document.body.classList.remove('dark-mode');
-  const toolbar = document.querySelector('.toolbar');
-  if (toolbar) toolbar.style.display = 'none';
-  // Force page to its natural width so zoomed viewports don't produce a narrow capture
-  const prevWidth = page.style.width;
-  const prevMaxWidth = page.style.maxWidth;
-  page.style.width = '850px';
-  page.style.maxWidth = '850px';
-  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px;overflow-y:auto;';
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px;overflow-y:auto;-webkit-overflow-scrolling:touch;box-sizing:border-box;';
+
   const closeBtn = document.createElement('button');
-  closeBtn.style.cssText = 'position:sticky;top:16px;background:#DC2626;color:#fff;border:none;border-radius:4px;padding:8px 16px;font-size:12px;cursor:pointer;font-weight:bold;z-index:10000;margin-bottom:12px;';
-  closeBtn.textContent = '✕ Close';
+  closeBtn.style.cssText = 'background:#DC2626;color:#fff;border:none;border-radius:4px;padding:10px 20px;font-size:14px;cursor:pointer;font-weight:bold;margin-bottom:12px;align-self:flex-end;flex-shrink:0;';
+  closeBtn.textContent = 'X Close';
+
   const lbl = document.createElement('div');
-  lbl.style.cssText = 'color:#ccc;font-size:11px;margin-bottom:8px;text-align:center;';
-  lbl.textContent = 'Long-press the image below to save to Photos';
+  lbl.style.cssText = 'color:#ccc;font-size:13px;margin-bottom:12px;text-align:center;line-height:1.6;padding:0 8px;';
+  lbl.textContent = 'Rendering your form...';
+
   const img = document.createElement('img');
+  img.style.cssText = 'max-width:100%;border:2px solid #555;border-radius:4px;display:block;margin:0 auto;';
+  img.alt = 'AOG Maintenance Report';
+
   overlay.appendChild(closeBtn);
   overlay.appendChild(lbl);
   overlay.appendChild(img);
   document.body.appendChild(overlay);
-  html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false, width: page.scrollWidth, windowWidth: 850 }).then(canvas => {
-    img.style.cssText = 'max-width:100%;border:2px solid #555;border-radius:4px;display:block;margin:0 auto;';
-    img.alt = 'Maintenance Report';
-    setStatus('Image ready — long-press to save to Photos.');
-    page.style.width = prevWidth;
-    page.style.maxWidth = prevMaxWidth;
-    if (toolbar) toolbar.style.display = '';
-    if (wasDark) document.body.classList.add('dark-mode');
-  }).catch(() => {
-    setStatus('Render failed. Try PDF instead.');
-    page.style.width = prevWidth;
-    page.style.maxWidth = prevMaxWidth;
-    if (toolbar) toolbar.style.display = '';
-    if (wasDark) document.body.classList.add('dark-mode');
-  });
+
   closeBtn.onclick = () => {
-    setStatus('');
-    if (toolbar) toolbar.style.display = '';
-    if (wasDark) document.body.classList.add('dark-mode');
     document.body.removeChild(overlay);
+    if (wasDark) document.body.classList.add('dark-mode');
+    setStatus('');
   };
+
+  setTimeout(() => {
+    capturePageToCanvas().then(canvas => {
+      img.src = canvas.toDataURL('image/jpeg', 0.92);
+      lbl.innerHTML = '<b>Long-press the image below</b><br>then tap "Add to Photos"';
+      lbl.style.color = '#4ade80';
+      setStatus('Ready - long-press image to save.');
+      if (wasDark) document.body.classList.add('dark-mode');
+    }).catch(() => {
+      lbl.textContent = 'Render failed. Try the PDF button instead.';
+      lbl.style.color = '#f87171';
+      setStatus('Render failed.');
+      if (wasDark) document.body.classList.add('dark-mode');
+    });
+  }, 250);
 }
 
 function saveForAndroid() {
-  setStatus('Rendering, please wait…');
-  const page = document.getElementById('page');
+  setStatus('Rendering... please wait');
   const wasDark = document.body.classList.contains('dark-mode');
   if (wasDark) document.body.classList.remove('dark-mode');
-  const toolbar = document.querySelector('.toolbar');
-  if (toolbar) toolbar.style.display = 'none';
-  const prevWidth = page.style.width;
-  const prevMaxWidth = page.style.maxWidth;
-  page.style.width = '850px';
-  page.style.maxWidth = '850px';
-  html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false, width: page.scrollWidth, windowWidth: 850 }).then(canvas => {
-    const link = document.createElement('a');
-    link.download = 'AOG_Maintenance_Report.jpg';
-    link.href = canvas.toDataURL('image/jpeg', 0.88);
-    link.click();
-    setStatus('Image sent to Downloads folder.');
-    setTimeout(() => setStatus(''), 4000);
-    page.style.width = prevWidth;
-    page.style.maxWidth = prevMaxWidth;
-    if (toolbar) toolbar.style.display = '';
-    if (wasDark) document.body.classList.add('dark-mode');
-  }).catch(() => {
-    setStatus('Render failed. Try PDF instead.');
-    page.style.width = prevWidth;
-    page.style.maxWidth = prevMaxWidth;
-    if (toolbar) toolbar.style.display = '';
-    if (wasDark) document.body.classList.add('dark-mode');
-  });
+  setTimeout(() => {
+    capturePageToCanvas().then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'AOG_Maintenance_Report.jpg';
+      link.href = canvas.toDataURL('image/jpeg', 0.92);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setStatus('Saved to Downloads folder.');
+      setTimeout(() => setStatus(''), 4000);
+      if (wasDark) document.body.classList.add('dark-mode');
+    }).catch(() => {
+      setStatus('Render failed. Try PDF instead.');
+      if (wasDark) document.body.classList.add('dark-mode');
+    });
+  }, 250);
 }
 
 // Auto-save every 30 seconds
