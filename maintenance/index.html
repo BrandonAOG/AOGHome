@@ -2001,14 +2001,28 @@ function capturePageToCanvas() {
     const prevMaxWidth = page.style.maxWidth;
     const prevBodyPad = document.body.style.padding;
 
-    // 816px = 8.5in @ 96dpi — exact letter width
-    // Scale 2 means canvas = 1632px wide, matching 8.5in @ 192dpi
-    const CAPTURE_WIDTH = 816;
-    const PAPER_RATIO = 11 / 8.5; // letter height/width ratio
+    // 1050px — wide enough that NO responsive breakpoint collapses two-column.
+    // html2canvas windowWidth matches so CSS media queries resolve correctly.
+    // We scale the final canvas down to letter proportions afterward.
+    const CAPTURE_WIDTH = 1050;
+    const PAPER_RATIO = 11 / 8.5;
 
     page.style.width = CAPTURE_WIDTH + 'px';
     page.style.maxWidth = CAPTURE_WIDTH + 'px';
     document.body.style.padding = '0';
+
+    // Inject a temporary style that forces two-column layout regardless of viewport
+    const forceStyle = document.createElement('style');
+    forceStyle.id = 'capture-force-style';
+    forceStyle.textContent = `
+      .two-column {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .toolbar { display: none !important; }
+      .theme-toggle-btn { display: none !important; }
+    `;
+    document.head.appendChild(forceStyle);
 
     // Two rAF: first triggers layout, second confirms paint
     requestAnimationFrame(() => {
@@ -2024,36 +2038,44 @@ function capturePageToCanvas() {
           windowWidth: CAPTURE_WIDTH,
           scrollX: 0,
           scrollY: 0,
-          ignoreElements: el => el.classList.contains('toolbar')
+          ignoreElements: el =>
+            el.classList.contains('toolbar') ||
+            el.classList.contains('theme-toggle-btn')
         }).then(srcCanvas => {
-          // Restore styles immediately
+          // Clean up
           page.style.width = prevWidth;
           page.style.maxWidth = prevMaxWidth;
           document.body.style.padding = prevBodyPad;
+          const fs = document.getElementById('capture-force-style');
+          if (fs) fs.remove();
 
           // Scale canvas to exact 8.5x11 letter proportions
-          const outW = srcCanvas.width;               // 1632px at scale:2
-          const outH = Math.round(outW * PAPER_RATIO); // 11/8.5 ratio
+          const LETTER_W = 1632; // 8.5in @ 192dpi (scale:2)
+          const LETTER_H = Math.round(LETTER_W * PAPER_RATIO);
 
           const letterCanvas = document.createElement('canvas');
-          letterCanvas.width = outW;
-          letterCanvas.height = outH;
+          letterCanvas.width = LETTER_W;
+          letterCanvas.height = LETTER_H;
           const ctx = letterCanvas.getContext('2d');
 
           // White background
           ctx.fillStyle = '#ffffff';
-          ctx.fillRect(0, 0, outW, outH);
+          ctx.fillRect(0, 0, LETTER_W, LETTER_H);
 
-          // Draw captured content at top — center horizontally if narrower
-          const srcH = srcCanvas.height;
-          const drawH = Math.min(srcH, outH); // don't exceed paper
-          ctx.drawImage(srcCanvas, 0, 0, srcCanvas.width, drawH, 0, 0, outW, drawH);
+          // Scale captured content to fit letter width
+          const scale = LETTER_W / srcCanvas.width;
+          const scaledH = Math.round(srcCanvas.height * scale);
+          const drawH = Math.min(scaledH, LETTER_H);
+          ctx.drawImage(srcCanvas, 0, 0, srcCanvas.width, srcCanvas.height,
+                        0, 0, LETTER_W, drawH);
 
           resolve(letterCanvas);
         }).catch(err => {
           page.style.width = prevWidth;
           page.style.maxWidth = prevMaxWidth;
           document.body.style.padding = prevBodyPad;
+          const fs = document.getElementById('capture-force-style');
+          if (fs) fs.remove();
           reject(err);
         });
       });
