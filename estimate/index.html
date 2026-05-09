@@ -1060,6 +1060,8 @@ function setStatus(msg) { const el = document.getElementById('save-status'); if 
 // ── PRINT (no popup) ──
 function printForm() {
   const wasDark = document.body.classList.contains('dark-mode');
+  // Strip dark mode immediately — don't wait for setTimeout
+  if (wasDark) document.body.classList.remove('dark-mode');
   const printStyle = document.createElement('style');
   printStyle.id = 'force-print-light';
   printStyle.textContent = `
@@ -1069,15 +1071,19 @@ function printForm() {
       border-color: rgba(217,119,6,0.4) !important;
       animation: none !important; transition: none !important;
     }
-    .page { border: 2px solid #D97706 !important; }
-    .company-name, .doc-title { color: #D97706 !important; }
-    .section-header { background: #f5f5f5 !important; color: #D97706 !important; }
-    .col-label { color: #D97706 !important; background: #f5f5f5 !important; }
+    html, body { background: white !important; }
+    .page { border: 2px solid #D97706 !important; background: white !important; }
+    .company-name, .doc-title { color: #D97706 !important; text-shadow: none !important; }
+    .section-header { background: #f5f5f5 !important; color: #D97706 !important; text-shadow: none !important; }
+    .col-label { color: #D97706 !important; background: #f5f5f5 !important; text-shadow: none !important; }
+    .check-item input[type="radio"], .check-item input[type="checkbox"] { accent-color: #D97706 !important; }
+    .yn-group { background: white !important; border-color: #D97706 !important; }
+    .yn-group .yn-label { color: #6B7280 !important; background: white !important; text-shadow: none !important; }
+    .section-header svg, .section-header svg * { stroke: #D97706 !important; }
     .footer-text { color: #9CA3AF !important; }
     .toolbar, button, .theme-toggle-btn { display: none !important; }
   `;
   document.head.appendChild(printStyle);
-  if (wasDark) document.body.classList.remove('dark-mode');
   setTimeout(() => {
     window.print();
     setTimeout(() => {
@@ -1092,6 +1098,9 @@ function capturePageToCanvas() {
   return new Promise((resolve, reject) => {
     const page = document.getElementById('page');
     const prevWidth = page.style.width, prevMaxWidth = page.style.maxWidth, prevBodyPad = document.body.style.padding;
+    // Collapse min-height so scrollHeight = content height, not viewport height
+    const prevMinH = page.style.minHeight;
+    page.style.minHeight = '0px';
     const CAPTURE_WIDTH = 1050, PAPER_RATIO = 11 / 8.5;
     page.style.width = CAPTURE_WIDTH + 'px'; page.style.maxWidth = CAPTURE_WIDTH + 'px'; document.body.style.padding = '0';
     const forceStyle = document.createElement('style'); forceStyle.id = 'capture-force-style';
@@ -1114,7 +1123,7 @@ function capturePageToCanvas() {
         ctx.drawImage(srcCanvas, 0, 0, srcCanvas.width, srcCanvas.height, 0, 0, LETTER_W, scaledH);
         resolve(letterCanvas);
       }).catch(err => {
-        page.style.width = prevWidth; page.style.maxWidth = prevMaxWidth; document.body.style.padding = prevBodyPad;
+        page.style.width = prevWidth; page.style.maxWidth = prevMaxWidth; document.body.style.padding = prevBodyPad; page.style.minHeight = prevMinH;
         const fs = document.getElementById('capture-force-style'); if (fs) fs.remove(); reject(err);
       });
     }); });
