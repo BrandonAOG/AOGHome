@@ -1114,13 +1114,12 @@ function capturePageToCanvas() {
       }).then(srcCanvas => {
         page.style.width = prevWidth; page.style.maxWidth = prevMaxWidth; document.body.style.padding = prevBodyPad;
         const fs = document.getElementById('capture-force-style'); if (fs) fs.remove();
-        // Output canvas matches content height exactly — no blank padding at bottom
+        // Fixed 8.5×11 letter canvas — content stretched to fill completely
         const LETTER_W = 1632;
-        const scale = LETTER_W / srcCanvas.width;
-        const scaledH = Math.round(srcCanvas.height * scale);
-        const letterCanvas = document.createElement('canvas'); letterCanvas.width = LETTER_W; letterCanvas.height = scaledH;
-        const ctx = letterCanvas.getContext('2d'); ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, LETTER_W, scaledH);
-        ctx.drawImage(srcCanvas, 0, 0, srcCanvas.width, srcCanvas.height, 0, 0, LETTER_W, scaledH);
+        const LETTER_H = Math.round(LETTER_W * (11 / 8.5)); // 2112px
+        const letterCanvas = document.createElement('canvas'); letterCanvas.width = LETTER_W; letterCanvas.height = LETTER_H;
+        const ctx = letterCanvas.getContext('2d'); ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, LETTER_W, LETTER_H);
+        ctx.drawImage(srcCanvas, 0, 0, srcCanvas.width, srcCanvas.height, 0, 0, LETTER_W, LETTER_H);
         resolve(letterCanvas);
       }).catch(err => {
         page.style.width = prevWidth; page.style.maxWidth = prevMaxWidth; document.body.style.padding = prevBodyPad; page.style.minHeight = prevMinH;
