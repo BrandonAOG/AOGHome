@@ -1296,161 +1296,43 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   MOBILE SAFARI — SINGLE-PAGE PRINT FIX
-   JS (below) detects iOS Safari and adds class "mobile-safari" to <body>.
-   All rules here proportionally compress text, controls, and spacing so
-   the entire form prints on ONE 8.5 × 11 page in Safari on iPhone/iPad.
+   MOBILE SAFARI — SINGLE-PAGE PRINT FIX  (Ver 1.1)
+   JS detects iOS/iPadOS Safari and adds "mobile-safari" to <body>.
+   Strategy: one master zoom (~14% reduction) handles all proportional
+   scaling — fonts, radios, checkboxes, Y/N toggles, inputs, spacing.
+   Only three targeted overrides are needed beyond that:
+     1. Enforce two-column layout (mobile viewport collapses it)
+     2. Reduce fixed-px textarea heights to match the zoom ratio
+     3. Trim page padding slightly to recover extra vertical room
    ═══════════════════════════════════════════════════════════════════════════ */
 @media print {
 
-  /* ── PAGE SHELL: master zoom shrinks everything ~24% ── */
+  /* ── 1. MASTER SCALE — let zoom do all proportional work ── */
   body.mobile-safari .page {
-    zoom: 0.76;
-    padding: 14px !important;
+    zoom: 0.86;          /* ~14% reduction; content was ~1.25 pages → fits 1 */
+    padding: 18px !important;  /* slightly tighter than desktop's 24px        */
   }
 
-  /* ── HEADER ── */
-  body.mobile-safari .header {
-    padding: 3px 8px !important;
-    min-height: auto !important;
-  }
-  body.mobile-safari .logo-img {
-    width: 28px !important;
-    height: 28px !important;
-  }
-  body.mobile-safari .company-name {
-    font-size: 0.68rem !important;
-    letter-spacing: 0.5px !important;
-  }
-  body.mobile-safari .doc-title {
-    font-size: 0.72rem !important;
-    letter-spacing: 1px !important;
-  }
-
-  /* ── LAYOUT ── */
+  /* ── 2. TWO-COLUMN: mobile viewport width triggers the ≤820px breakpoint ──
+          which collapses Battery + Generator into a single column.
+          Force it back to side-by-side for print.                           */
   body.mobile-safari .two-column {
     grid-template-columns: 1fr 1fr !important;
-    gap: 2px !important;
-    margin-bottom: 2px !important;
-  }
-  body.mobile-safari .section {
-    margin-bottom: 2px !important;
   }
 
-  /* ── SECTION HEADERS ── */
-  body.mobile-safari .section-header {
-    padding: 2px 5px !important;
-    font-size: 0.43rem !important;
-  }
-  body.mobile-safari .section-header::before {
-    width: 3px !important;
-    height: 3px !important;
-  }
-
-  /* ── SECTION BODY & ROWS ── */
-  body.mobile-safari .section-body {
-    padding: 2px 5px !important;
-  }
-  body.mobile-safari .field-row {
-    margin-bottom: 1px !important;
-    gap: 2px !important;
-  }
-
-  /* ── LABELS ── */
-  body.mobile-safari label {
-    font-size: 0.40rem !important;
-    letter-spacing: 0.3px !important;
-  }
-
-  /* ── TEXT / DATE / NUMBER INPUTS ── */
-  body.mobile-safari input[type="text"],
-  body.mobile-safari input[type="date"],
-  body.mobile-safari input[type="number"],
-  body.mobile-safari input[type="email"],
-  body.mobile-safari input[type="tel"],
-  body.mobile-safari select {
-    font-size: 0.50rem !important;
-    min-height: 13px !important;
-    padding: 0 1px !important;
-    border-bottom-width: 0.5px !important;
-  }
-
-  /* ── TEXTAREAS ── */
-  body.mobile-safari textarea {
-    font-size: 0.48rem !important;
-    padding: 1px 2px !important;
-    border-width: 0.5px !important;
-  }
+  /* ── 3. TEXTAREA FIXED HEIGHTS — zoom scales layout but not explicit
+          height/min-height values in all WebKit builds; set them manually
+          at the same ~0.86 ratio so they don't exceed their natural space. */
   body.mobile-safari #batnotes,
   body.mobile-safari #gennotes {
-    min-height: 38px !important;
-    height:     38px !important;
+    min-height: 53px !important;   /* 62px × 0.86 */
+    height:     53px !important;
   }
   body.mobile-safari #oilnotes,
   body.mobile-safari #gasnotes,
   body.mobile-safari #tsnotes {
-    min-height: 22px !important;
-    height:     22px !important;
-  }
-
-  /* ── CHECKBOX / RADIO PILLS ── */
-  body.mobile-safari .check-group {
-    gap: 1px !important;
-  }
-  body.mobile-safari .check-item {
-    min-height: auto !important;
-    padding: 0px 3px 0px 2px !important;
-  }
-  body.mobile-safari .check-item span {
-    font-size: 0.38rem !important;
-    letter-spacing: 0.2px !important;
-  }
-  body.mobile-safari .check-item input[type="checkbox"],
-  body.mobile-safari .check-item input[type="radio"] {
-    width:      8px !important;
-    height:     8px !important;
-    min-width:  8px !important;
-    min-height: 8px !important;
-  }
-
-  /* ── Y / N TOGGLES ── */
-  body.mobile-safari .yn-group {
-    height:       14px !important;
-    border-width: 0.5px !important;
-  }
-  body.mobile-safari .yn-group .yn-label {
-    min-height:     14px !important;
-    padding:        0 4px !important;
-    font-size:      0.40rem !important;
-    letter-spacing: 0.8px !important;
-  }
-
-  /* ── SIMULATED OUTAGE TEST GRID ── */
-  body.mobile-safari .test-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 2px !important;
-    margin-top: 2px !important;
-  }
-  body.mobile-safari .test-item {
-    gap: 4px !important;
-  }
-  body.mobile-safari .test-item label {
-    min-width:  44px !important;
-    font-size:  0.40rem !important;
-  }
-
-  /* ── FOOTER ── */
-  body.mobile-safari .footer {
-    padding:        2px 4px !important;
-    padding-bottom: 2px !important;
-    margin-top:     2px !important;
-    min-height:     auto !important;
-  }
-  body.mobile-safari .footer-text,
-  body.mobile-safari .footer span {
-    font-size:      0.40rem !important;
-    letter-spacing: 0.8px !important;
-    white-space:    nowrap !important;
+    min-height: 26px !important;   /* 30px × 0.86 */
+    height:     26px !important;
   }
 
 } /* end mobile-safari @media print */
