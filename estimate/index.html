@@ -577,9 +577,14 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
      Safe range to try: 0.70 → 0.90
      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   body.mobile-safari .page {
-    zoom: 0.99 !important;
+    zoom: 0.82 !important;
     margin-left:  auto !important;
     margin-right: auto !important;
+    min-height: 100vh !important;        /* fill the full paper height */
+  }
+
+  body.mobile-safari .footer {
+    margin-top: auto !important;         /* push footer to page bottom */
   }
           Mobile viewport triggers ≤600-768px breakpoints that collapse
           top-grid and grid-2/3/4 to single-column. Force them back so the
