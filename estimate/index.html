@@ -466,129 +466,75 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   .check-item { flex: 1 1 calc(50% - 4px); min-width: 80px; }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PRINT STYLES
-   ═══════════════════════════════════════════════════════════ */
 @media print {
   @page { size: 8.5in 11in; margin: 0.1in 0.1in 0.1in 0.1in; }
-
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; animation-play-state: paused !important; transition: none !important; }
-
   .toolbar, #theme-toggle-btn, #offline-banner, #address-suggestions, #gps-status, #gps-btn { display: none !important; }
   .header::after { display: none !important; }
   body::before, body::after, body[class*="seasonal-"]::before, body[class*="seasonal-"]::after { display: none !important; content: none !important; }
-
   html { zoom: 0.789; margin: 0 !important; padding: 0 !important; }
-
   body { margin: 0 !important; padding: 0 !important; width: 1050px !important; max-width: none !important; background: #ffffff !important; background-image: none !important; color: #1F2937 !important; }
-
   .page { width: 1050px !important; max-width: none !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; box-sizing: border-box !important; display: flex !important; flex-direction: column !important; overflow: visible !important; background: #ffffff !important; border: 2px solid #D97706 !important; box-shadow: none !important; position: static !important; }
   .page::before, .page::after, .page-corner-bl, .page-corner-br { display: block !important; }
-
   .header { background: #ffffff !important; border-bottom: 1px solid #D97706 !important; padding: 5px 28px !important; min-height: auto !important; height: auto !important; display: flex !important; align-items: center !important; justify-content: space-between !important; flex-shrink: 0 !important; }
   .logo-img { width: 56px !important; height: 56px !important; }
   .company-name { font-size: 1.25rem !important; color: #D97706 !important; text-shadow: none !important; }
   .doc-title { font-size: 1.25rem !important; color: #D97706 !important; text-shadow: none !important; }
-
-  /* ── CONTENT ── */
   .content { flex: 1 !important; min-height: 0 !important; overflow: visible !important; padding: 8px 18px !important; background: #ffffff !important; display: flex !important; flex-direction: column !important; }
-
-  /* ── TOP GRID ── */
   .top-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; background: #ffffff !important; border: 1px solid #D97706 !important; margin-bottom: 8px !important; flex-shrink: 0 !important; }
   .top-grid::before { background: none !important; }
   .top-col { padding: 10px 14px !important; background: #ffffff !important; border-color: #D97706 !important; }
   .top-col:first-child { border-right: 1px solid #D97706 !important; border-bottom: none !important; }
-
-  /* ── COL LABELS ── */
   .col-label { display: inline-flex !important; background: #f5f5f5 !important; border-color: #D97706 !important; border-left-color: #D97706 !important; color: #D97706 !important; text-shadow: none !important; margin-bottom: 8px !important; font-size: 0.62rem !important; padding: 3px 10px 3px 7px !important; }
   .col-label::before { background: #D97706 !important; box-shadow: none !important; animation: none !important; }
   .col-label svg, .col-label svg * { stroke: #D97706 !important; color: #D97706 !important; }
-
-  /* ── FLOOD BAR ── */
   .flood-bar { display: flex !important; background: #ffffff !important; border: 1px solid #D97706 !important; border-top: none !important; margin-bottom: 8px !important; flex-shrink: 0 !important; }
   .flood-item { border-right-color: #D97706 !important; background: #ffffff !important; padding: 6px 14px !important; }
-
-  /* ── SECTIONS ── */
   .section { background: #ffffff !important; border: 1px solid #D97706 !important; margin-bottom: 4px !important; flex-shrink: 0 !important; page-break-inside: avoid !important; break-inside: avoid !important; }
   .section::before { background: none !important; }
   .section-header { background: #f5f5f5 !important; color: #D97706 !important; border-bottom: 1px solid #D97706 !important; text-shadow: none !important; padding: 6px 14px !important; font-size: 0.7rem !important; }
   .section-header::before { background: #D97706 !important; box-shadow: none !important; animation: none !important; }
   .section-header svg, .section-header svg * { stroke: #D97706 !important; color: #D97706 !important; }
   .section-body { background: #ffffff !important; padding: 6px 14px !important; }
-
-  /* ── GRIDS ── */
   .grid-2 { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; margin-bottom: 8px !important; }
   .grid-3 { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 8px !important; margin-bottom: 8px !important; }
   .grid-4 { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 8px !important; margin-bottom: 8px !important; }
   .grid-4 .yn-group, .grid-3 .yn-group, .grid-2 .yn-group { width: fit-content !important; min-width: 0 !important; align-self: flex-start !important; }
   .grid-4 .field-block, .grid-3 .field-block, .grid-2 .field-block { min-width: 0 !important; overflow: hidden !important; }
-
-  /* ── FIELD ROWS ── */
   .field-row { margin-bottom: 2px !important; flex-wrap: nowrap !important; min-height: 32px !important; }
   .inline-row { margin-bottom: 2px !important; flex-wrap: wrap !important; min-height: 32px !important; }
-
-  /* ── LABELS ── */
   label { color: #6B7280 !important; font-size: 0.60rem !important; white-space: nowrap !important; }
   .inline-label { color: #6B7280 !important; white-space: nowrap !important; font-size: 0.60rem !important; }
-
-  /* ── INPUTS ── */
-  input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"] {
-    background: #ffffff !important; border-bottom: 2px solid #D97706 !important;
-    border-top: none !important; border-left: none !important; border-right: none !important;
-    color: #1F2937 !important; padding: 3px 5px !important;
-    min-height: 32px !important; height: 32px !important;
-    font-size: 0.9rem !important; box-shadow: none !important;
-  }
+  input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"] { background: #ffffff !important; border-bottom: 2px solid #D97706 !important; border-top: none !important; border-left: none !important; border-right: none !important; color: #1F2937 !important; padding: 3px 5px !important; min-height: 32px !important; height: 32px !important; font-size: 0.9rem !important; box-shadow: none !important; }
   input::placeholder, textarea::placeholder { color: transparent !important; }
   #address { padding-right: 6px !important; }
   input[type="date"] { min-width: 160px !important; width: 160px !important; }
-
-  /* ── TEXTAREAS ── */
-  textarea {
-    border: 1px solid #D97706 !important; resize: none !important; overflow: hidden !important;
-    padding: 5px 8px !important; margin-top: 3px !important;
-    font-size: 0.88rem !important; background: #ffffff !important;
-    color: #1F2937 !important; box-shadow: none !important;
-  }
-  /* Named textareas — sized to fill available vertical space proportionally */
+  textarea { border: 1px solid #D97706 !important; resize: none !important; overflow: hidden !important; padding: 5px 8px !important; margin-top: 3px !important; font-size: 0.88rem !important; background: #ffffff !important; color: #1F2937 !important; box-shadow: none !important; }
   #gen_notes  { min-height: 46px !important; height: 46px !important; max-height: 46px !important; }
   #pad_notes  { min-height: 38px !important; height: 38px !important; max-height: 38px !important; }
   #gas_notes  { min-height: 46px !important; height: 46px !important; max-height: 46px !important; }
   #ready_notes{ min-height: 44px !important; height: 44px !important; max-height: 44px !important; width: 100% !important; box-sizing: border-box !important; }
-
-  /* ── Y/N TOGGLES ── */
   .yn-group { display: inline-flex !important; border: 1px solid #D97706 !important; background: #ffffff !important; box-shadow: none !important; }
   .yn-group .yn-label { min-height: 26px !important; height: 26px !important; padding: 0 12px !important; color: #6B7280 !important; background: transparent !important; font-size: 0.68rem !important; line-height: 26px !important; }
   .yn-group .yn-label:first-of-type { border-right: 1px solid #D97706 !important; }
   .yn-group .yn-y:checked + .yn-label-y { background: #f0f0f0 !important; color: #059669 !important; text-shadow: none !important; box-shadow: none !important; }
   .yn-group .yn-n:checked + .yn-label-n { background: #f0f0f0 !important; color: #DC2626 !important; text-shadow: none !important; box-shadow: none !important; }
-
-  /* ── CHECK ITEMS ── */
   .check-group { display: flex !important; flex-wrap: wrap !important; gap: 4px !important; }
   .check-item { min-height: 26px !important; height: 26px !important; padding: 0 8px 0 6px !important; background: #ffffff !important; border: 1px solid #D97706 !important; box-shadow: none !important; display: flex !important; align-items: center !important; gap: 5px !important; }
   .check-item input[type="checkbox"], .check-item input[type="radio"] { width: 13px !important; height: 13px !important; min-height: 13px !important; min-width: 13px !important; margin: 0 !important; padding: 0 !important; border: none !important; border-bottom: none !important; flex-shrink: 0 !important; }
   .check-item span { color: #1F2937 !important; text-shadow: none !important; font-size: 0.62rem !important; line-height: 1 !important; }
   .check-item:has(input:checked) { background: #f0f0f0 !important; border-color: #D97706 !important; box-shadow: none !important; }
   .check-item:has(input:checked) span { color: #D97706 !important; }
-
-  /* ── DIVIDER ── */
   .divider { border-top: 1px solid #D97706 !important; background: #ffffff !important; margin: 8px 0 !important; }
   .divider::before { background: #ffffff !important; color: #D97706 !important; }
-
-  /* ── GAS APPLIANCES ── */
   .gas-appliances-box { background: #ffffff !important; border-color: #D97706 !important; padding: 7px 10px !important; margin-bottom: 8px !important; }
   .gas-appliances-box::before { background: none !important; }
   .gas-appliances-label { color: #6B7280 !important; font-size: 0.56rem !important; margin-bottom: 5px !important; }
-
-  /* ── INSTALL DIFFICULTY ROW ── */
   #install-difficulty-row { flex-shrink: 0 !important; margin-top: 3px !important; padding: 0 !important; background: transparent !important; border: none !important; }
   #address-suggestions, #gps-status { display: none !important; }
   #install_days { padding: 3px 5px !important; min-height: 32px !important; height: 32px !important; }
-
-  /* ── FOOTER ── */
   .footer { background: #ffffff !important; border-top: 1px solid #D97706 !important; padding: 6px 22px !important; margin-top: 3px !important; display: flex !important; justify-content: space-between !important; align-items: center !important; flex-shrink: 0 !important; width: 100% !important; min-height: auto !important; height: auto !important; }
   .footer-text { color: #D97706 !important; text-shadow: none !important; }
-
   body.dark-mode .page, body.dark-mode .header, body.dark-mode .section, body.dark-mode .section-header,
   body.dark-mode .top-grid, body.dark-mode .top-col, body.dark-mode .content,
   body.dark-mode .flood-bar, body.dark-mode .flood-item, body.dark-mode .footer,
@@ -598,7 +544,6 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   body.dark-mode .gas-appliances-box, body.dark-mode .gas-appliances-label {
     background: #ffffff !important; color: #1F2937 !important; text-shadow: none !important; box-shadow: none !important; border-color: #D97706 !important;
   }
-
   body[class*="seasonal-"] { background: #ffffff !important; color: #1F2937 !important; }
   body[class*="seasonal-"] .page { border-color: #D97706 !important; box-shadow: none !important; }
   body[class*="seasonal-"] .section-header, body[class*="seasonal-"] .col-label { color: #D97706 !important; text-shadow: none !important; }
@@ -630,7 +575,6 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
     </button>
   </div>
 
-  <!-- ── TOOLBAR: matches Maintenance Report style ── -->
   <div class="toolbar" id="toolbar">
     <button class="btn" onclick="window.location.href='../'">🏠</button>
     <button class="btn" onclick="printForm()" title="Print or save as PDF">📄 PDF</button>
@@ -1057,10 +1001,9 @@ function getFormData() {
 // ── STATUS ──
 function setStatus(msg) { const el = document.getElementById('save-status'); if (el) el.textContent = msg; }
 
-// ── PRINT (no popup) ──
+// ── PRINT ──
 function printForm() {
   const wasDark = document.body.classList.contains('dark-mode');
-  // Strip dark mode immediately — don't wait for setTimeout
   if (wasDark) document.body.classList.remove('dark-mode');
   const printStyle = document.createElement('style');
   printStyle.id = 'force-print-light';
@@ -1094,6 +1037,9 @@ function printForm() {
 }
 
 // ── CANVAS CAPTURE (shared by iPhone + Android) ──
+// FIX: Force the page to exact 8.5×11 letter dimensions BEFORE capturing.
+// Old approach captured at natural scroll height then stretched onto a letter
+// canvas, leaving blank space when the form content was shorter than 11 inches.
 function capturePageToCanvas() {
   return new Promise((resolve, reject) => {
     const page = document.getElementById('page');
@@ -1101,23 +1047,37 @@ function capturePageToCanvas() {
     const prevMaxWidth = page.style.maxWidth;
     const prevMinH     = page.style.minHeight;
     const prevHeight   = page.style.height;
+    const prevOverflow = page.style.overflow;
     const prevBodyPad  = document.body.style.padding;
 
+    // Set page to EXACT 8.5×11 letter proportions before capture
     const CAPTURE_W = 1050;
+    const CAPTURE_H = Math.round(CAPTURE_W * 11 / 8.5); // 1358px — perfect letter ratio
 
-    // Step 1: collapse page to content height so srcCanvas has no blank space
     page.style.width     = CAPTURE_W + 'px';
     page.style.maxWidth  = CAPTURE_W + 'px';
-    page.style.minHeight = '0px';
-    page.style.height    = 'auto';
+    page.style.height    = CAPTURE_H + 'px';
+    page.style.minHeight = CAPTURE_H + 'px';
+    page.style.overflow  = 'hidden';
     document.body.style.padding = '0';
 
     const forceStyle = document.createElement('style');
     forceStyle.id = 'capture-force-style';
     forceStyle.textContent = `
       .toolbar, .theme-toggle-btn { display: none !important; }
-      #page { min-height: 0 !important; height: auto !important; }
-      .content { flex: 0 0 auto !important; overflow: visible !important; min-height: 0 !important; }
+      #page {
+        width: ${CAPTURE_W}px !important;
+        height: ${CAPTURE_H}px !important;
+        min-height: ${CAPTURE_H}px !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      .content {
+        flex: 1 1 auto !important;
+        overflow: hidden !important;
+        min-height: 0 !important;
+      }
     `;
     document.head.appendChild(forceStyle);
 
@@ -1126,27 +1086,20 @@ function capturePageToCanvas() {
       page.style.maxWidth  = prevMaxWidth;
       page.style.minHeight = prevMinH;
       page.style.height    = prevHeight;
+      page.style.overflow  = prevOverflow;
       document.body.style.padding = prevBodyPad;
       const fs = document.getElementById('capture-force-style'); if (fs) fs.remove();
     };
 
     requestAnimationFrame(() => { requestAnimationFrame(() => {
-      const CAPTURE_H = page.scrollHeight;
       html2canvas(page, {
         scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false,
         width: CAPTURE_W, height: CAPTURE_H, windowWidth: CAPTURE_W, scrollX: 0, scrollY: 0,
         ignoreElements: el => el.classList.contains('toolbar') || el.classList.contains('theme-toggle-btn')
-      }).then(srcCanvas => {
+      }).then(canvas => {
         restore();
-        // Step 2: stretch content canvas to fill exact 8.5×11 letter sheet
-        const LETTER_W = 1632;
-        const LETTER_H = Math.round(LETTER_W * 11 / 8.5); // 2112px
-        const letterCanvas = document.createElement('canvas');
-        letterCanvas.width = LETTER_W; letterCanvas.height = LETTER_H;
-        const ctx = letterCanvas.getContext('2d');
-        ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, LETTER_W, LETTER_H);
-        ctx.drawImage(srcCanvas, 0, 0, srcCanvas.width, srcCanvas.height, 0, 0, LETTER_W, LETTER_H);
-        resolve(letterCanvas);
+        // canvas is 2100×2716px @ 2× — exactly 8.5×11 at ~247 DPI, no stretching needed
+        resolve(canvas);
       }).catch(err => { restore(); reject(err); });
     }); });
   });
