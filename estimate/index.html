@@ -1097,34 +1097,57 @@ function printForm() {
 function capturePageToCanvas() {
   return new Promise((resolve, reject) => {
     const page = document.getElementById('page');
-    const prevWidth = page.style.width, prevMaxWidth = page.style.maxWidth, prevBodyPad = document.body.style.padding;
-    // Collapse min-height so scrollHeight = content height, not viewport height
-    const prevMinH = page.style.minHeight;
+    const prevWidth    = page.style.width;
+    const prevMaxWidth = page.style.maxWidth;
+    const prevMinH     = page.style.minHeight;
+    const prevHeight   = page.style.height;
+    const prevBodyPad  = document.body.style.padding;
+
+    const CAPTURE_W = 1050;
+
+    // Step 1: collapse page to content height so srcCanvas has no blank space
+    page.style.width     = CAPTURE_W + 'px';
+    page.style.maxWidth  = CAPTURE_W + 'px';
     page.style.minHeight = '0px';
-    const CAPTURE_WIDTH = 1050, PAPER_RATIO = 11 / 8.5;
-    page.style.width = CAPTURE_WIDTH + 'px'; page.style.maxWidth = CAPTURE_WIDTH + 'px'; document.body.style.padding = '0';
-    const forceStyle = document.createElement('style'); forceStyle.id = 'capture-force-style';
-    forceStyle.textContent = `.toolbar { display: none !important; } .theme-toggle-btn { display: none !important; } #pdfModal, #imageModal { display: none !important; }`;
+    page.style.height    = 'auto';
+    document.body.style.padding = '0';
+
+    const forceStyle = document.createElement('style');
+    forceStyle.id = 'capture-force-style';
+    forceStyle.textContent = `
+      .toolbar, .theme-toggle-btn { display: none !important; }
+      #page { min-height: 0 !important; height: auto !important; }
+      .content { flex: 0 0 auto !important; overflow: visible !important; min-height: 0 !important; }
+    `;
     document.head.appendChild(forceStyle);
+
+    const restore = () => {
+      page.style.width     = prevWidth;
+      page.style.maxWidth  = prevMaxWidth;
+      page.style.minHeight = prevMinH;
+      page.style.height    = prevHeight;
+      document.body.style.padding = prevBodyPad;
+      const fs = document.getElementById('capture-force-style'); if (fs) fs.remove();
+    };
+
     requestAnimationFrame(() => { requestAnimationFrame(() => {
+      const CAPTURE_H = page.scrollHeight;
       html2canvas(page, {
         scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false,
-        width: CAPTURE_WIDTH, height: page.scrollHeight, windowWidth: CAPTURE_WIDTH, scrollX: 0, scrollY: 0,
+        width: CAPTURE_W, height: CAPTURE_H, windowWidth: CAPTURE_W, scrollX: 0, scrollY: 0,
         ignoreElements: el => el.classList.contains('toolbar') || el.classList.contains('theme-toggle-btn')
       }).then(srcCanvas => {
-        page.style.width = prevWidth; page.style.maxWidth = prevMaxWidth; document.body.style.padding = prevBodyPad;
-        const fs = document.getElementById('capture-force-style'); if (fs) fs.remove();
-        // Fixed 8.5×11 letter canvas — content stretched to fill completely
+        restore();
+        // Step 2: stretch content canvas to fill exact 8.5×11 letter sheet
         const LETTER_W = 1632;
-        const LETTER_H = Math.round(LETTER_W * (11 / 8.5)); // 2112px
-        const letterCanvas = document.createElement('canvas'); letterCanvas.width = LETTER_W; letterCanvas.height = LETTER_H;
-        const ctx = letterCanvas.getContext('2d'); ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, LETTER_W, LETTER_H);
+        const LETTER_H = Math.round(LETTER_W * 11 / 8.5); // 2112px
+        const letterCanvas = document.createElement('canvas');
+        letterCanvas.width = LETTER_W; letterCanvas.height = LETTER_H;
+        const ctx = letterCanvas.getContext('2d');
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, LETTER_W, LETTER_H);
         ctx.drawImage(srcCanvas, 0, 0, srcCanvas.width, srcCanvas.height, 0, 0, LETTER_W, LETTER_H);
         resolve(letterCanvas);
-      }).catch(err => {
-        page.style.width = prevWidth; page.style.maxWidth = prevMaxWidth; document.body.style.padding = prevBodyPad; page.style.minHeight = prevMinH;
-        const fs = document.getElementById('capture-force-style'); if (fs) fs.remove(); reject(err);
-      });
+      }).catch(err => { restore(); reject(err); });
     }); });
   });
 }
