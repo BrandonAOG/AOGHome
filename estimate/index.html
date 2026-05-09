@@ -552,43 +552,25 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   MOBILE SAFARI — SINGLE-PAGE PRINT FIX  (Ver 1.2)
+   MOBILE SAFARI — SINGLE-PAGE PRINT FIX  (Ver 1.3)
 
-   Three problems fixed vs Ver 1.0/1.1:
+   Root cause: mobile Safari's viewport fires the ≤600-768px screen media
+   queries even during printing, collapsing every grid to single-column and
+   pushing the form to a second page.
 
-   1. DOUBLE ZOOM: General @media print already has html { zoom: 0.789 }.
-      Adding page zoom on top compounds to ~0.57 — too small and left-
-      aligned. We cancel the html zoom with html.mobile-safari { zoom: 1 }
-      then apply a single zoom on .page.
-
-   2. CENTERING: With page zoom shrinking page below body width, and
-      body margin: 0 from general print, page was left-aligned. Setting
-      margin: 0 auto on .page centers it. CSS zoom reduces the element's
-      layout footprint so auto margins have space to work.
-
-   3. DARK MODE BLEED: Mobile Safari takes its print snapshot before the
-      JS classList.remove('dark-mode') repaints. This block is LAST in the
-      file — at equal specificity, cascade position wins — so
-      body.mobile-safari beats body.dark-mode without JS cooperation.
+   The general @media print already has  html { zoom: 0.789 }  which scales
+   the 1050px design to fill letter paper — no additional zoom is needed or
+   wanted here.  All we need to do is:
+     1. Force the collapsed grids back to their desktop multi-column layout.
+     2. Override dark-mode colours (cascade-last position wins at equal
+        specificity, so body.mobile-safari beats body.dark-mode).
    ══════════════════════════════════════════════════════════════════════════ */
 @media print {
 
-  /* ── 1. CANCEL desktop html zoom; apply single zoom here ── */
-  html.mobile-safari {
-    zoom: 1 !important;
-  }
-
-  /* ── 2. SCALE + CENTER ──
-          body = 1050px (general print); page zoom 0.72 → layout footprint
-          = 756px; auto margins = (1050 - 756) / 2 = 147px each side.     */
-  body.mobile-safari .page {
-    zoom: 0.72 !important;
-    padding: 10px !important;
-    margin-left:  auto !important;
-    margin-right: auto !important;
-  }
-
-  /* ── 3. FORCE MULTI-COLUMN GRIDS ── */
+  /* ── 1. FORCE MULTI-COLUMN GRIDS ──
+          Mobile viewport triggers ≤600-768px breakpoints that collapse
+          top-grid and grid-2/3/4 to single-column. Force them back so the
+          content fits vertically on one page at the existing html zoom.    */
   body.mobile-safari .top-grid {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
@@ -601,14 +583,10 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   body.mobile-safari .grid-3 { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; }
   body.mobile-safari .grid-4 { display: grid !important; grid-template-columns: repeat(4,1fr) !important; }
 
-  /* ── 4. TEXTAREA HEIGHTS scaled at 0.72 ratio ── */
-  body.mobile-safari #gen_notes   { min-height: 33px !important; height: 33px !important; max-height: 33px !important; }
-  body.mobile-safari #pad_notes   { min-height: 27px !important; height: 27px !important; max-height: 27px !important; }
-  body.mobile-safari #gas_notes   { min-height: 33px !important; height: 33px !important; max-height: 33px !important; }
-  body.mobile-safari #ready_notes { min-height: 32px !important; height: 32px !important; max-height: 32px !important; width: 100% !important; box-sizing: border-box !important; }
-
-  /* ── 5. FORCE LIGHT MODE ──
-          Cascade-last position beats body.dark-mode at equal specificity. */
+  /* ── 2. FORCE LIGHT MODE ──
+          Cascade-last position beats body.dark-mode at equal specificity.
+          Mobile Safari captures its print snapshot before JS can remove
+          the dark-mode class, so we handle it purely in CSS.              */
   body.mobile-safari .page,
   body.mobile-safari .header,
   body.mobile-safari .content,
