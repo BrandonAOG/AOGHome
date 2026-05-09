@@ -564,7 +564,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
 
   /* ── 1. MASTER SCALE ── */
   body.mobile-safari .page {
-    zoom: 0.70;
+    zoom: 0.72;
     padding: 10px !important;
   }
 
@@ -1099,6 +1099,7 @@ function setStatus(msg) { const el = document.getElementById('save-status'); if 
 
 // ── PRINT ──
 function printForm() {
+  if (!validateForm()) return;
   const wasDark = document.body.classList.contains('dark-mode');
   if (wasDark) document.body.classList.remove('dark-mode');
   const printStyle = document.createElement('style');
@@ -1198,6 +1199,7 @@ function capturePageToCanvas() {
 
 // ── iPHONE SAVE ──
 function saveForIPhone() {
+  if (!validateForm()) return;
   setStatus('Rendering... please wait');
   const wasDark = document.body.classList.contains('dark-mode');
   if (wasDark) document.body.classList.remove('dark-mode');
@@ -1225,6 +1227,7 @@ function saveForIPhone() {
 
 // ── ANDROID SAVE ──
 function saveForAndroid() {
+  if (!validateForm()) return;
   setStatus('Rendering... please wait');
   const wasDark = document.body.classList.contains('dark-mode');
   if (wasDark) document.body.classList.remove('dark-mode');
