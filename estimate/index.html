@@ -550,10 +550,106 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   body[class*="seasonal-"] .section-header svg, body[class*="seasonal-"] .section-header svg *,
   body[class*="seasonal-"] .col-label svg, body[class*="seasonal-"] .col-label svg * { stroke: #D97706 !important; color: #D97706 !important; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MOBILE SAFARI — SINGLE-PAGE PRINT FIX  (Ver 1.0)
+   JS detects iOS/iPadOS Safari and adds "mobile-safari" to <html>/<body>.
+   Strategy: one master zoom pulls the overflowing content back onto one
+   letter-sized page. Grid layouts that the mobile viewport collapses to
+   single-column are forced back to their desktop multi-column state.
+   Textarea pixel heights are set manually at the ~zoom ratio so they don't
+   exceed their allocated space in WebKit's print engine.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media print {
+
+  /* ── 1. MASTER SCALE ── */
+  body.mobile-safari .page {
+    zoom: 0.70;
+    padding: 10px !important;
+  }
+
+  /* ── 2. FORCE MULTI-COLUMN GRIDS ──
+          Mobile viewport triggers the ≤600-768px breakpoints which collapse
+          top-grid and grid-2/3/4 to single-column. Force them back.       */
+  body.mobile-safari .top-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  body.mobile-safari .top-col:first-child {
+    border-right: 1px solid #D97706 !important;
+    border-bottom: none !important;
+  }
+
+  body.mobile-safari .grid-2 {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  body.mobile-safari .grid-3 {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+  }
+
+  body.mobile-safari .grid-4 {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+
+  /* ── 3. TEXTAREA FIXED HEIGHTS — scaled at ~0.70 ratio so WebKit
+          doesn't let them blow out their section in the print engine.     */
+  body.mobile-safari #gen_notes {
+    min-height: 32px !important;
+    height:     32px !important;
+    max-height: 32px !important;
+  }
+
+  body.mobile-safari #pad_notes {
+    min-height: 27px !important;
+    height:     27px !important;
+    max-height: 27px !important;
+  }
+
+  body.mobile-safari #gas_notes {
+    min-height: 32px !important;
+    height:     32px !important;
+    max-height: 32px !important;
+  }
+
+  body.mobile-safari #ready_notes {
+    min-height: 31px !important;
+    height:     31px !important;
+    max-height: 31px !important;
+    width:      100% !important;
+    box-sizing: border-box !important;
+  }
+
+} /* end mobile-safari @media print */
 </style>
 </head>
 
 <body>
+
+<script>
+/* ── Mobile Safari detection — runs immediately before any DOM paint ── */
+(function () {
+  var ua = navigator.userAgent;
+  if (
+    /iP(hone|od|ad)/.test(ua) &&
+    /WebKit/.test(ua) &&
+    !/CriOS|FxiOS|OPiOS|EdgiOS|mercury/.test(ua)
+  ) {
+    document.documentElement.classList.add('mobile-safari');
+    if (document.body) {
+      document.body.classList.add('mobile-safari');
+    } else {
+      document.addEventListener('DOMContentLoaded', function () {
+        document.body.classList.add('mobile-safari');
+      });
+    }
+  }
+})();
+</script>
 
 <div id="offline-banner">⚠️ YOU ARE OFFLINE — Your data will be auto-saved locally</div>
 
@@ -1036,10 +1132,7 @@ function printForm() {
   }, 250);
 }
 
-// ── CANVAS CAPTURE (shared by iPhone + Android) ──
-// FIX: Force the page to exact 8.5×11 letter dimensions BEFORE capturing.
-// Old approach captured at natural scroll height then stretched onto a letter
-// canvas, leaving blank space when the form content was shorter than 11 inches.
+// ── CANVAS CAPTURE ──
 function capturePageToCanvas() {
   return new Promise((resolve, reject) => {
     const page = document.getElementById('page');
@@ -1050,9 +1143,8 @@ function capturePageToCanvas() {
     const prevOverflow = page.style.overflow;
     const prevBodyPad  = document.body.style.padding;
 
-    // Set page to EXACT 8.5×11 letter proportions before capture
     const CAPTURE_W = 1050;
-    const CAPTURE_H = Math.round(CAPTURE_W * 11 / 8.5); // 1358px — perfect letter ratio
+    const CAPTURE_H = Math.round(CAPTURE_W * 11 / 8.5);
 
     page.style.width     = CAPTURE_W + 'px';
     page.style.maxWidth  = CAPTURE_W + 'px';
@@ -1098,7 +1190,6 @@ function capturePageToCanvas() {
         ignoreElements: el => el.classList.contains('toolbar') || el.classList.contains('theme-toggle-btn')
       }).then(canvas => {
         restore();
-        // canvas is 2100×2716px @ 2× — exactly 8.5×11 at ~247 DPI, no stretching needed
         resolve(canvas);
       }).catch(err => { restore(); reject(err); });
     }); });
