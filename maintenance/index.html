@@ -1000,12 +1000,12 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   PRINT STYLES — fills 8.5x11 with 0.25in margins, all on one page
+   PRINT STYLES — zero @page margins, padding on .page for all browsers
    ══════════════════════════════════════════════════════════════════════════ */
 @media print {
   @page {
     size: 8.5in 11in;
-    margin: 0.25in;
+    margin: 0 !important;
   }
 
   html {
@@ -1042,7 +1042,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     opacity: 0 !important;
   }
 
-  /* display:block — prevents flex from pushing footer off page */
+  /* display:block — prevents flex pushing footer to page 2 */
   .page {
     width: 100% !important;
     max-width: 100% !important;
@@ -1052,7 +1052,8 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     display: block !important;
     box-sizing: border-box !important;
     margin: 0 !important;
-    padding: 0 4px !important;
+    /* All spacing handled here — 0.25in = 24px at 96dpi */
+    padding: 24px !important;
     border: 1.5px solid #D97706 !important;
     box-shadow: none !important;
   }
@@ -1093,7 +1094,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
   .content {
     display: block !important;
     overflow: visible !important;
-    padding: 3px 5px !important;
+    padding: 3px 0 !important;
     margin: 0 !important;
   }
 
@@ -1101,7 +1102,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
   .footer {
     display: flex !important;
     margin-top: 5px !important;
-    padding: 4px 16px !important;
+    padding: 4px 2px !important;
     border-top: 1px solid #D97706 !important;
     background: white !important;
     min-height: auto !important;
@@ -1204,7 +1205,6 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     print-color-adjust: exact;
   }
 
-  /* Taller notes = more vertical fill */
   #batnotes, #gennotes { min-height: 62px !important; height: 62px !important; }
   #oilnotes           { min-height: 30px !important; height: 30px !important; }
   #gasnotes           { min-height: 30px !important; height: 30px !important; }
@@ -1212,7 +1212,6 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
 
   /* ── CHECKBOXES / RADIOS ── */
   .check-group { display: flex !important; flex-wrap: wrap !important; gap: 2px !important; }
-
   .check-item {
     display: flex !important;
     min-height: auto !important;
