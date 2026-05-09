@@ -552,77 +552,140 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   MOBILE SAFARI — SINGLE-PAGE PRINT FIX  (Ver 1.0)
-   JS detects iOS/iPadOS Safari and adds "mobile-safari" to <html>/<body>.
-   Strategy: one master zoom pulls the overflowing content back onto one
-   letter-sized page. Grid layouts that the mobile viewport collapses to
-   single-column are forced back to their desktop multi-column state.
-   Textarea pixel heights are set manually at the ~zoom ratio so they don't
-   exceed their allocated space in WebKit's print engine.
+   MOBILE SAFARI — SINGLE-PAGE PRINT FIX  (Ver 1.2)
+
+   Three problems fixed vs Ver 1.0/1.1:
+
+   1. DOUBLE ZOOM: General @media print already has html { zoom: 0.789 }.
+      Adding page zoom on top compounds to ~0.57 — too small and left-
+      aligned. We cancel the html zoom with html.mobile-safari { zoom: 1 }
+      then apply a single zoom on .page.
+
+   2. CENTERING: With page zoom shrinking page below body width, and
+      body margin: 0 from general print, page was left-aligned. Setting
+      margin: 0 auto on .page centers it. CSS zoom reduces the element's
+      layout footprint so auto margins have space to work.
+
+   3. DARK MODE BLEED: Mobile Safari takes its print snapshot before the
+      JS classList.remove('dark-mode') repaints. This block is LAST in the
+      file — at equal specificity, cascade position wins — so
+      body.mobile-safari beats body.dark-mode without JS cooperation.
    ══════════════════════════════════════════════════════════════════════════ */
 @media print {
 
-  /* ── 1. MASTER SCALE ── */
-  body.mobile-safari .page {
-    zoom: 0.72;
-    padding: 10px !important;
+  /* ── 1. CANCEL desktop html zoom; apply single zoom here ── */
+  html.mobile-safari {
+    zoom: 1 !important;
   }
 
-  /* ── 2. FORCE MULTI-COLUMN GRIDS ──
-          Mobile viewport triggers the ≤600-768px breakpoints which collapse
-          top-grid and grid-2/3/4 to single-column. Force them back.       */
+  /* ── 2. SCALE + CENTER ──
+          body = 1050px (general print); page zoom 0.72 → layout footprint
+          = 756px; auto margins = (1050 - 756) / 2 = 147px each side.     */
+  body.mobile-safari .page {
+    zoom: 0.72 !important;
+    padding: 10px !important;
+    margin-left:  auto !important;
+    margin-right: auto !important;
+  }
+
+  /* ── 3. FORCE MULTI-COLUMN GRIDS ── */
   body.mobile-safari .top-grid {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
   }
-
   body.mobile-safari .top-col:first-child {
-    border-right: 1px solid #D97706 !important;
+    border-right:  1px solid #D97706 !important;
     border-bottom: none !important;
   }
+  body.mobile-safari .grid-2 { display: grid !important; grid-template-columns: 1fr 1fr !important; }
+  body.mobile-safari .grid-3 { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; }
+  body.mobile-safari .grid-4 { display: grid !important; grid-template-columns: repeat(4,1fr) !important; }
 
-  body.mobile-safari .grid-2 {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
+  /* ── 4. TEXTAREA HEIGHTS scaled at 0.72 ratio ── */
+  body.mobile-safari #gen_notes   { min-height: 33px !important; height: 33px !important; max-height: 33px !important; }
+  body.mobile-safari #pad_notes   { min-height: 27px !important; height: 27px !important; max-height: 27px !important; }
+  body.mobile-safari #gas_notes   { min-height: 33px !important; height: 33px !important; max-height: 33px !important; }
+  body.mobile-safari #ready_notes { min-height: 32px !important; height: 32px !important; max-height: 32px !important; width: 100% !important; box-sizing: border-box !important; }
+
+  /* ── 5. FORCE LIGHT MODE ──
+          Cascade-last position beats body.dark-mode at equal specificity. */
+  body.mobile-safari .page,
+  body.mobile-safari .header,
+  body.mobile-safari .content,
+  body.mobile-safari .section,
+  body.mobile-safari .section-body,
+  body.mobile-safari .top-grid,
+  body.mobile-safari .top-col,
+  body.mobile-safari .flood-bar,
+  body.mobile-safari .flood-item,
+  body.mobile-safari .footer,
+  body.mobile-safari .check-item,
+  body.mobile-safari .yn-group,
+  body.mobile-safari .gas-appliances-box {
+    background: #ffffff !important;
+    background-image: none !important;
+    box-shadow: none !important;
   }
 
-  body.mobile-safari .grid-3 {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr 1fr !important;
+  body.mobile-safari .header {
+    border-bottom-color: rgba(217,119,6,0.5) !important;
   }
+  body.mobile-safari .header::after { display: none !important; }
 
-  body.mobile-safari .grid-4 {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
+  body.mobile-safari .section { border-color: rgba(217,119,6,0.4) !important; }
+  body.mobile-safari .section::before { background: none !important; }
 
-  /* ── 3. TEXTAREA FIXED HEIGHTS — scaled at ~0.70 ratio so WebKit
-          doesn't let them blow out their section in the print engine.     */
-  body.mobile-safari #gen_notes {
-    min-height: 32px !important;
-    height:     32px !important;
-    max-height: 32px !important;
+  body.mobile-safari .section-header {
+    background: #f5f5f5 !important;
+    color: #D97706 !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    border-bottom-color: rgba(217,119,6,0.4) !important;
   }
+  body.mobile-safari .section-header::before { background: #D97706 !important; box-shadow: none !important; animation: none !important; }
+  body.mobile-safari .section-header svg, body.mobile-safari .section-header svg * { stroke: #D97706 !important; }
 
-  body.mobile-safari #pad_notes {
-    min-height: 27px !important;
-    height:     27px !important;
-    max-height: 27px !important;
+  body.mobile-safari .col-label {
+    background: #f5f5f5 !important;
+    color: #D97706 !important;
+    border-color: rgba(217,119,6,0.4) !important;
+    border-left-color: #D97706 !important;
+    text-shadow: none !important;
   }
+  body.mobile-safari .col-label::before { background: #D97706 !important; box-shadow: none !important; animation: none !important; }
+  body.mobile-safari .col-label svg, body.mobile-safari .col-label svg * { stroke: #D97706 !important; }
 
-  body.mobile-safari #gas_notes {
-    min-height: 32px !important;
-    height:     32px !important;
-    max-height: 32px !important;
-  }
+  body.mobile-safari .company-name { color: #D97706 !important; text-shadow: none !important; letter-spacing: 2.5px !important; }
+  body.mobile-safari .doc-title    { color: #D97706 !important; text-shadow: none !important; letter-spacing: 4px !important; }
 
-  body.mobile-safari #ready_notes {
-    min-height: 31px !important;
-    height:     31px !important;
-    max-height: 31px !important;
-    width:      100% !important;
-    box-sizing: border-box !important;
-  }
+  body.mobile-safari label,
+  body.mobile-safari .inline-label,
+  body.mobile-safari .gas-appliances-label { color: #6B7280 !important; text-shadow: none !important; }
+
+  body.mobile-safari .check-item span { color: #1F2937 !important; text-shadow: none !important; }
+  body.mobile-safari .check-item:has(input:checked) span { color: #D97706 !important; }
+
+  body.mobile-safari .yn-group { border-color: #D97706 !important; }
+  body.mobile-safari .yn-group .yn-label { color: #6B7280 !important; background: white !important; text-shadow: none !important; }
+  body.mobile-safari .yn-group .yn-label:first-of-type { border-right-color: #D97706 !important; }
+  body.mobile-safari .yn-group .yn-y:checked + .yn-label-y { color: #059669 !important; background: #f0f0f0 !important; text-shadow: none !important; box-shadow: none !important; }
+  body.mobile-safari .yn-group .yn-n:checked + .yn-label-n { color: #DC2626 !important; background: #f0f0f0 !important; text-shadow: none !important; box-shadow: none !important; }
+
+  body.mobile-safari input[type="text"],
+  body.mobile-safari input[type="email"],
+  body.mobile-safari input[type="tel"],
+  body.mobile-safari input[type="date"],
+  body.mobile-safari input[type="number"] { background: white !important; color: #1F2937 !important; border-bottom-color: #D97706 !important; box-shadow: none !important; }
+
+  body.mobile-safari textarea { background: white !important; color: #1F2937 !important; border-color: rgba(217,119,6,0.4) !important; box-shadow: none !important; }
+
+  body.mobile-safari .footer-text { color: #9CA3AF !important; text-shadow: none !important; }
+
+  body.mobile-safari .page, body.mobile-safari .page::before, body.mobile-safari .page::after,
+  body.mobile-safari .page-corner-bl, body.mobile-safari .page-corner-br { border-color: #D97706 !important; }
+
+  body.mobile-safari .divider { border-top-color: rgba(217,119,6,0.3) !important; background: white !important; }
+  body.mobile-safari .divider::before { background: white !important; color: #D97706 !important; text-shadow: none !important; }
 
 } /* end mobile-safari @media print */
 </style>
