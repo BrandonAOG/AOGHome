@@ -298,9 +298,9 @@ body.dark-mode .col-label { background: linear-gradient(90deg, rgba(26,40,71,0.7
 body.dark-mode .col-label::before { background: #00FFC8; box-shadow: 0 0 6px #00FFC8, 0 0 12px rgba(0,255,200,0.4); }
 
 .section-header svg { stroke: var(--icon-color-section) !important; color: var(--icon-color-section) !important; }
-.section-header svg path, .section-header svg line, .section-header svg circle, .section-header svg rect, .section-header svg polyline, .section-header svg polygon { stroke: var(--icon-color-section) !important; fill: none !important; }
+.section-header svg *, .section-header svg path, .section-header svg line, .section-header svg circle, .section-header svg rect, .section-header svg polyline, .section-header svg polygon, .section-header svg ellipse { stroke: var(--icon-color-section) !important; fill: none !important; }
 .col-label svg { stroke: var(--icon-color-section) !important; color: var(--icon-color-section) !important; }
-.col-label svg path, .col-label svg line, .col-label svg circle, .col-label svg rect, .col-label svg polyline, .col-label svg polygon { stroke: var(--icon-color-section) !important; fill: none !important; }
+.col-label svg *, .col-label svg path, .col-label svg line, .col-label svg circle, .col-label svg rect, .col-label svg polyline, .col-label svg polygon, .col-label svg ellipse { stroke: var(--icon-color-section) !important; fill: none !important; }
 .toolbar svg { stroke: var(--icon-color-primary) !important; color: var(--icon-color-primary) !important; }
 .gps-btn svg { stroke: var(--icon-color-gps) !important; color: var(--icon-color-gps) !important; }
 #theme-toggle-btn svg { stroke: var(--icon-color-primary) !important; color: var(--icon-color-primary) !important; }
@@ -1398,7 +1398,7 @@ function getCurrentSeasonalTheme() {
   return 'default';
 }
 function applySeasonalTheme(n){Object.keys(SEASONAL_THEMES).forEach(k=>document.body.classList.remove('seasonal-'+k));if(n!=='default'&&SEASONAL_THEMES[n])document.body.classList.add('seasonal-'+n);}
-function injectSeasonalStyles(){const s=document.createElement('style');s.id='seasonal-styles';s.textContent=`:root{--seasonal-primary:#D97706;--seasonal-secondary:#059669;--seasonal-accent:#FFB300;}body[class*="seasonal-"] .page{border-color:var(--seasonal-primary)!important;}body[class*="seasonal-"] .section-header,body[class*="seasonal-"] .col-label{color:var(--seasonal-primary)!important;border-left-color:var(--seasonal-primary)!important;}@media print{body::before,body::after,body[class*="seasonal-"]::before,body[class*="seasonal-"]::after{display:none!important;content:none!important;}body[class*="seasonal-"]{background:#ffffff!important;}}`;document.head.appendChild(s);}
+function injectSeasonalStyles(){const s=document.createElement('style');s.id='seasonal-styles';s.textContent=`:root{--seasonal-primary:#D97706;--seasonal-secondary:#059669;--seasonal-accent:#FFB300;}body[class*="seasonal-"] .page{border-color:var(--seasonal-primary)!important;}body[class*="seasonal-"]:not(.dark-mode) .section-header,body[class*="seasonal-"]:not(.dark-mode) .col-label{color:var(--seasonal-primary)!important;border-left-color:var(--seasonal-primary)!important;}@media print{body::before,body::after,body[class*="seasonal-"]::before,body[class*="seasonal-"]::after{display:none!important;content:none!important;}body[class*="seasonal-"]{background:#ffffff!important;}}`;document.head.appendChild(s);}
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', function() {
