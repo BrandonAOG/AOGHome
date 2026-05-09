@@ -577,7 +577,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
      Safe range to try: 0.70 → 0.90
      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   body.mobile-safari .page {
-    zoom: 0.82 !important;
+    zoom: 0.94 !important;
     margin-left:  auto !important;
     margin-right: auto !important;
   }
@@ -696,6 +696,18 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   body.mobile-safari input[type="number"] { background: white !important; color: #1F2937 !important; border-bottom-color: #D97706 !important; box-shadow: none !important; }
 
   body.mobile-safari textarea { background: white !important; color: #1F2937 !important; border-color: rgba(217,119,6,0.4) !important; box-shadow: none !important; }
+
+  /* ── RADIO & CHECKBOX — override dark-mode accent-color ── */
+  body.mobile-safari .check-item input[type="checkbox"],
+  body.mobile-safari .check-item input[type="radio"] {
+    accent-color: #D97706 !important;
+  }
+
+  /* ── PLACEHOLDERS — mobile Safari needs opacity:0 + webkit prefix ── */
+  body.mobile-safari input::placeholder,
+  body.mobile-safari textarea::placeholder { color: transparent !important; opacity: 0 !important; }
+  body.mobile-safari input::-webkit-input-placeholder,
+  body.mobile-safari textarea::-webkit-input-placeholder { color: transparent !important; opacity: 0 !important; }
 
   body.mobile-safari .footer-text { color: #9CA3AF !important; text-shadow: none !important; }
 
