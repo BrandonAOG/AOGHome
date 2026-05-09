@@ -1309,7 +1309,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
 
   /* ── 1. MASTER SCALE — let zoom do all proportional work ── */
   body.mobile-safari .page {
-    zoom: 0.86;          /* ~14% reduction; content was ~1.25 pages → fits 1 */
+    zoom: 0.82;          /* ~18% reduction; pulls last section onto page 1   */
     padding: 18px !important;  /* slightly tighter than desktop's 24px        */
   }
 
@@ -1903,12 +1903,6 @@ function clearForm() {
 
 function printForm() {
   const wasDark = document.body.classList.contains('dark-mode');
-
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-  if (isSafari) {
-    alert('⚠️ SAFARI PRINT TIP\n\nFor best results, in the print preview:\n\n1. Tap the scale slider/zoom\n2. Scale DOWN by 1\n3. Then scale BACK UP by 1\n\nThis ensures the page fits properly on one page.');
-  }
 
   const printStyle = document.createElement('style');
   printStyle.id = 'force-print-light';
