@@ -73,13 +73,11 @@ body {
   color: var(--text);
   width: 100%;
   margin: 0 auto;
-  /* FIX: was env(safe-area-inset-bottom, 24px) — causes reflow gap on Safari refresh */
   padding: 0;
   padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
   -webkit-text-size-adjust: 100%;
   overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
-  /* FIX: -webkit-fill-available prevents vh recalc gaps on Safari refresh */
   min-height: -webkit-fill-available;
   min-height: 100vh;
 }
@@ -107,13 +105,11 @@ body.dark-mode {
   position: relative;
   display: flex;
   flex-direction: column;
-  /* FIX: match body — use -webkit-fill-available to stay stable */
   min-height: -webkit-fill-available;
   min-height: 100vh;
   padding: 0;
   box-sizing: border-box;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  /* FIX: prevent flex stretch adding phantom bottom gap */
   flex-shrink: 0;
   overflow-x: hidden;
 }
@@ -940,7 +936,6 @@ body.dark-mode .yn-group .yn-n:checked + .yn-label-n {
 .footer {
   background: var(--panel);
   padding: 4px 10px;
-  /* FIX: absorb safe-area here, not on body — prevents body reflow gap */
   padding-bottom: max(4px, env(safe-area-inset-bottom, 4px));
   display: flex;
   justify-content: space-between;
@@ -1000,7 +995,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   PRINT STYLES — zero @page margins, padding on .page for all browsers
+   DESKTOP / GENERAL PRINT STYLES
    ══════════════════════════════════════════════════════════════════════════ */
 @media print {
   @page {
@@ -1042,7 +1037,6 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     opacity: 0 !important;
   }
 
-  /* display:block — prevents flex pushing footer to page 2 */
   .page {
     width: 100% !important;
     max-width: 100% !important;
@@ -1052,7 +1046,6 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     display: block !important;
     box-sizing: border-box !important;
     margin: 0 !important;
-    /* All spacing handled here — 0.25in = 24px at 96dpi */
     padding: 24px !important;
     border: 1.5px solid #D97706 !important;
     box-shadow: none !important;
@@ -1298,7 +1291,169 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
   body.dark-mode .page { border: 1.5px solid #D97706 !important; }
   body.dark-mode .yn-group { background: white !important; border-color: rgba(217,119,6,0.4) !important; }
   body.dark-mode .check-item { background: white !important; }
-}
+
+} /* end general @media print */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE SAFARI — SINGLE-PAGE PRINT FIX
+   JS (below) detects iOS Safari and adds class "mobile-safari" to <body>.
+   All rules here proportionally compress text, controls, and spacing so
+   the entire form prints on ONE 8.5 × 11 page in Safari on iPhone/iPad.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media print {
+
+  /* ── PAGE SHELL: master zoom shrinks everything ~24% ── */
+  body.mobile-safari .page {
+    zoom: 0.76;
+    padding: 14px !important;
+  }
+
+  /* ── HEADER ── */
+  body.mobile-safari .header {
+    padding: 3px 8px !important;
+    min-height: auto !important;
+  }
+  body.mobile-safari .logo-img {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  body.mobile-safari .company-name {
+    font-size: 0.68rem !important;
+    letter-spacing: 0.5px !important;
+  }
+  body.mobile-safari .doc-title {
+    font-size: 0.72rem !important;
+    letter-spacing: 1px !important;
+  }
+
+  /* ── LAYOUT ── */
+  body.mobile-safari .two-column {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2px !important;
+    margin-bottom: 2px !important;
+  }
+  body.mobile-safari .section {
+    margin-bottom: 2px !important;
+  }
+
+  /* ── SECTION HEADERS ── */
+  body.mobile-safari .section-header {
+    padding: 2px 5px !important;
+    font-size: 0.43rem !important;
+  }
+  body.mobile-safari .section-header::before {
+    width: 3px !important;
+    height: 3px !important;
+  }
+
+  /* ── SECTION BODY & ROWS ── */
+  body.mobile-safari .section-body {
+    padding: 2px 5px !important;
+  }
+  body.mobile-safari .field-row {
+    margin-bottom: 1px !important;
+    gap: 2px !important;
+  }
+
+  /* ── LABELS ── */
+  body.mobile-safari label {
+    font-size: 0.40rem !important;
+    letter-spacing: 0.3px !important;
+  }
+
+  /* ── TEXT / DATE / NUMBER INPUTS ── */
+  body.mobile-safari input[type="text"],
+  body.mobile-safari input[type="date"],
+  body.mobile-safari input[type="number"],
+  body.mobile-safari input[type="email"],
+  body.mobile-safari input[type="tel"],
+  body.mobile-safari select {
+    font-size: 0.50rem !important;
+    min-height: 13px !important;
+    padding: 0 1px !important;
+    border-bottom-width: 0.5px !important;
+  }
+
+  /* ── TEXTAREAS ── */
+  body.mobile-safari textarea {
+    font-size: 0.48rem !important;
+    padding: 1px 2px !important;
+    border-width: 0.5px !important;
+  }
+  body.mobile-safari #batnotes,
+  body.mobile-safari #gennotes {
+    min-height: 38px !important;
+    height:     38px !important;
+  }
+  body.mobile-safari #oilnotes,
+  body.mobile-safari #gasnotes,
+  body.mobile-safari #tsnotes {
+    min-height: 22px !important;
+    height:     22px !important;
+  }
+
+  /* ── CHECKBOX / RADIO PILLS ── */
+  body.mobile-safari .check-group {
+    gap: 1px !important;
+  }
+  body.mobile-safari .check-item {
+    min-height: auto !important;
+    padding: 0px 3px 0px 2px !important;
+  }
+  body.mobile-safari .check-item span {
+    font-size: 0.38rem !important;
+    letter-spacing: 0.2px !important;
+  }
+  body.mobile-safari .check-item input[type="checkbox"],
+  body.mobile-safari .check-item input[type="radio"] {
+    width:      8px !important;
+    height:     8px !important;
+    min-width:  8px !important;
+    min-height: 8px !important;
+  }
+
+  /* ── Y / N TOGGLES ── */
+  body.mobile-safari .yn-group {
+    height:       14px !important;
+    border-width: 0.5px !important;
+  }
+  body.mobile-safari .yn-group .yn-label {
+    min-height:     14px !important;
+    padding:        0 4px !important;
+    font-size:      0.40rem !important;
+    letter-spacing: 0.8px !important;
+  }
+
+  /* ── SIMULATED OUTAGE TEST GRID ── */
+  body.mobile-safari .test-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2px !important;
+    margin-top: 2px !important;
+  }
+  body.mobile-safari .test-item {
+    gap: 4px !important;
+  }
+  body.mobile-safari .test-item label {
+    min-width:  44px !important;
+    font-size:  0.40rem !important;
+  }
+
+  /* ── FOOTER ── */
+  body.mobile-safari .footer {
+    padding:        2px 4px !important;
+    padding-bottom: 2px !important;
+    margin-top:     2px !important;
+    min-height:     auto !important;
+  }
+  body.mobile-safari .footer-text,
+  body.mobile-safari .footer span {
+    font-size:      0.40rem !important;
+    letter-spacing: 0.8px !important;
+    white-space:    nowrap !important;
+  }
+
+} /* end mobile-safari @media print */
 </style>
 </head>
 
@@ -1750,6 +1905,30 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
 </div>
 
 <script>
+// ── Mobile Safari detection for single-page print ──────────────────────────
+// Runs immediately (before DOMContentLoaded) so the class is present when
+// print CSS is evaluated.  Only targets iOS/iPadOS Safari — Chrome, Firefox,
+// Edge, and Opera on iOS are excluded via their specific UA tokens.
+(function () {
+  var ua = navigator.userAgent;
+  if (
+    /iP(hone|od|ad)/.test(ua) &&
+    /WebKit/.test(ua) &&
+    !/CriOS|FxiOS|OPiOS|EdgiOS|mercury/.test(ua)
+  ) {
+    // Set on <html> immediately; set on <body> once it exists
+    document.documentElement.classList.add('mobile-safari');
+    if (document.body) {
+      document.body.classList.add('mobile-safari');
+    } else {
+      document.addEventListener('DOMContentLoaded', function () {
+        document.body.classList.add('mobile-safari');
+      });
+    }
+  }
+})();
+// ──────────────────────────────────────────────────────────────────────────
+
 const THEME_KEY = 'aog_maint_theme';
 const DRAFT_KEY = 'aog_maint_draft';
 
@@ -1893,14 +2072,10 @@ function capturePageToCanvas() {
   return new Promise((resolve, reject) => {
     const page = document.getElementById('page');
 
-    // Save original styles
     const prevWidth = page.style.width;
     const prevMaxWidth = page.style.maxWidth;
     const prevBodyPad = document.body.style.padding;
 
-    // 1050px — wide enough that NO responsive breakpoint collapses two-column.
-    // html2canvas windowWidth matches so CSS media queries resolve correctly.
-    // We scale the final canvas down to letter proportions afterward.
     const CAPTURE_WIDTH = 1050;
     const PAPER_RATIO = 11 / 8.5;
 
@@ -1908,7 +2083,6 @@ function capturePageToCanvas() {
     page.style.maxWidth = CAPTURE_WIDTH + 'px';
     document.body.style.padding = '0';
 
-    // Inject a temporary style that forces two-column layout regardless of viewport
     const forceStyle = document.createElement('style');
     forceStyle.id = 'capture-force-style';
     forceStyle.textContent = `
@@ -1921,7 +2095,6 @@ function capturePageToCanvas() {
     `;
     document.head.appendChild(forceStyle);
 
-    // Two rAF: first triggers layout, second confirms paint
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         html2canvas(page, {
@@ -1939,15 +2112,13 @@ function capturePageToCanvas() {
             el.classList.contains('toolbar') ||
             el.classList.contains('theme-toggle-btn')
         }).then(srcCanvas => {
-          // Clean up
           page.style.width = prevWidth;
           page.style.maxWidth = prevMaxWidth;
           document.body.style.padding = prevBodyPad;
           const fs = document.getElementById('capture-force-style');
           if (fs) fs.remove();
 
-          // Scale canvas to exact 8.5x11 letter proportions
-          const LETTER_W = 1632; // 8.5in @ 192dpi (scale:2)
+          const LETTER_W = 1632;
           const LETTER_H = Math.round(LETTER_W * PAPER_RATIO);
 
           const letterCanvas = document.createElement('canvas');
@@ -1955,11 +2126,9 @@ function capturePageToCanvas() {
           letterCanvas.height = LETTER_H;
           const ctx = letterCanvas.getContext('2d');
 
-          // White background
           ctx.fillStyle = '#ffffff';
           ctx.fillRect(0, 0, LETTER_W, LETTER_H);
 
-          // Scale captured content to fit letter width
           const scale = LETTER_W / srcCanvas.width;
           const scaledH = Math.round(srcCanvas.height * scale);
           const drawH = Math.min(scaledH, LETTER_H);
