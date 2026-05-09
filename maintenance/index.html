@@ -1000,18 +1000,15 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   PRINT STYLES — rebuilt for mobile Safari stability
+   PRINT STYLES — fills 8.5x11 with 0.25in margins, all on one page
    ══════════════════════════════════════════════════════════════════════════ */
 @media print {
   @page {
     size: 8.5in 11in;
-    margin: 0;
-    padding: 0;
+    margin: 0.25in;
   }
 
-  /* FIX: lock html to exact page height — Safari print engine needs this explicit */
   html {
-    width: 8.5in !important;
     height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -1020,9 +1017,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     print-color-adjust: exact !important;
   }
 
-  /* FIX: min-height: 0 cancels -webkit-fill-available for print context */
   body {
-    width: 8.5in !important;
     height: auto !important;
     min-height: 0 !important;
     margin: 0 !important;
@@ -1032,107 +1027,93 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     print-color-adjust: exact !important;
   }
 
-  /* FIX: kill all animations — Safari re-ticks @keyframes during print layout */
   *, *::before, *::after {
     animation: none !important;
     transition: none !important;
   }
 
-  input::placeholder, textarea::placeholder { 
-    color: transparent !important; 
+  input::placeholder, textarea::placeholder {
+    color: transparent !important;
     opacity: 0 !important;
   }
-  input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+  input::-webkit-input-placeholder,
+  textarea::-webkit-input-placeholder {
     color: transparent !important;
     opacity: 0 !important;
   }
 
+  /* display:block — prevents flex from pushing footer off page */
   .page {
-    max-width: 8.5in !important;
-    width: 8.5in !important;
+    width: 100% !important;
+    max-width: 100% !important;
     height: auto !important;
+    min-height: 0 !important;
     overflow: visible !important;
-    display: flex !important;
-    flex-direction: column !important;
+    display: block !important;
     box-sizing: border-box !important;
     margin: 0 !important;
-    padding: 0.12in !important;
+    padding: 0 4px !important;
     border: 1.5px solid #D97706 !important;
     box-shadow: none !important;
-    min-height: 0 !important;
-    flex-shrink: 0 !important;
   }
 
+  .page::before, .page::after,
+  .page-corner-bl, .page-corner-br {
+    display: block !important;
+    border-color: #D97706 !important;
+  }
+
+  /* ── HEADER ── */
   .header {
-    flex-shrink: 0 !important;
-    margin-bottom: 3px !important;
+    display: flex !important;
+    margin-bottom: 4px !important;
     padding: 5px 10px !important;
     border-bottom: 0.5px solid #D97706 !important;
     background: white !important;
     min-height: auto !important;
   }
-
-  .logo-img {
-    width: 50px !important;
-    height: 50px !important;
-  }
-
+  .header::after { display: none !important; }
+  .logo-img { width: 46px !important; height: 46px !important; }
   .company-name {
     color: #D97706 !important;
     text-shadow: none !important;
-    font-size: 1.2rem !important;
+    font-size: 1.05rem !important;
     letter-spacing: 1px !important;
   }
-
   .doc-title {
     color: #D97706 !important;
     text-shadow: none !important;
-    font-size: 1.2rem !important;
+    font-size: 1.05rem !important;
     letter-spacing: 1.5px !important;
   }
 
-  .toolbar, button, .theme-toggle-btn { 
-    display: none !important;
-  }
+  .toolbar, button, .theme-toggle-btn { display: none !important; }
 
-  .page::before, .page::after,
-  .page-corner-bl, .page-corner-br { 
-    display: block !important; 
-    border-color: #D97706 !important; 
-  }
-
-  .header::after { 
-    display: none !important; 
-  }
-
+  /* ── CONTENT ── */
   .content {
-    flex: 0 1 auto !important;
+    display: block !important;
     overflow: visible !important;
-    padding: 4px 6px !important;
+    padding: 3px 5px !important;
     margin: 0 !important;
   }
 
+  /* ── FOOTER ── */
   .footer {
-    margin-top: 4px !important;
-    flex-shrink: 0 !important;
-    padding: 5px 20px !important;
-    padding-bottom: 4px !important;
+    display: flex !important;
+    margin-top: 5px !important;
+    padding: 4px 16px !important;
     border-top: 1px solid #D97706 !important;
     background: white !important;
-    line-height: 1.4 !important;
-    overflow: visible !important;
     min-height: auto !important;
     box-sizing: border-box !important;
   }
-
-  .footer-text,
-  .footer span {
+  .footer-text, .footer span {
     line-height: 1.4 !important;
-    overflow: visible !important;
     white-space: nowrap !important;
     font-size: 0.52rem !important;
   }
 
+  /* ── TWO-COLUMN ── */
   .two-column {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
@@ -1140,62 +1121,63 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     margin-bottom: 3px !important;
   }
 
-  .section { 
+  /* ── SECTIONS ── */
+  .section {
     background: white !important;
     border: 0.5px solid #D97706 !important;
     margin-bottom: 3px !important;
-    padding: 1px !important;
+    padding: 0 !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     box-shadow: none !important;
+    display: block !important;
   }
+  .section::before { background: none !important; }
 
-  .section::before { 
-    background: none !important; 
-  }
-
-  .section-header { 
+  .section-header {
     background: #f5f5f5 !important;
     color: #D97706 !important;
     border-bottom: 0.5px solid #D97706 !important;
     text-shadow: none !important;
-    padding: 3px 8px !important;
-    font-size: 0.55rem !important;
+    padding: 3px 7px !important;
+    font-size: 0.52rem !important;
     min-height: auto !important;
+    display: flex !important;
   }
-
-  /* FIX: pulse dot was animating during print layout — now a static 2px square */
-  .section-header::before { 
-    width: 2px !important;
-    height: 2px !important;
+  .section-header::before {
+    width: 3px !important; height: 3px !important;
     background: #D97706 !important;
     box-shadow: none !important;
     animation: none !important;
   }
 
-  .section-body { 
+  .section-body {
     padding: 3px 6px !important;
     background: white !important;
+    display: block !important;
   }
 
+  /* ── FIELD ROWS ── */
   .field-row {
     display: flex !important;
     margin-bottom: 2px !important;
     gap: 3px !important;
+    flex-wrap: wrap !important;
   }
 
   label {
     color: #6B7280 !important;
-    font-size: 0.5rem !important;
-    letter-spacing: 0.4px !important;
+    font-size: 0.49rem !important;
+    letter-spacing: 0.3px !important;
   }
 
-  input[type="text"], 
-  input[type="email"], 
+  /* ── INPUTS ── */
+  input[type="text"],
+  input[type="email"],
   input[type="tel"],
-  input[type="date"], 
-  input[type="number"], 
-  textarea, 
+  input[type="date"],
+  input[type="number"],
+  textarea,
   select {
     background: white !important;
     border-bottom: 0.5px solid #D97706 !important;
@@ -1203,82 +1185,77 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     border-left: none !important;
     border-right: none !important;
     color: #1F2937 !important;
-    min-height: 18px !important;
-    padding: 1px 3px !important;
-    font-size: 0.65rem !important;
+    min-height: 16px !important;
+    padding: 0 2px !important;
+    font-size: 0.62rem !important;
     box-shadow: none !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
-  textarea { 
-    max-height: none !important;  
+  textarea {
     height: auto !important;
-    min-height: 44px !important;
+    min-height: 40px !important;
     background: white !important;
     border: 0.5px solid #D97706 !important;
-    font-size: 0.6rem !important;
+    font-size: 0.57rem !important;
     padding: 1px 3px !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
-  #batnotes, #gennotes {
-    min-height: 58px !important;
-    height: 58px !important;
+  /* Taller notes = more vertical fill */
+  #batnotes, #gennotes { min-height: 62px !important; height: 62px !important; }
+  #oilnotes           { min-height: 30px !important; height: 30px !important; }
+  #gasnotes           { min-height: 30px !important; height: 30px !important; }
+  #tsnotes            { min-height: 30px !important; height: 30px !important; }
+
+  /* ── CHECKBOXES / RADIOS ── */
+  .check-group { display: flex !important; flex-wrap: wrap !important; gap: 2px !important; }
+
+  .check-item {
+    display: flex !important;
+    min-height: auto !important;
+    padding: 1px 5px 1px 3px !important;
+  }
+  .check-item span { font-size: 0.47rem !important; }
+  .check-item input[type="checkbox"],
+  .check-item input[type="radio"] {
+    width: 10px !important; height: 10px !important;
+    min-height: 10px !important; min-width: 10px !important;
   }
 
-  #oilnotes, #gasnotes, #tsnotes {
-    min-height: 34px !important;
-    height: 34px !important;
-  }
-
+  /* ── SIMULATED OUTAGE TEST GRID ── */
   .test-grid {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 3px !important;
     margin-top: 3px !important;
   }
+  .test-item { display: flex !important; align-items: center !important; gap: 4px !important; }
+  .test-item label { min-width: 52px !important; font-size: 0.47rem !important; }
 
-  .test-item {
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-  }
-
-  .test-item label {
-    min-width: 55px !important;
-    font-size: 0.5rem !important;
-  }
-
-  .yn-group { 
+  /* ── Y/N TOGGLES ── */
+  .yn-group {
     border: 0.5px solid #D97706 !important;
     background: white !important;
-    height: 20px !important;
+    height: 18px !important;
     display: inline-flex !important;
   }
-
-  .yn-group .yn-label { 
-    min-height: 20px !important;
+  .yn-group .yn-label {
+    min-height: 18px !important;
     padding: 0 5px !important;
     color: #6B7280 !important;
     border-right: 0.5px solid #D97706 !important;
-    font-size: 0.5rem !important;
+    font-size: 0.47rem !important;
     background: white !important;
     display: flex !important;
     align-items: center !important;
   }
+  .yn-group .yn-label:last-child { border-right: none !important; }
+  .yn-group .yn-y:checked + .yn-label-y { background: #f0f0f0 !important; color: #059669 !important; }
 
-  .yn-group .yn-label:last-child {
-    border-right: none !important;
-  }
-
-  .yn-group .yn-y:checked + .yn-label-y {
-    background: #f0f0f0 !important;
-    color: #059669 !important;
-  }
-
-  /* Nuclear light-mode override — beats dark-mode class at print time */
+  /* ── DARK MODE NUCLEAR OVERRIDE ── */
   body.dark-mode,
   body.dark-mode .page,
   body.dark-mode .header,
@@ -1301,26 +1278,14 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     text-shadow: none !important;
     border-color: rgba(217,119,6,0.35) !important;
   }
-
   body.dark-mode .company-name,
   body.dark-mode .doc-title,
-  body.dark-mode .section-header {
-    color: #D97706 !important;
-    text-shadow: none !important;
-  }
-
-  body.dark-mode .section-header {
-    background: #f5f5f5 !important;
-  }
-
+  body.dark-mode .section-header { color: #D97706 !important; text-shadow: none !important; }
+  body.dark-mode .section-header { background: #f5f5f5 !important; }
   body.dark-mode label,
   body.dark-mode .footer-text,
   body.dark-mode .yn-group .yn-label,
-  body.dark-mode .check-item span {
-    color: #6B7280 !important;
-    text-shadow: none !important;
-  }
-
+  body.dark-mode .check-item span { color: #6B7280 !important; text-shadow: none !important; }
   body.dark-mode input[type="text"],
   body.dark-mode input[type="date"],
   body.dark-mode input[type="number"],
@@ -1328,80 +1293,12 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
   body.dark-mode input[type="tel"],
   body.dark-mode textarea,
   body.dark-mode select {
-    background: white !important;
-    color: #1F2937 !important;
-    box-shadow: none !important;
-    border-color: rgba(217,119,6,0.35) !important;
+    background: white !important; color: #1F2937 !important;
+    box-shadow: none !important; border-color: rgba(217,119,6,0.35) !important;
   }
-
-  body.dark-mode .page {
-    border: 1.5px solid #D97706 !important;
-  }
-
-  body.dark-mode .yn-group {
-    background: white !important;
-    border-color: rgba(217,119,6,0.4) !important;
-  }
-
-  body.dark-mode .check-item {
-    background: white !important;
-  }
-}
-
-/* ══════════════════════════════════════════════════════════════════════════
-   MOBILE SAFARI PRINT — allow content to flow, prevent footer clipping
-   Only targets narrow mobile viewports, not desktop Safari.
-   ══════════════════════════════════════════════════════════════════════════ */
-@media print and (max-width: 767px) {
-
-  @page { size: 8.5in 11in; margin: 0.1in; }
-
-  /* Override the fixed heights set in the main print block */
-  html {
-    height: auto !important;
-    overflow: visible !important;
-  }
-
-  body {
-    height: auto !important;
-    min-height: 0 !important;
-    overflow: visible !important;
-  }
-
-  .page {
-    height: auto !important;
-    min-height: 0 !important;
-    overflow: visible !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 0 !important;
-  }
-
-  .content {
-    overflow: visible !important;
-    flex: none !important;
-    height: auto !important;
-  }
-
-  /* Force two-column to stay side by side on mobile print */
-  .two-column {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-  }
-
-  /* Slightly tighten spacing so everything fits on one page */
-  .section { margin-bottom: 1px !important; }
-  .section-body { padding: 1px 3px !important; }
-  .field-row { margin-bottom: 1px !important; }
-
-  #batnotes, #gennotes { height: 35px !important; min-height: 35px !important; }
-  #oilnotes, #gasnotes, #tsnotes { height: 22px !important; min-height: 22px !important; }
-
-  /* Footer stays on same page */
-  .footer {
-    margin-top: 4px !important;
-    padding-bottom: 2px !important;
-  }
+  body.dark-mode .page { border: 1.5px solid #D97706 !important; }
+  body.dark-mode .yn-group { background: white !important; border-color: rgba(217,119,6,0.4) !important; }
+  body.dark-mode .check-item { background: white !important; }
 }
 </style>
 </head>
