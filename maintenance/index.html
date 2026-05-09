@@ -1012,10 +1012,10 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
   /* FIX: lock html to exact page height — Safari print engine needs this explicit */
   html {
     width: 8.5in !important;
-    height: 10.96in !important;
+    height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -1023,11 +1023,11 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
   /* FIX: min-height: 0 cancels -webkit-fill-available for print context */
   body {
     width: 8.5in !important;
-    height: 10.96in !important;
+    height: auto !important;
     min-height: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -1042,12 +1042,16 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     color: transparent !important; 
     opacity: 0 !important;
   }
+  input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+    color: transparent !important;
+    opacity: 0 !important;
+  }
 
   .page {
     max-width: 8.5in !important;
     width: 8.5in !important;
-    height: 10.96in !important;
-    overflow: hidden !important;
+    height: auto !important;
+    overflow: visible !important;
     display: flex !important;
     flex-direction: column !important;
     box-sizing: border-box !important;
@@ -1055,7 +1059,6 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     padding: 0.12in !important;
     border: 1.5px solid #D97706 !important;
     box-shadow: none !important;
-    /* FIX: reset Safari-specific values to explicit units for print */
     min-height: 0 !important;
     flex-shrink: 0 !important;
   }
@@ -1102,19 +1105,17 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     display: none !important; 
   }
 
-  /* FIX: flex-grow:0 prevents Safari from distributing phantom whitespace as bottom gap */
   .content {
     flex: 0 1 auto !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     padding: 4px 6px !important;
     margin: 0 !important;
   }
 
   .footer {
-    margin-top: auto !important;
+    margin-top: 4px !important;
     flex-shrink: 0 !important;
     padding: 5px 20px !important;
-    /* FIX: hard value — env() resolves unpredictably in Safari print context */
     padding-bottom: 4px !important;
     border-top: 1px solid #D97706 !important;
     background: white !important;
