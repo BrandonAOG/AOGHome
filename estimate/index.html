@@ -1557,7 +1557,7 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
      edge, so there's no gap between the last section and the footer / page bottom. */
   html.desktop-print { font-size: 16px !important; zoom: 1 !important; }
   html.desktop-print body { width: 1050px !important; max-width: 1050px !important; margin: 0 auto !important; }
-  html.desktop-print .page { width: 1050px !important; max-width: 1050px !important; height: auto !important; min-height: 0 !important; overflow: visible !important; display: flex !important; flex-direction: column !important; }
+  html.desktop-print .page { width: 1050px !important; max-width: 1050px !important; height: auto !important; min-height: 0 !important; overflow: visible !important; display: flex !important; flex-direction: column !important; padding: 0.1in !important; box-sizing: border-box !important; }
   html.desktop-print .content { flex: 1 1 auto !important; height: auto !important; min-height: 0 !important; display: flex !important; flex-direction: column !important; }
   html.desktop-print .footer { flex: 0 0 auto !important; margin-top: 0 !important; }
 }
@@ -1574,7 +1574,7 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
 
 /* ---- Force light appearance for every print ---- */
 @media print {
-  @page { margin: 0.1in; }
+  @page { margin: 0; }
   :root, body {
     color-scheme: light !important;
     --cyan: #D97706 !important; --cyan-dim: #B45309 !important; --cyan-dark: #92400E !important;
