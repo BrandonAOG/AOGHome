@@ -1055,7 +1055,7 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
 
 @media print {
   html { font-size: var(--fs-print-phone-base) !important; }
-  @page { size: 8.5in 11in; margin: 0in; }
+  @page { size: 8.5in 11in; margin: 0.1in; }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; animation-play-state: paused !important; transition: none !important; }
   .toolbar, .action-bar, #save-status, #theme-toggle-btn, #offline-banner, #address-suggestions, #gps-status, #gps-btn { display: none !important; }
   .header::after { display: none !important; }
@@ -1398,7 +1398,6 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html.ipad-print { font-size: var(--fs-print-ipad-base) !important; zoom: 1; margin: 0 !important; padding: 0 !important; }
   html.ipad-print body { width: 1050px !important; max-width: none !important; }
   html.ipad-print .page { width: 1050px !important; max-width: none !important; }
-  @page { margin: 0in !important; }
   html.ipad-print .company-name { font-size: var(--fs-print-ipad-company-name) !important; }
   html.ipad-print .doc-title { font-size: var(--fs-print-ipad-doc-title) !important; }
   html.ipad-print .section-header { font-size: var(--fs-print-ipad-section-header) !important; padding: var(--pd-print-ipad-section-header) !important; }
