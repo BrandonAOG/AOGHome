@@ -432,7 +432,7 @@
   --check-group-gap-desktop:     4px;    /* gap between checkbox/radio pills (desktop)       */
 
   /* ---- DESKTOP PRINT BASE FONT ---- */
-  --fs-print-phone-base:         15.5px; /* base html font-size for phone print             */
+  --fs-print-phone-base:         16.6px; /* base html font-size for phone print             */
   --fs-print-ipad-base:          16.7px; /* base html font-size for iPad print              */
   --fs-print-desktop-base:       16.7px; /* base html font-size for desktop print           */
 
@@ -1624,6 +1624,17 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   body.dark-mode legend { color:#1F2937!important; }
   .toolbar,button,.theme-toggle-btn { display:none!important; }
   .confirm-modal-backdrop,#seasonal-canvas { display:none!important; }
+  /* Strip seasonal theming on EVERY print path (incl. native desktop Cmd+P, where printForm's
+     JS class-removal never runs). Kills decorative pseudo-elements and forces light surfaces. */
+  body::before, body::after,
+  body[class*="seasonal-"]::before, body[class*="seasonal-"]::after,
+  body[class*="seasonal-"] .section-header::after, body[class*="seasonal-"] .col-label::after { display:none!important; content:none!important; }
+  body[class*="seasonal-"] { background:#ffffff!important; color:#1F2937!important; }
+  body[class*="seasonal-"] .page { border-color:#D97706!important; box-shadow:none!important; }
+  body[class*="seasonal-"] .section-header, body[class*="seasonal-"] .col-label { color:#D97706!important; text-shadow:none!important; }
+  body[class*="seasonal-"] .section-header::before, body[class*="seasonal-"] .col-label::before { background:#D97706!important; box-shadow:none!important; animation:none!important; }
+  body[class*="seasonal-"] .section-header svg, body[class*="seasonal-"] .section-header svg *,
+  body[class*="seasonal-"] .col-label svg, body[class*="seasonal-"] .col-label svg * { stroke:#D97706!important; color:#D97706!important; }
 }
 
 /* ---- PHONE print sizing (applies unless an ipad-print / desktop-print class is set) ---- */
