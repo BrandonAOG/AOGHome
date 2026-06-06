@@ -127,7 +127,7 @@
   --fs-print-phone-label:          0.85rem;  /* field labels in PDF (Name, Phone, Best Email…)   */
   --fs-print-phone-inline-label:   0.85rem;  /* inline labels in PDF                             */
   --fs-print-phone-input:          0.9rem;  /* text inside input fields in PDF                  */
-  --fs-print-phone-date:           0.9rem;  /* date fields (Today's Date, Estimate Date, Est. Done On) in PDF */
+  --fs-print-phone-date:           0.8rem;  /* date fields (Today's Date, Estimate Date, Est. Done On) in PDF */
   --fs-print-phone-notes:          0.8rem;  /* text inside note boxes (gen/pad/gas/ready) in PDF */
   --fs-print-phone-yn-label:       0.8rem;  /* Y / N toggle buttons in PDF                      */
   --fs-print-phone-check-item:     0.8rem;  /* checkbox & radio options in PDF                  */
@@ -148,18 +148,18 @@
   --fs-print-ipad-gas-label:       0.75rem;  /* gas appliances label in iPad PDF                 */
 
   /* ---- PRINT : DESKTOP ---- */
-  --fs-print-desktop-company-name:   1.2rem;  /* "Always On Generators" in desktop PDF            */
-  --fs-print-desktop-doc-title:      1.2rem;  /* "Generator Installation Estimate" in desktop PDF */
-  --fs-print-desktop-section-header: 0.95rem;  /* section title bars in desktop PDF                */
-  --fs-print-desktop-col-label:      0.95rem;  /* column label pills in desktop PDF                */
-  --fs-print-desktop-label:          0.85rem;  /* field labels in desktop PDF                      */
-  --fs-print-desktop-inline-label:   0.85rem;  /* inline labels in desktop PDF                     */
-  --fs-print-desktop-input:          1.2rem;  /* text inside input fields in desktop PDF          */
-  --fs-print-desktop-date:           1.2rem;  /* date fields (Today's Date, Estimate Date, Est. Done On) in desktop PDF */
-  --fs-print-desktop-notes:          1rem;  /* text inside note boxes (gen/pad/gas/ready) in desktop PDF */
-  --fs-print-desktop-yn-label:       0.85rem;  /* Y / N toggle buttons in desktop PDF              */
-  --fs-print-desktop-check-item:     0.85rem;  /* checkbox & radio options in desktop PDF          */
-  --fs-print-desktop-gas-label:      0.75rem;  /* gas appliances label in desktop PDF              */
+  --fs-print-desktop-company-name:   1.05rem;  /* "Always On Generators" in desktop PDF            */
+  --fs-print-desktop-doc-title:      1.05rem;  /* "Generator Installation Estimate" in desktop PDF */
+  --fs-print-desktop-section-header: 0.8rem;  /* section title bars in desktop PDF                */
+  --fs-print-desktop-col-label:      0.8rem;  /* column label pills in desktop PDF                */
+  --fs-print-desktop-label:          0.8rem;  /* field labels in desktop PDF                      */
+  --fs-print-desktop-inline-label:   0.8rem;  /* inline labels in desktop PDF                     */
+  --fs-print-desktop-input:          0.88rem;  /* text inside input fields in desktop PDF          */
+  --fs-print-desktop-date:           0.75rem;  /* date fields (Today's Date, Estimate Date, Est. Done On) in desktop PDF */
+  --fs-print-desktop-notes:         0.88rem;  /* text inside note boxes (gen/pad/gas/ready) in desktop PDF */
+  --fs-print-desktop-yn-label:       0.75rem;  /* Y / N toggle buttons in desktop PDF              */
+  --fs-print-desktop-check-item:     0.75rem;  /* checkbox & radio options in desktop PDF          */
+  --fs-print-desktop-gas-label:      0.65rem;  /* gas appliances label in desktop PDF              */
 
   /* =============================================
      PADDING — edit any value to adjust spacing.
@@ -337,10 +337,10 @@
   --h-print-desktop-inline-row: 31px;  /* inline row in desktop PDF                        */
   --h-print-desktop-yn-label:   27px;  /* Y/N button height in desktop PDF                 */
   --h-print-desktop-check-item: 26px;  /* checkbox/radio pill height in desktop PDF        */
-  --h-print-desktop-gen-notes:  43px;   /* Generator notes text box height in PDF        */
-  --h-print-desktop-pad-notes:  43px;   /* Precast Pad notes text box height in PDF      */
-  --h-print-desktop-gas-notes:  43px;   /* Fuel Tank / gas appliances notes box in PDF   */
-  --h-print-desktop-ready-notes:43px;   /* Install Details ready/notes box in PDF        */
+  --h-print-desktop-gen-notes:  40px;   /* Generator notes text box height in PDF        */
+  --h-print-desktop-pad-notes:  32px;   /* Precast Pad notes text box height in PDF      */
+  --h-print-desktop-gas-notes:  40px;   /* Fuel Tank / gas appliances notes box in PDF   */
+  --h-print-desktop-ready-notes:38px;   /* Install Details ready/notes box in PDF        */
 
   /* =============================================
      FOOTER TEXT SIZES — controls the two items
@@ -434,7 +434,7 @@
   /* ---- DESKTOP PRINT BASE FONT ---- */
   --fs-print-phone-base:         16.7px; /* base html font-size for phone print             */
   --fs-print-ipad-base:          16.7px; /* base html font-size for iPad print              */
-  --fs-print-desktop-base:       16.7px; /* base html font-size for desktop print           */
+  --fs-print-desktop-base:       13.08px; /* base html font-size for desktop print           */
 
   /* ---- INPUT FIELD WIDTHS — PHONE ---- */
   --w-phone-gen-size:        15ch;  /* Generator size input (phone)                     */
@@ -445,6 +445,7 @@
   --w-phone-circuits:        5ch;   /* 60A and 100A circuits inputs (phone)             */
   --w-phone-stand-height:    6ch;   /* Stand/pad height input (phone)                   */
   --w-phone-tank-size:       10ch;  /* New/existing tank size inputs (phone)            */
+  --w-phone-elec-run:        9ch;   /* Electrical run (ft) input (phone)                */
   --w-phone-install-days:    12ch;  /* Install days input (phone)                       */
 
   /* ---- INPUT FIELD WIDTHS — iPAD ---- */
@@ -456,50 +457,55 @@
   --w-ipad-circuits:         5ch;
   --w-ipad-stand-height:     6ch;
   --w-ipad-tank-size:        13ch;
+  --w-ipad-elec-run:         9ch;
   --w-ipad-install-days:     12ch;
 
   /* ---- INPUT FIELD WIDTHS — DESKTOP ---- */
   --w-desktop-gen-size:      15ch;
-  --w-desktop-num-panels:    3ch;
-  --w-desktop-num-ts:        3ch;
+  --w-desktop-num-panels:    8ch;
+  --w-desktop-num-ts:        8ch;
   --w-desktop-ts-type:       20ch;
   --w-desktop-ts-placement:  40ch;  /* longer: fits e.g. "Install Back To Back With Panel" */
   --w-desktop-circuits:      5ch;
   --w-desktop-stand-height:  10ch;
   --w-desktop-tank-size:     10ch;
+  --w-desktop-elec-run:      9ch;
   --w-desktop-install-days:  12ch;
 
   /* ---- INPUT FIELD WIDTHS — PRINT (phone) ---- */
   --w-print-gen-size:        15ch;
-  --w-print-num-panels:      3ch;
-  --w-print-num-ts:          3ch;
+  --w-print-num-panels:      8ch;
+  --w-print-num-ts:          8ch;
   --w-print-ts-type:         20ch;
   --w-print-ts-placement:    40ch;  /* longer: fits e.g. "Install Back To Back With Panel" (phone print) */
   --w-print-circuits:        5ch;
   --w-print-stand-height:    4ch;
-  --w-print-tank-size:       13ch;
+  --w-print-tank-size:       10ch;
+  --w-print-elec-run:        9ch;
   --w-print-install-days:    12ch;
 
   /* ---- INPUT FIELD WIDTHS — PRINT iPAD ---- */
   --w-print-ipad-gen-size:       15ch;
-  --w-print-ipad-num-panels:     3ch;
-  --w-print-ipad-num-ts:         3ch;
+  --w-print-ipad-num-panels:     8ch;
+  --w-print-ipad-num-ts:         8ch;
   --w-print-ipad-ts-type:        25ch;
   --w-print-ipad-ts-placement:   40ch;  /* longer: fits e.g. "Install Back To Back With Panel" */
   --w-print-ipad-circuits:       5ch;
   --w-print-ipad-stand-height:   4ch;
   --w-print-ipad-tank-size:      12ch;
+  --w-print-ipad-elec-run:       9ch;
   --w-print-ipad-install-days:   12ch;
 
   /* ---- INPUT FIELD WIDTHS — PRINT DESKTOP ---- */
   --w-print-desktop-gen-size:    15ch;
-  --w-print-desktop-num-panels:  3ch;
-  --w-print-desktop-num-ts:      3ch;
+  --w-print-desktop-num-panels:  8ch;
+  --w-print-desktop-num-ts:      8ch;
   --w-print-desktop-ts-type:     20ch;
   --w-print-desktop-ts-placement:40ch;  /* longer: fits e.g. "Install Back To Back With Panel" */
   --w-print-desktop-circuits:    5ch;
   --w-print-desktop-stand-height:10ch;
-  --w-print-desktop-tank-size:   13ch;
+  --w-print-desktop-tank-size:   10ch;
+  --w-print-desktop-elec-run:    9ch;
   --w-print-desktop-install-days:12ch;
 
   /* ---- INLINE LABEL GAPS — PHONE ---- */
@@ -898,6 +904,7 @@ body.dark-mode input[type="number"]:focus, body.dark-mode textarea:focus, body.d
 }
 
 input.short { width: 64px; min-width: 64px; }
+#elec_run_ft { width: var(--w-phone-elec-run); min-width: var(--w-phone-elec-run); }
 input.tiny  { width: 40px; min-width: 40px; text-align: center; }
 input.med   { width: 120px; min-width: 80px; }
 input.long  { flex: 1; min-width: 100px; }
@@ -1174,7 +1181,7 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
   #transfer-switch-row .section-body { padding-bottom: var(--pd-ts-bottom-screen) !important; }
   #address-suggestions, #gps-status { display: none !important; }
   #install_days { padding: 2px 5px !important; min-height: var(--h-print-phone-input) !important; height: var(--h-print-phone-input) !important; }
-  #elec_run_ft { width: 9ch !important; min-width: 9ch !important; max-width: 9ch !important; flex-shrink: 0 !important; }
+  #elec_run_ft { width: var(--w-print-elec-run) !important; min-width: var(--w-print-elec-run) !important; max-width: var(--w-print-elec-run) !important; flex-shrink: 0 !important; }
   #gen_size { width: 15ch !important; min-width: 15ch !important; max-width: 15ch !important; flex-shrink: 0 !important; }
   #circuits_60a, #circuits_100a { width: 5ch !important; min-width: 5ch !important; max-width: 5ch !important; flex-shrink: 0 !important; }
   .footer { background: #ffffff !important; border-top: 1px solid #D97706 !important; padding: var(--pd-print-phone-footer) !important; margin-top: 0 !important; display: flex !important; justify-content: space-between !important; align-items: center !important; flex-shrink: 0 !important; width: 100% !important; min-height: auto !important; height: auto !important; }
@@ -1304,6 +1311,7 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   #circuits_60a, #circuits_100a { width: var(--w-ipad-circuits) !important; min-width: var(--w-ipad-circuits) !important; }
   #stand_height { width: var(--w-ipad-stand-height) !important; min-width: var(--w-ipad-stand-height) !important; }
   #new_tank_size, #existing_tank_size { width: var(--w-ipad-tank-size) !important; min-width: var(--w-ipad-tank-size) !important; }
+  #elec_run_ft { width: var(--w-ipad-elec-run) !important; min-width: var(--w-ipad-elec-run) !important; max-width: var(--w-ipad-elec-run) !important; flex-shrink: 0 !important; }
   #install_days { width: var(--w-ipad-install-days) !important; }
   body.mobile-safari .footer                           { padding: var(--pd-ipad-footer) !important; }
   body.mobile-safari #address-suggestions li           { font-size: var(--fs-ipad-address-suggestion) !important; }
@@ -1450,8 +1458,9 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html.ipad-print #ts_placement { width: var(--w-print-ipad-ts-placement) !important; min-width: var(--w-print-ipad-ts-placement) !important; }
   html.ipad-print #circuits_60a, html.ipad-print #circuits_100a { width: var(--w-print-ipad-circuits) !important; min-width: var(--w-print-ipad-circuits) !important; }
   html.ipad-print #stand_height { width: var(--w-print-ipad-stand-height) !important; min-width: var(--w-print-ipad-stand-height) !important; }
-  html.ipad-print #new_tank_size, html.ipad-print #existing_tank_size { width: var(--w-print-ipad-tank-size) !important; min-width: var(--w-print-ipad-tank-size) !important; }
+  html.ipad-print #new_tank_size, html.ipad-print #existing_tank_size { width: var(--w-print-ipad-tank-size) !important; min-width: var(--w-print-ipad-tank-size) !important; max-width: var(--w-print-ipad-tank-size) !important; }
   html.ipad-print #install_days { width: var(--w-print-ipad-install-days) !important; }
+  html.ipad-print #elec_run_ft { width: var(--w-print-ipad-elec-run) !important; min-width: var(--w-print-ipad-elec-run) !important; max-width: var(--w-print-ipad-elec-run) !important; flex-shrink: 0 !important; }
   html.ipad-print .inline-row { flex-wrap: wrap !important; }
   html.ipad-print .field-row { flex-wrap: nowrap !important; }
   html.ipad-print .inline-row .check-group { flex-wrap: wrap !important; }
@@ -1526,8 +1535,9 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html.desktop-print #ts_placement { width: var(--w-print-desktop-ts-placement) !important; min-width: var(--w-print-desktop-ts-placement) !important; }
   html.desktop-print #circuits_60a, html.desktop-print #circuits_100a { width: var(--w-print-desktop-circuits) !important; min-width: var(--w-print-desktop-circuits) !important; }
   html.desktop-print #stand_height { width: var(--w-print-desktop-stand-height) !important; min-width: var(--w-print-desktop-stand-height) !important; }
-  html.desktop-print #new_tank_size, html.desktop-print #existing_tank_size { width: var(--w-print-desktop-tank-size) !important; min-width: var(--w-print-desktop-tank-size) !important; }
+  html.desktop-print #new_tank_size, html.desktop-print #existing_tank_size { width: var(--w-print-desktop-tank-size) !important; min-width: var(--w-print-desktop-tank-size) !important; max-width: var(--w-print-desktop-tank-size) !important; }
   html.desktop-print #install_days { width: var(--w-print-desktop-install-days) !important; }
+  html.desktop-print #elec_run_ft { width: var(--w-print-desktop-elec-run) !important; min-width: var(--w-print-desktop-elec-run) !important; max-width: var(--w-print-desktop-elec-run) !important; flex-shrink: 0 !important; }
 
 /* ── DESKTOP "print like the screen" override ──
    When printForm marks <html class="desktop-print"> (desktop browsers only), undo the fixed
@@ -2550,6 +2560,8 @@ function printForm() {
       '  .yn-group,.yn-group .yn-label { height:var(--h-print-phone-yn-label)!important;min-height:var(--h-print-phone-yn-label)!important;line-height:var(--h-print-phone-yn-label)!important; }',
       '  .check-item { height:var(--h-print-phone-check-item)!important;min-height:var(--h-print-phone-check-item)!important; }',
       '  .section-body { padding:var(--pd-print-phone-section-body)!important; }',
+      '  #new_tank_size,#existing_tank_size { width:var(--w-print-tank-size)!important;min-width:var(--w-print-tank-size)!important;max-width:var(--w-print-tank-size)!important; }',
+      '  #elec_run_ft { width:var(--w-print-elec-run)!important;min-width:var(--w-print-elec-run)!important;max-width:var(--w-print-elec-run)!important; }',
       '  #gen_notes  { height:var(--h-print-phone-gen-notes)!important;min-height:var(--h-print-phone-gen-notes)!important;max-height:var(--h-print-phone-gen-notes)!important; }',
       '  #pad_notes  { height:var(--h-print-phone-pad-notes)!important;min-height:var(--h-print-phone-pad-notes)!important;max-height:var(--h-print-phone-pad-notes)!important; }',
       '  #gas_notes  { height:var(--h-print-phone-gas-notes)!important;min-height:var(--h-print-phone-gas-notes)!important;max-height:var(--h-print-phone-gas-notes)!important; }',
@@ -2587,6 +2599,8 @@ function printForm() {
       'input[type=date] { min-height:var(--h-print-ipad-input)!important;height:var(--h-print-ipad-input)!important;font-size:var(--fs-print-ipad-date)!important; }',
       '.yn-group,.yn-group .yn-label { height:var(--h-print-ipad-yn-label)!important;min-height:var(--h-print-ipad-yn-label)!important;line-height:var(--h-print-ipad-yn-label)!important; }',
       '.check-item { height:var(--h-print-ipad-check-item)!important;min-height:var(--h-print-ipad-check-item)!important; }',
+      '#new_tank_size,#existing_tank_size { width:var(--w-print-ipad-tank-size)!important;min-width:var(--w-print-ipad-tank-size)!important;max-width:var(--w-print-ipad-tank-size)!important; }',
+      '#elec_run_ft { width:var(--w-print-ipad-elec-run)!important;min-width:var(--w-print-ipad-elec-run)!important;max-width:var(--w-print-ipad-elec-run)!important; }',
       '#gen_notes  { height:var(--h-print-ipad-gen-notes)!important;min-height:var(--h-print-ipad-gen-notes)!important;max-height:var(--h-print-ipad-gen-notes)!important; }',
       '#pad_notes  { height:var(--h-print-ipad-pad-notes)!important;min-height:var(--h-print-ipad-pad-notes)!important;max-height:var(--h-print-ipad-pad-notes)!important; }',
       '#gas_notes  { height:var(--h-print-ipad-gas-notes)!important;min-height:var(--h-print-ipad-gas-notes)!important;max-height:var(--h-print-ipad-gas-notes)!important; }',
