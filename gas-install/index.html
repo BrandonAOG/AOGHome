@@ -1573,7 +1573,6 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
 
 /* ---- Force light appearance for every print ---- */
 @media print {
-  @page { margin: 0; }
   :root, body {
     color-scheme: light !important;
     --cyan: #D97706 !important; --cyan-dim: #B45309 !important; --cyan-dark: #92400E !important;
@@ -1631,8 +1630,11 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html:not(.ipad-print):not(.desktop-print) .field-row { flex-wrap:nowrap!important; min-height:var(--h-print-phone-field-row)!important; }
   html:not(.ipad-print):not(.desktop-print) .inline-row { flex-wrap:wrap!important; overflow:visible!important; min-height:var(--h-print-phone-inline-row)!important; }
   html:not(.ipad-print):not(.desktop-print) .section-body,
-  html:not(.ipad-print):not(.desktop-print) .section,
-  html:not(.ipad-print):not(.desktop-print) .page { overflow:visible!important; }
+  html:not(.ipad-print):not(.desktop-print) .section { overflow:visible!important; }
+  /* Clamp the page to exactly one printable sheet (8.5x11 at the 1050px print scale ≈ 1358px tall,
+     margin 0) and clip sub-pixel overflow. The saved PDF already fits on one page, so nothing real
+     is cut — this only stops Safari's preview from spilling a sliver onto a phantom 2nd page. */
+  html:not(.ipad-print):not(.desktop-print) .page { overflow:hidden!important; height:1358px!important; max-height:1358px!important; }
   html:not(.ipad-print):not(.desktop-print) .section-body { padding:var(--pd-print-phone-section-body)!important; }
   html:not(.ipad-print):not(.desktop-print) input[type=date] { min-width:0!important;flex-shrink:1!important;width:auto!important;min-height:var(--h-print-phone-input)!important;height:var(--h-print-phone-input)!important;font-size:var(--fs-print-phone-date)!important; }
   html:not(.ipad-print):not(.desktop-print) input[type=text],
@@ -1658,7 +1660,8 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html.ipad-print .field-row,html.ipad-print .inline-row { min-height:var(--h-print-ipad-field-row)!important; }
   html.ipad-print .field-row { flex-wrap:nowrap!important; }
   html.ipad-print .inline-row { flex-wrap:wrap!important; overflow:visible!important; }
-  html.ipad-print .section-body,html.ipad-print .section,html.ipad-print .page { overflow:visible!important; }
+  html.ipad-print .section-body,html.ipad-print .section { overflow:visible!important; }
+  html.ipad-print .page { overflow:hidden!important; height:1358px!important; max-height:1358px!important; }
   html.ipad-print .section-body { padding:var(--pd-print-ipad-section-body)!important; }
   html.ipad-print #transfer-switch-row .section-body { padding:4px 12px 0px 12px!important; }
   html.ipad-print #transfer-switch-row .inline-row:last-child { min-height:0!important;height:auto!important;max-height:fit-content!important;margin-bottom:0!important;padding-bottom:0!important;flex-wrap:nowrap!important;overflow:hidden!important; }
@@ -2504,6 +2507,7 @@ function printForm() {
       else r.input.removeAttribute('style');
     });
     _printReplaced = [];
+    var _pm = document.getElementById('print-page-margin'); if (_pm) _pm.remove();
     if (wasDark) document.body.classList.add('dark-mode');
     document.documentElement.classList.remove('desktop-print');
     document.documentElement.classList.remove('ipad-print');
@@ -2585,6 +2589,10 @@ function printForm() {
   // ══════════════════════════════════════════
   if (isMobileSafari && !isIpadSafari) {
     doSpanReplace();
+    var _pmPhone = document.createElement('style');
+    _pmPhone.id = 'print-page-margin';
+    _pmPhone.textContent = '@page { size: 8.5in 11in; margin: 0; }';
+    document.head.appendChild(_pmPhone);
     void document.body.offsetHeight;
     armRestoreAndPrint(true);
     return;
@@ -2596,6 +2604,10 @@ function printForm() {
   if (isMobileSafari && isIpadSafari) {
     document.documentElement.classList.add('ipad-print');
     doSpanReplace();
+    var _pmIpad = document.createElement('style');
+    _pmIpad.id = 'print-page-margin';
+    _pmIpad.textContent = '@page { size: 8.5in 11in; margin: 0; }';
+    document.head.appendChild(_pmIpad);
     void document.body.offsetHeight;
     armRestoreAndPrint(true);
     return;
