@@ -154,8 +154,8 @@
   --fs-print-desktop-col-label:      0.95rem;  /* column label pills in desktop PDF                */
   --fs-print-desktop-label:          0.85rem;  /* field labels in desktop PDF                      */
   --fs-print-desktop-inline-label:   0.85rem;  /* inline labels in desktop PDF                     */
-  --fs-print-desktop-input:          1.1rem;  /* text inside input fields in desktop PDF          */
-  --fs-print-desktop-date:           1.1rem;  /* date fields (Today's Date, Estimate Date, Est. Done On) in desktop PDF */
+  --fs-print-desktop-input:          1.2rem;  /* text inside input fields in desktop PDF          */
+  --fs-print-desktop-date:           1.2rem;  /* date fields (Today's Date, Estimate Date, Est. Done On) in desktop PDF */
   --fs-print-desktop-notes:          1rem;  /* text inside note boxes (gen/pad/gas/ready) in desktop PDF */
   --fs-print-desktop-yn-label:       0.85rem;  /* Y / N toggle buttons in desktop PDF              */
   --fs-print-desktop-check-item:     0.85rem;  /* checkbox & radio options in desktop PDF          */
@@ -1123,6 +1123,10 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
   /* Transfer Switch Placement — wider on print so long entries like
      "Install Back To Back With Panel" aren't cut off (this is the phone-print path). */
   #ts_placement { width: var(--w-print-ts-placement) !important; min-width: var(--w-print-ts-placement) !important; flex: 0 0 auto !important; }
+  /* Tank size — set in STATIC print CSS (not just the injected Safari style, which the restore
+     timer can strip before iOS finalizes the PDF). This guarantees --w-print-tank-size applies
+     to the generated PDF, not just the preview thumbnail. iPad/desktop class rules override it. */
+  #new_tank_size, #existing_tank_size { width: var(--w-print-tank-size) !important; min-width: var(--w-print-tank-size) !important; max-width: var(--w-print-tank-size) !important; flex: 0 0 auto !important; }
   label { color: #6B7280 !important; font-size: var(--fs-print-phone-label) !important; white-space: nowrap !important; }
   legend { font-size: var(--fs-print-phone-label) !important; color: #6B7280 !important; font-weight: 500 !important; font-family: var(--font-display) !important; letter-spacing: 1.5px !important; text-transform: uppercase !important; }
   .inline-label { color: #6B7280 !important; white-space: nowrap !important; font-size: var(--fs-print-phone-inline-label) !important; }
@@ -2774,6 +2778,10 @@ function capturePageToCanvas() {
       '#transfer-switch-row .inline-row:last-child { min-height: 0 !important; height: auto !important; max-height: fit-content !important; margin-bottom: 0 !important; padding-bottom: 0 !important; flex-wrap: nowrap !important; overflow: hidden !important; }',
       '#precast-pad-row .section-body { padding-top: 0px !important; }',
       'textarea { white-space: pre-wrap !important; word-wrap: break-word !important; overflow-wrap: break-word !important; overflow: hidden !important; }',
+      /* Match the print preview: the generated PDF is a 1050px-wide page, so use the PRINT
+         tank-size width here instead of the on-screen phone width. Edit --w-print-tank-size
+         (or --w-print-ipad-tank-size on iPad) and it now flows through to the saved PDF too. */
+      '#new_tank_size, #existing_tank_size { width: var(--w-print-tank-size) !important; min-width: var(--w-print-tank-size) !important; max-width: var(--w-print-tank-size) !important; flex: 0 0 auto !important; }',
     ].join('\n');
     document.head.appendChild(forceStyle);
 
