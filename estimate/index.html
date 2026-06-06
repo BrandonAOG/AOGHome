@@ -1650,18 +1650,21 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html:not(.ipad-print):not(.desktop-print) #pad_notes  { height:var(--h-print-phone-pad-notes)!important;min-height:var(--h-print-phone-pad-notes)!important;max-height:var(--h-print-phone-pad-notes)!important; }
   html:not(.ipad-print):not(.desktop-print) #gas_notes  { height:var(--h-print-phone-gas-notes)!important;min-height:var(--h-print-phone-gas-notes)!important;max-height:var(--h-print-phone-gas-notes)!important; }
   html:not(.ipad-print):not(.desktop-print) #ready_notes { height:var(--h-print-phone-ready-notes)!important;min-height:var(--h-print-phone-ready-notes)!important;max-height:var(--h-print-phone-ready-notes)!important; }
-  /* Kill the phantom 2nd page: force the whole form onto one sheet and forbid any break. */
-  html:not(.ipad-print):not(.desktop-print) .page,
+  /* Kill the phantom 2nd page. The 1050px-wide layout is scaled to fit one 8.5x11 sheet;
+     one page tall at that width is ~1358px (1050 / (8.5/11)). Pin .page to exactly that
+     height and clip, so nothing can spill onto a second sheet. Sections must not break. */
+  html:not(.ipad-print):not(.desktop-print) .page {
+    height: 1358px !important;
+    max-height: 1358px !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
   html:not(.ipad-print):not(.desktop-print) .content,
-  html:not(.ipad-print):not(.desktop-print) .section,
-  html:not(.ipad-print):not(.desktop-print) .footer {
+  html:not(.ipad-print):not(.desktop-print) .section {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-    page-break-after: avoid !important;
-    break-after: avoid !important;
   }
   html:not(.ipad-print):not(.desktop-print) .footer { margin-bottom: 0 !important; padding-bottom: 0 !important; }
-  html:not(.ipad-print):not(.desktop-print) .page { overflow: hidden !important; }
 }
 
 /* ---- iPAD print sizing (mirrors the old injected safari-page-fix; the html.ipad-print
