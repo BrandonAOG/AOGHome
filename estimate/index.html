@@ -154,7 +154,7 @@
   --fs-print-desktop-col-label:      0.95rem;  /* column label pills in desktop PDF                */
   --fs-print-desktop-label:          0.85rem;  /* field labels in desktop PDF                      */
   --fs-print-desktop-inline-label:   0.85rem;  /* inline labels in desktop PDF                     */
-  --fs-print-desktop-input:          1.2rem;  /* text inside input fields in desktop PDF          */
+  --fs-print-desktop-input:          1.1rem;  /* text inside input fields in desktop PDF          */
   --fs-print-desktop-date:           1.2rem;  /* date fields (Today's Date, Estimate Date, Est. Done On) in desktop PDF */
   --fs-print-desktop-notes:          1rem;  /* text inside note boxes (gen/pad/gas/ready) in desktop PDF */
   --fs-print-desktop-yn-label:       0.85rem;  /* Y / N toggle buttons in desktop PDF              */
@@ -501,7 +501,7 @@
   --w-print-desktop-num-panels:  3ch;
   --w-print-desktop-num-ts:      3ch;
   --w-print-desktop-ts-type:     20ch;
-  --w-print-desktop-ts-placement:30ch;  /* longer: fits e.g. "Install Back To Back With Panel" */
+  --w-print-desktop-ts-placement:35ch;  /* longer: fits e.g. "Install Back To Back With Panel" */
   --w-print-desktop-circuits:    3ch;
   --w-print-desktop-stand-height:8ch;
   --w-print-desktop-tank-size:   13ch;
@@ -954,9 +954,12 @@ body.dark-mode .inline-label { color: #7DD3FC; }
 @media (max-width: 768px) {
   .inline-row input[type="text"],
   .inline-row input[type="number"] {
-    min-width: 60px;
-    flex: 1 1 60px;
+    flex: 0 0 auto;   /* don't grow — each input keeps its own assigned width */
+    min-width: 0;
   }
+  /* Fuel-run trio (Underground / Above Ground / Attic) is a deliberate 3-up layout,
+     so keep those three inputs filling their own columns instead of freezing them. */
+  #fuel-run-row .field-block input[type="number"] { flex: 1 1 auto; width: 100%; min-width: 0; }
   /* The panel / transfer-switch COUNT boxes hold a single digit — keep them narrow
      (~3ch) instead of stretching to fill the row like the other inline inputs. */
   #num_panels { flex: 0 0 auto; width: var(--w-phone-num-panels); min-width: var(--w-phone-num-panels); }
@@ -1120,6 +1123,10 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
   /* Transfer Switch Placement — wider on print so long entries like
      "Install Back To Back With Panel" aren't cut off (this is the phone-print path). */
   #ts_placement { width: var(--w-print-ts-placement) !important; min-width: var(--w-print-ts-placement) !important; flex: 0 0 auto !important; }
+  /* Tank size — set in STATIC print CSS (not just the injected Safari style, which the restore
+     timer can strip before iOS finalizes the PDF). This guarantees --w-print-tank-size applies
+     to the generated PDF, not just the preview thumbnail. iPad/desktop class rules override it. */
+  #new_tank_size, #existing_tank_size { width: var(--w-print-tank-size) !important; min-width: var(--w-print-tank-size) !important; max-width: var(--w-print-tank-size) !important; flex: 0 0 auto !important; }
   label { color: #6B7280 !important; font-size: var(--fs-print-phone-label) !important; white-space: nowrap !important; }
   legend { font-size: var(--fs-print-phone-label) !important; color: #6B7280 !important; font-weight: 500 !important; font-family: var(--font-display) !important; letter-spacing: 1.5px !important; text-transform: uppercase !important; }
   .inline-label { color: #6B7280 !important; white-space: nowrap !important; font-size: var(--fs-print-phone-inline-label) !important; }
@@ -1552,6 +1559,120 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html.desktop-print .page { width: 1050px !important; max-width: 1050px !important; height: auto !important; min-height: 0 !important; overflow: visible !important; display: flex !important; flex-direction: column !important; }
   html.desktop-print .content { flex: 1 1 auto !important; height: auto !important; min-height: 0 !important; display: flex !important; flex-direction: column !important; }
   html.desktop-print .footer { flex: 0 0 auto !important; margin-top: 0 !important; }
+}
+
+/* ============================================================================
+   STATIC PRINT STYLES
+   Migrated out of the old JS-injected <style> blocks (force-print-light and
+   safari-page-fix). They now live here unconditionally so the post-print
+   restore timer can never strip them before the PDF is finalized — editing any
+   --*-print-* variable flows straight through to the generated PDF.
+   printForm() now only toggles the ipad-print / desktop-print classes and runs
+   the checkbox span-replace; it no longer injects style text.
+   ============================================================================ */
+
+/* ---- Force light appearance for every print ---- */
+@media print {
+  @page { margin: 0; }
+  :root, body {
+    color-scheme: light !important;
+    --cyan: #D97706 !important; --cyan-dim: #B45309 !important; --cyan-dark: #92400E !important;
+    --amber: #D97706 !important; --bg: #FFFFFF !important; --bg3: #F8F8F8 !important;
+    --panel: #FFFFFF !important; --text: #1F2937 !important; --text-muted: #6B7280 !important;
+    --glow: none !important; --icon-color-primary: #D97706 !important; --icon-color-section: #D97706 !important;
+  }
+  html, body, * { color-scheme: light !important; }
+  input[type=date] { color-scheme: light !important; }
+  *, *::before, *::after { -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; }
+  input[type=radio],input[type=checkbox],.check-item input[type=radio],.check-item input[type=checkbox] { accent-color:#D97706!important; }
+  /* Race guard: if the .dark-mode class lingers at print time these match its specificity. */
+  body.dark-mode, body.dark-mode *, body.dark-mode *::before, body.dark-mode *::after { background:white!important;color:#1F2937!important;box-shadow:none!important;text-shadow:none!important;border-color:rgba(217,119,6,0.4)!important; }
+  body.dark-mode .doc-title, body.dark-mode .company-name, body.dark-mode .section-header, body.dark-mode .col-label, body.dark-mode .icon-themed { color:#D97706!important; }
+  body.dark-mode .section-header svg, body.dark-mode .section-header svg *, body.dark-mode .icon-themed, body.dark-mode .icon-themed * { stroke:#D97706!important; color:#D97706!important; }
+  body.dark-mode .print-cb-box.cb-checked { background:#D97706!important; border-color:#D97706!important; }
+  body.dark-mode .print-cb-box.cb-unchecked { background:#ffffff!important; border-color:#9CA3AF!important; }
+  body.dark-mode .print-cb-mark { background:transparent!important; border-color:#ffffff!important; }
+  body.dark-mode .check-item input[type=checkbox], body.dark-mode .check-item input[type=radio] { accent-color:#D97706!important; }
+  *, *::before, *::after { background:white!important;color:#1F2937!important;box-shadow:none!important;text-shadow:none!important;border-color:rgba(217,119,6,0.4)!important;animation:none!important;animation-play-state:paused!important;transition:none!important; }
+  .print-cb-box.cb-checked { background:#D97706!important; border-color:#D97706!important; }
+  .print-cb-box.cb-unchecked { background:#ffffff!important; border-color:#9CA3AF!important; }
+  .print-cb-mark { background:transparent!important; border-color:#ffffff!important; }
+  svg, svg * { background:transparent!important; }
+  .doc-title,.company-name { color:#D97706!important;text-shadow:none!important; }
+  .doc-title::before,.doc-title::after,.company-name::before,.company-name::after,.header::after { content:none!important;display:none!important; }
+  html,body { background:white!important; }
+  .page { border:1.5pt solid #D97706!important;background:white!important; }
+  .section-header { background:#f5f5f5!important;color:#D97706!important;text-shadow:none!important; }
+  .section-header svg,.section-header svg * { stroke:#D97706!important; }
+  .col-label { color:#D97706!important;background:#f5f5f5!important;text-shadow:none!important; }
+  .yn-group { background:white!important;border-color:#D97706!important; }
+  .yn-group .yn-label { color:#6B7280!important;background:white!important;text-shadow:none!important;box-shadow:none!important; }
+  .yn-group .yn-y:checked + .yn-label-y { background:#34d399!important;color:#064e3b!important;text-shadow:none!important;box-shadow:none!important; }
+  .yn-group .yn-n:checked + .yn-label-n { background:#fca5a5!important;color:#7f1d1d!important;text-shadow:none!important;box-shadow:none!important; }
+  /* Neutralize the native control ONLY where span-replace drew a box (printForm flow).
+     The :has() guard keeps native browser print (no boxes) showing normal amber controls. */
+  .check-item:has(.print-cb-box) input[type=radio], .check-item:has(.print-cb-box) input[type=checkbox] {
+    -webkit-appearance:none!important;appearance:none!important;accent-color:#D97706!important;
+    background:transparent!important;border:none!important;color:transparent!important;
+    -webkit-print-color-adjust:exact!important;print-color-adjust:exact!important; }
+  .check-item:has(input:checked) { background:#fde68a!important;border-color:#D97706!important;box-shadow:none!important; }
+  body.dark-mode .check-item:has(input:checked) { background:#fde68a!important;border-color:#D97706!important;box-shadow:none!important; }
+  body.dark-mode .check-item:has(input:checked) span { color:#92400E!important;text-shadow:none!important; }
+  .footer-text { color:#9CA3AF!important; }
+  legend { font-weight:500!important;font-family:var(--font-display)!important;letter-spacing:1.5px!important;text-transform:uppercase!important;color:#6B7280!important; }
+  body.dark-mode legend { color:#1F2937!important; }
+  .toolbar,button,.theme-toggle-btn { display:none!important; }
+  .confirm-modal-backdrop,#seasonal-canvas { display:none!important; }
+}
+
+/* ---- PHONE print sizing (applies unless an ipad-print / desktop-print class is set) ---- */
+@media print {
+  html:not(.ipad-print):not(.desktop-print) { font-size: var(--fs-print-phone-base) !important; }
+  html:not(.ipad-print):not(.desktop-print) .field-row { flex-wrap:nowrap!important; min-height:var(--h-print-phone-field-row)!important; }
+  html:not(.ipad-print):not(.desktop-print) .inline-row { flex-wrap:wrap!important; overflow:visible!important; min-height:var(--h-print-phone-inline-row)!important; }
+  html:not(.ipad-print):not(.desktop-print) .section-body,
+  html:not(.ipad-print):not(.desktop-print) .section,
+  html:not(.ipad-print):not(.desktop-print) .page { overflow:visible!important; }
+  html:not(.ipad-print):not(.desktop-print) .section-body { padding:var(--pd-print-phone-section-body)!important; }
+  html:not(.ipad-print):not(.desktop-print) input[type=date] { min-width:0!important;flex-shrink:1!important;width:auto!important;min-height:var(--h-print-phone-input)!important;height:var(--h-print-phone-input)!important;font-size:var(--fs-print-phone-date)!important; }
+  html:not(.ipad-print):not(.desktop-print) input[type=text],
+  html:not(.ipad-print):not(.desktop-print) input[type=email],
+  html:not(.ipad-print):not(.desktop-print) input[type=tel],
+  html:not(.ipad-print):not(.desktop-print) input[type=number] { min-height:var(--h-print-phone-input)!important;height:var(--h-print-phone-input)!important;font-size:var(--fs-print-phone-input)!important; }
+  html:not(.ipad-print):not(.desktop-print) .yn-group,
+  html:not(.ipad-print):not(.desktop-print) .yn-group .yn-label { height:var(--h-print-phone-yn-label)!important;min-height:var(--h-print-phone-yn-label)!important;line-height:var(--h-print-phone-yn-label)!important; }
+  html:not(.ipad-print):not(.desktop-print) .check-item { height:var(--h-print-phone-check-item)!important;min-height:var(--h-print-phone-check-item)!important; }
+  html:not(.ipad-print):not(.desktop-print) #new_tank_size,
+  html:not(.ipad-print):not(.desktop-print) #existing_tank_size { width:var(--w-print-tank-size)!important;min-width:var(--w-print-tank-size)!important;max-width:var(--w-print-tank-size)!important; }
+  html:not(.ipad-print):not(.desktop-print) #elec_run_ft { width:var(--w-print-elec-run)!important;min-width:var(--w-print-elec-run)!important;max-width:var(--w-print-elec-run)!important; }
+  html:not(.ipad-print):not(.desktop-print) #gen_notes  { height:var(--h-print-phone-gen-notes)!important;min-height:var(--h-print-phone-gen-notes)!important;max-height:var(--h-print-phone-gen-notes)!important; }
+  html:not(.ipad-print):not(.desktop-print) #pad_notes  { height:var(--h-print-phone-pad-notes)!important;min-height:var(--h-print-phone-pad-notes)!important;max-height:var(--h-print-phone-pad-notes)!important; }
+  html:not(.ipad-print):not(.desktop-print) #gas_notes  { height:var(--h-print-phone-gas-notes)!important;min-height:var(--h-print-phone-gas-notes)!important;max-height:var(--h-print-phone-gas-notes)!important; }
+  html:not(.ipad-print):not(.desktop-print) #ready_notes { height:var(--h-print-phone-ready-notes)!important;min-height:var(--h-print-phone-ready-notes)!important;max-height:var(--h-print-phone-ready-notes)!important; }
+}
+
+/* ---- iPAD print sizing (mirrors the old injected safari-page-fix; the html.ipad-print
+        block above already carries most of these — kept here for parity / resilience) ---- */
+@media print {
+  html.ipad-print { font-size: var(--fs-print-ipad-base) !important; }
+  html.ipad-print .field-row,html.ipad-print .inline-row { min-height:var(--h-print-ipad-field-row)!important; }
+  html.ipad-print .field-row { flex-wrap:nowrap!important; }
+  html.ipad-print .inline-row { flex-wrap:wrap!important; overflow:visible!important; }
+  html.ipad-print .section-body,html.ipad-print .section,html.ipad-print .page { overflow:visible!important; }
+  html.ipad-print .section-body { padding:var(--pd-print-ipad-section-body)!important; }
+  html.ipad-print #transfer-switch-row .section-body { padding:4px 12px 0px 12px!important; }
+  html.ipad-print #transfer-switch-row .inline-row:last-child { min-height:0!important;height:auto!important;max-height:fit-content!important;margin-bottom:0!important;padding-bottom:0!important;flex-wrap:nowrap!important;overflow:hidden!important; }
+  html.ipad-print #precast-pad-row .section-body { padding-top:0px!important; }
+  html.ipad-print input[type=date] { min-width:0!important;flex-shrink:1!important;width:auto!important;min-height:var(--h-print-ipad-input)!important;height:var(--h-print-ipad-input)!important;font-size:var(--fs-print-ipad-date)!important; }
+  html.ipad-print input[type=text],html.ipad-print input[type=email],html.ipad-print input[type=tel],html.ipad-print input[type=number] { min-height:var(--h-print-ipad-input)!important;height:var(--h-print-ipad-input)!important; }
+  html.ipad-print .yn-group,html.ipad-print .yn-group .yn-label { height:var(--h-print-ipad-yn-label)!important;min-height:var(--h-print-ipad-yn-label)!important;line-height:var(--h-print-ipad-yn-label)!important; }
+  html.ipad-print .check-item { height:var(--h-print-ipad-check-item)!important;min-height:var(--h-print-ipad-check-item)!important; }
+  html.ipad-print #new_tank_size,html.ipad-print #existing_tank_size { width:var(--w-print-ipad-tank-size)!important;min-width:var(--w-print-ipad-tank-size)!important;max-width:var(--w-print-ipad-tank-size)!important; }
+  html.ipad-print #elec_run_ft { width:var(--w-print-ipad-elec-run)!important;min-width:var(--w-print-ipad-elec-run)!important;max-width:var(--w-print-ipad-elec-run)!important; }
+  html.ipad-print #gen_notes  { height:var(--h-print-ipad-gen-notes)!important;min-height:var(--h-print-ipad-gen-notes)!important;max-height:var(--h-print-ipad-gen-notes)!important; }
+  html.ipad-print #pad_notes  { height:var(--h-print-ipad-pad-notes)!important;min-height:var(--h-print-ipad-pad-notes)!important;max-height:var(--h-print-ipad-pad-notes)!important; }
+  html.ipad-print #gas_notes  { height:var(--h-print-ipad-gas-notes)!important;min-height:var(--h-print-ipad-gas-notes)!important;max-height:var(--h-print-ipad-gas-notes)!important; }
+  html.ipad-print #ready_notes { height:var(--h-print-ipad-ready-notes)!important;min-height:var(--h-print-ipad-ready-notes)!important;max-height:var(--h-print-ipad-ready-notes)!important;width:100%!important;margin-top:2px!important;box-sizing:border-box!important; }
 }
 </style>
 </head>
@@ -2364,81 +2485,9 @@ function printForm() {
   var _seasonalSheet = document.getElementById('seasonal-styles');
   if (_seasonalSheet) _seasonalSheet.parentNode.removeChild(_seasonalSheet);
 
-  // ── No-transitions style (same as install) ──
-  var noTrans = document.createElement('style');
-  noTrans.id = 'no-transitions';
-  noTrans.textContent = '* { transition: none !important; animation: none !important; animation-play-state: paused !important; }';
-  document.head.appendChild(noTrans);
-
-  // ── Force light vars ──
-  var printStyle = document.createElement('style');
-  printStyle.id = 'force-print-light';
-  printStyle.textContent = [
-    ':root, body {',
-    '  -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;',
-    '  color-scheme: light !important;',
-    '  --cyan: #D97706 !important; --cyan-dim: #B45309 !important; --cyan-dark: #92400E !important;',
-    '  --amber: #D97706 !important; --bg: #FFFFFF !important; --bg3: #F8F8F8 !important;',
-    '  --panel: #FFFFFF !important; --text: #1F2937 !important; --text-muted: #6B7280 !important;',
-    '  --glow: none !important; --icon-color-primary: #D97706 !important; --icon-color-section: #D97706 !important;',
-    '}',
-    'input[type=radio],input[type=checkbox],.check-item input[type=radio],.check-item input[type=checkbox] { accent-color:#D97706!important; }',
-    '@media print {',
-    '  html, body, * { color-scheme: light !important; }',
-    '  input[type=date] { color-scheme: light !important; }',
-    '  *, *::before, *::after { -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; }',
-    '  /* Race guard: on iOS the print snapshot can fire before the dark-mode class removal repaints,',
-    '     leaving dark rules (higher specificity than the * reset below) winning. These body.dark-mode',
-    '     resets match that specificity so the PDF prints light whether or not the class lingered. */',
-    '  body.dark-mode, body.dark-mode *, body.dark-mode *::before, body.dark-mode *::after { background:white!important;color:#1F2937!important;box-shadow:none!important;text-shadow:none!important;border-color:rgba(217,119,6,0.4)!important; }',
-    '  body.dark-mode .doc-title, body.dark-mode .company-name, body.dark-mode .section-header, body.dark-mode .col-label, body.dark-mode .icon-themed { color:#D97706!important; }',
-    '  body.dark-mode .section-header svg, body.dark-mode .section-header svg *, body.dark-mode .icon-themed, body.dark-mode .icon-themed * { stroke:#D97706!important; color:#D97706!important; }',
-    '  body.dark-mode .print-cb-box.cb-checked { background:#D97706!important; border-color:#D97706!important; }',
-    '  body.dark-mode .print-cb-box.cb-unchecked { background:#ffffff!important; border-color:#9CA3AF!important; }',
-    '  body.dark-mode .print-cb-mark { background:transparent!important; border-color:#ffffff!important; }',
-    '  body.dark-mode .check-item input[type=checkbox], body.dark-mode .check-item input[type=radio] { accent-color:#D97706!important; }',
-    '  *, *::before, *::after { background:white!important;color:#1F2937!important;box-shadow:none!important;text-shadow:none!important;border-color:rgba(217,119,6,0.4)!important;animation:none!important;animation-play-state:paused!important;transition:none!important; }',
-    '  /* The drawn checkbox/radio boxes must keep their amber fill — the universal white-background',
-    '     rule above would otherwise wipe it out, leaving only an outline + faint tick. */',
-    '  .print-cb-box.cb-checked { background:#D97706!important; border-color:#D97706!important; }',
-    '  .print-cb-box.cb-unchecked { background:#ffffff!important; border-color:#9CA3AF!important; }',
-    '  .print-cb-mark { background:transparent!important; border-color:#ffffff!important; }',
-    '  svg, svg * { background:transparent!important; }',
-    '  .doc-title,.company-name { color:#D97706!important;text-shadow:none!important; }',
-    '  .doc-title::before,.doc-title::after,.company-name::before,.company-name::after,.header::after { content:none!important;display:none!important; }',
-    '  html,body { background:white!important; }',
-    '  .page { border:1.5pt solid #D97706!important;background:white!important; }',
-    '  .section-header { background:#f5f5f5!important;color:#D97706!important;text-shadow:none!important; }',
-    '  .section-header svg,.section-header svg * { stroke:#D97706!important; }',
-    '  .col-label { color:#D97706!important;background:#f5f5f5!important;text-shadow:none!important; }',
-    '  .yn-group { background:white!important;border-color:#D97706!important; }',
-    '  .yn-group .yn-label { color:#6B7280!important;background:white!important;text-shadow:none!important;box-shadow:none!important; }',
-    '  .yn-group .yn-y:checked + .yn-label-y { background:#34d399!important;color:#064e3b!important;text-shadow:none!important;box-shadow:none!important; }',
-    '  .yn-group .yn-n:checked + .yn-label-n { background:#fca5a5!important;color:#7f1d1d!important;text-shadow:none!important;box-shadow:none!important; }',
-    '  /* iOS saved-PDF ignores accent-color overrides on native controls and uses the live (dark-mode',
-    '     green) accent. The span-replace draws amber boxes, but if its paint loses the print-timing race',
-    '     the native control shows through green. So in print we visually NEUTRALIZE the native control',
-    '     entirely (appearance:none, no accent, transparent) — the drawn .print-cb-box is what shows. If',
-    '     span-replace somehow did not run, you get a plain empty box, never a green dark-mode check. */',
-    '  .check-item input[type=radio],.check-item input[type=checkbox],',
-    '  body.dark-mode .check-item input[type=radio],body.dark-mode .check-item input[type=checkbox] {',
-    '    -webkit-appearance:none!important;appearance:none!important;accent-color:#D97706!important;',
-    '    background:transparent!important;border:none!important;color:transparent!important;',
-    '    -webkit-print-color-adjust:exact!important;print-color-adjust:exact!important; }',
-    '  .check-item:has(input:checked) { background:#fde68a!important;border-color:#D97706!important;box-shadow:none!important; }',
-    '  /* Match dark-mode specificity: when printing from dark mode the .dark-mode class can still be',
-    '     present at print time, and body.dark-mode .check-item:has(...) (higher specificity) was winning,',
-    '     so the amber shading on selected radios/checkboxes did not print. These force it light too. */',
-    '  body.dark-mode .check-item:has(input:checked) { background:#fde68a!important;border-color:#D97706!important;box-shadow:none!important; }',
-    '  body.dark-mode .check-item:has(input:checked) span { color:#92400E!important;text-shadow:none!important; }',
-    '  .footer-text { color:#9CA3AF!important; }',
-    '  legend { font-weight:500!important;font-family:var(--font-display)!important;letter-spacing:1.5px!important;text-transform:uppercase!important;color:#6B7280!important; }',
-    '  body.dark-mode legend { color:#1F2937!important; }',
-    '  .toolbar,button,.theme-toggle-btn { display:none!important; }',
-    '  .confirm-modal-backdrop,#seasonal-canvas { display:none!important; }',
-    '}'
-  ].join('\n');
-  document.head.appendChild(printStyle);
+  // ── Print appearance (light mode, sizing, page setup) now lives in the STATIC
+  //    @media print stylesheet in <head>, so it can't be torn down by the restore
+  //    timer before the PDF is finalized. printForm only toggles classes + span-replace. ──
 
   // ── Detect device ──
   var isIpadSafari = isMobileSafari && Math.min(screen.width, screen.height) >= 768;
@@ -2534,41 +2583,12 @@ function printForm() {
 
   // ══════════════════════════════════════════
   // ── iPHONE SAFARI — print path ──
-  // Runs BEFORE iPad detection so iPad CSS
-  // (@media print and min-width:768px) cannot
-  // bleed in. Injects counter-rules to reset
-  // any iPad overrides back to phone values.
+  // Runs BEFORE iPad detection. No class is added, so the static phone-print
+  // rules (html:not(.ipad-print):not(.desktop-print)) apply; only the checkbox
+  // span-replace is done here.
   // ══════════════════════════════════════════
   if (isMobileSafari && !isIpadSafari) {
     doSpanReplace();
-    var safariPageFix = document.createElement('style');
-    safariPageFix.id = 'safari-page-fix';
-    safariPageFix.textContent = [
-      '@page { size: 8.5in 11in; margin: 0in; }',
-      'html, html.desktop-print { font-size: var(--fs-print-phone-base) !important; }',
-      '@media print {',
-      '  html { font-size: var(--fs-print-phone-base) !important; }',
-      '  .field-row { flex-wrap:nowrap!important; }',
-      '  .inline-row { flex-wrap:wrap!important; overflow:visible!important; }',
-      '  .section-body,.section,.page { overflow:visible!important; }',
-      '  input[type=date] { min-width:0!important;flex-shrink:1!important;width:auto!important; }',
-      '  /* Counter iPad bleed — force phone values */',
-      '  .field-row { min-height:var(--h-print-phone-field-row)!important; }',
-      '  .inline-row { min-height:var(--h-print-phone-inline-row)!important; }',
-      '  input[type=text],input[type=email],input[type=tel],input[type=number] { min-height:var(--h-print-phone-input)!important;height:var(--h-print-phone-input)!important;font-size:var(--fs-print-phone-input)!important; }',
-      '  input[type=date] { min-height:var(--h-print-phone-input)!important;height:var(--h-print-phone-input)!important;font-size:var(--fs-print-phone-date)!important; }',
-      '  .yn-group,.yn-group .yn-label { height:var(--h-print-phone-yn-label)!important;min-height:var(--h-print-phone-yn-label)!important;line-height:var(--h-print-phone-yn-label)!important; }',
-      '  .check-item { height:var(--h-print-phone-check-item)!important;min-height:var(--h-print-phone-check-item)!important; }',
-      '  .section-body { padding:var(--pd-print-phone-section-body)!important; }',
-      '  #new_tank_size,#existing_tank_size { width:var(--w-print-tank-size)!important;min-width:var(--w-print-tank-size)!important;max-width:var(--w-print-tank-size)!important; }',
-      '  #elec_run_ft { width:var(--w-print-elec-run)!important;min-width:var(--w-print-elec-run)!important;max-width:var(--w-print-elec-run)!important; }',
-      '  #gen_notes  { height:var(--h-print-phone-gen-notes)!important;min-height:var(--h-print-phone-gen-notes)!important;max-height:var(--h-print-phone-gen-notes)!important; }',
-      '  #pad_notes  { height:var(--h-print-phone-pad-notes)!important;min-height:var(--h-print-phone-pad-notes)!important;max-height:var(--h-print-phone-pad-notes)!important; }',
-      '  #gas_notes  { height:var(--h-print-phone-gas-notes)!important;min-height:var(--h-print-phone-gas-notes)!important;max-height:var(--h-print-phone-gas-notes)!important; }',
-      '  #ready_notes { height:var(--h-print-phone-ready-notes)!important;min-height:var(--h-print-phone-ready-notes)!important;max-height:var(--h-print-phone-ready-notes)!important; }',
-      '}'
-    ].join('\n');
-    document.head.appendChild(safariPageFix);
     void document.body.offsetHeight;
     armRestoreAndPrint(true);
     return;
@@ -2580,33 +2600,6 @@ function printForm() {
   if (isMobileSafari && isIpadSafari) {
     document.documentElement.classList.add('ipad-print');
     doSpanReplace();
-    var safariPageFix = document.createElement('style');
-    safariPageFix.id = 'safari-page-fix';
-    safariPageFix.textContent = [
-      '@page { size: 8.5in 11in; margin: 0.0in; }',
-      'html { font-size: var(--fs-print-ipad-base) !important; }',
-      '@media print { html { font-size: var(--fs-print-ipad-base) !important; } }',
-      '.field-row,.inline-row { min-height:var(--h-print-ipad-field-row)!important; }',
-      '.field-row { flex-wrap:nowrap!important; }',
-      '.inline-row { flex-wrap:wrap!important; overflow:visible!important; }',
-      '.section-body,.section,.page { overflow:visible!important; }',
-      '.section-body { padding:var(--pd-print-ipad-section-body)!important; }',
-      '#transfer-switch-row .section-body { padding:4px 12px 0px 12px!important; }',
-      '#transfer-switch-row .inline-row:last-child { min-height:0!important;height:auto!important;max-height:fit-content!important;margin-bottom:0!important;padding-bottom:0!important;flex-wrap:nowrap!important;overflow:hidden!important; }',
-      '#precast-pad-row .section-body { padding-top:0px!important; }',
-      'input[type=date] { min-width:0!important;flex-shrink:1!important;width:auto!important; }',
-      'input[type=text],input[type=email],input[type=tel],input[type=number] { min-height:var(--h-print-ipad-input)!important;height:var(--h-print-ipad-input)!important; }',
-      'input[type=date] { min-height:var(--h-print-ipad-input)!important;height:var(--h-print-ipad-input)!important;font-size:var(--fs-print-ipad-date)!important; }',
-      '.yn-group,.yn-group .yn-label { height:var(--h-print-ipad-yn-label)!important;min-height:var(--h-print-ipad-yn-label)!important;line-height:var(--h-print-ipad-yn-label)!important; }',
-      '.check-item { height:var(--h-print-ipad-check-item)!important;min-height:var(--h-print-ipad-check-item)!important; }',
-      '#new_tank_size,#existing_tank_size { width:var(--w-print-ipad-tank-size)!important;min-width:var(--w-print-ipad-tank-size)!important;max-width:var(--w-print-ipad-tank-size)!important; }',
-      '#elec_run_ft { width:var(--w-print-ipad-elec-run)!important;min-width:var(--w-print-ipad-elec-run)!important;max-width:var(--w-print-ipad-elec-run)!important; }',
-      '#gen_notes  { height:var(--h-print-ipad-gen-notes)!important;min-height:var(--h-print-ipad-gen-notes)!important;max-height:var(--h-print-ipad-gen-notes)!important; }',
-      '#pad_notes  { height:var(--h-print-ipad-pad-notes)!important;min-height:var(--h-print-ipad-pad-notes)!important;max-height:var(--h-print-ipad-pad-notes)!important; }',
-      '#gas_notes  { height:var(--h-print-ipad-gas-notes)!important;min-height:var(--h-print-ipad-gas-notes)!important;max-height:var(--h-print-ipad-gas-notes)!important; }',
-      '#ready_notes { height:var(--h-print-ipad-ready-notes)!important;min-height:var(--h-print-ipad-ready-notes)!important;max-height:var(--h-print-ipad-ready-notes)!important;width:100%!important;margin-top:2px!important;box-sizing:border-box!important; }'
-    ].join('\n');
-    document.head.appendChild(safariPageFix);
     void document.body.offsetHeight;
     armRestoreAndPrint(true);
     return;
@@ -2771,6 +2764,10 @@ function capturePageToCanvas() {
       '#transfer-switch-row .inline-row:last-child { min-height: 0 !important; height: auto !important; max-height: fit-content !important; margin-bottom: 0 !important; padding-bottom: 0 !important; flex-wrap: nowrap !important; overflow: hidden !important; }',
       '#precast-pad-row .section-body { padding-top: 0px !important; }',
       'textarea { white-space: pre-wrap !important; word-wrap: break-word !important; overflow-wrap: break-word !important; overflow: hidden !important; }',
+      /* Match the print preview: the generated PDF is a 1050px-wide page, so use the PRINT
+         tank-size width here instead of the on-screen phone width. Edit --w-print-tank-size
+         (or --w-print-ipad-tank-size on iPad) and it now flows through to the saved PDF too. */
+      '#new_tank_size, #existing_tank_size { width: var(--w-print-tank-size) !important; min-width: var(--w-print-tank-size) !important; max-width: var(--w-print-tank-size) !important; flex: 0 0 auto !important; }',
     ].join('\n');
     document.head.appendChild(forceStyle);
 
