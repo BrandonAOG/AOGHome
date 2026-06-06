@@ -1631,10 +1631,11 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html:not(.ipad-print):not(.desktop-print) .inline-row { flex-wrap:wrap!important; overflow:visible!important; min-height:var(--h-print-phone-inline-row)!important; }
   html:not(.ipad-print):not(.desktop-print) .section-body,
   html:not(.ipad-print):not(.desktop-print) .section { overflow:visible!important; }
-  /* Clamp the page to exactly one printable sheet (8.5x11 at the 1050px print scale ≈ 1358px tall,
-     margin 0) and clip sub-pixel overflow. The saved PDF already fits on one page, so nothing real
-     is cut — this only stops Safari's preview from spilling a sliver onto a phantom 2nd page. */
-  html:not(.ipad-print):not(.desktop-print) .page { overflow:hidden!important; height:1358px!important; max-height:1358px!important; }
+  /* Clamp the page to one printable sheet and clip sub-pixel overflow. Held a touch under the full
+     ~1358px (8.5x11 at the 1050px print scale) so the footer's bottom border sits inside the page
+     instead of tipping onto a phantom 2nd page in Safari's preview. The saved PDF already fits, so
+     nothing real is cut; the footer is flush-bottom via margin-top:auto and just rides up a few px. */
+  html:not(.ipad-print):not(.desktop-print) .page { overflow:hidden!important; height:1350px!important; max-height:1350px!important; }
   html:not(.ipad-print):not(.desktop-print) .section-body { padding:var(--pd-print-phone-section-body)!important; }
   html:not(.ipad-print):not(.desktop-print) input[type=date] { min-width:0!important;flex-shrink:1!important;width:auto!important;min-height:var(--h-print-phone-input)!important;height:var(--h-print-phone-input)!important;font-size:var(--fs-print-phone-date)!important; }
   html:not(.ipad-print):not(.desktop-print) input[type=text],
@@ -1661,7 +1662,7 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html.ipad-print .field-row { flex-wrap:nowrap!important; }
   html.ipad-print .inline-row { flex-wrap:wrap!important; overflow:visible!important; }
   html.ipad-print .section-body,html.ipad-print .section { overflow:visible!important; }
-  html.ipad-print .page { overflow:hidden!important; height:1358px!important; max-height:1358px!important; }
+  html.ipad-print .page { overflow:hidden!important; height:1350px!important; max-height:1350px!important; }
   html.ipad-print .section-body { padding:var(--pd-print-ipad-section-body)!important; }
   html.ipad-print #transfer-switch-row .section-body { padding:4px 12px 0px 12px!important; }
   html.ipad-print #transfer-switch-row .inline-row:last-child { min-height:0!important;height:auto!important;max-height:fit-content!important;margin-bottom:0!important;padding-bottom:0!important;flex-wrap:nowrap!important;overflow:hidden!important; }
