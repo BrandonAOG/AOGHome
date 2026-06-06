@@ -1076,9 +1076,6 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
      dialog the page may overflow width; default scaling fits it.) */
   html { margin: 0 !important; padding: 0 !important; }
   body { margin: 0 auto !important; padding: 0 !important; width: 1050px !important; max-width: none !important; background: #ffffff !important; background-image: none !important; color: #1F2937 !important; --icon-color-section: #D97706 !important; --cyan: #D97706 !important; }
-  /* iOS Safari resolves min-height:100vh against the device viewport even when printing,
-     adding viewport-height of blank space below the form → phantom page 2. Null it out. */
-  html, body { min-height: 0 !important; height: auto !important; }
   .page { width: 1050px !important; max-width: none !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; padding-top: 0 !important; box-sizing: border-box !important; display: flex !important; flex-direction: column !important; overflow: visible !important; background: #ffffff !important; border: 1.5pt solid #D97706 !important; box-shadow: none !important; position: static !important; outline: none !important; }
   .content { flex: 1 !important; min-height: 0 !important; overflow: visible !important; padding: var(--pd-print-phone-content) !important; padding-bottom: var(--pb-content-print-phone) !important; background: #ffffff !important; display: flex !important; flex-direction: column !important; gap: 0 !important; justify-content: space-between !important; height: 0 !important; }
   .page::before, .page::after, .page-corner-bl, .page-corner-br { display: none !important; }
@@ -1653,6 +1650,18 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html:not(.ipad-print):not(.desktop-print) #pad_notes  { height:var(--h-print-phone-pad-notes)!important;min-height:var(--h-print-phone-pad-notes)!important;max-height:var(--h-print-phone-pad-notes)!important; }
   html:not(.ipad-print):not(.desktop-print) #gas_notes  { height:var(--h-print-phone-gas-notes)!important;min-height:var(--h-print-phone-gas-notes)!important;max-height:var(--h-print-phone-gas-notes)!important; }
   html:not(.ipad-print):not(.desktop-print) #ready_notes { height:var(--h-print-phone-ready-notes)!important;min-height:var(--h-print-phone-ready-notes)!important;max-height:var(--h-print-phone-ready-notes)!important; }
+  /* Kill the phantom 2nd page: force the whole form onto one sheet and forbid any break. */
+  html:not(.ipad-print):not(.desktop-print) .page,
+  html:not(.ipad-print):not(.desktop-print) .content,
+  html:not(.ipad-print):not(.desktop-print) .section,
+  html:not(.ipad-print):not(.desktop-print) .footer {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+  html:not(.ipad-print):not(.desktop-print) .footer { margin-bottom: 0 !important; padding-bottom: 0 !important; }
+  html:not(.ipad-print):not(.desktop-print) .page { overflow: hidden !important; }
 }
 
 /* ---- iPAD print sizing (mirrors the old injected safari-page-fix; the html.ipad-print
