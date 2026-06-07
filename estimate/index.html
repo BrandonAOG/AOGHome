@@ -285,6 +285,9 @@
   --w-print-ipad-today:         300px;  /* Today's Date width (iPad print)            */
   --w-print-ipad-est-date:      300px;  /* Estimate Date width (iPad print)           */
   --w-print-ipad-est-done-on:   300px;  /* Estimate Done On width (iPad print)        */
+  --w-print-desktop-today:      300px;  /* Today's Date width (desktop print)         */
+  --w-print-desktop-est-date:   300px;  /* Estimate Date width (desktop print)        */
+  --w-print-desktop-est-done-on:300px;  /* Estimate Done On width (desktop print)     */
   --h-phone-field-row:    32px;   /* row container holding label + input              */
   --h-phone-inline-row:   30px;   /* inline row container (Coverage, Difficulty…)    */
   --h-phone-yn-group:     22px;   /* Y/N toggle group box                            */
@@ -341,6 +344,14 @@
   --h-print-desktop-pad-notes:  43px;   /* Precast Pad notes text box height in PDF      */
   --h-print-desktop-gas-notes:  43px;   /* Fuel Tank / gas appliances notes box in PDF   */
   --h-print-desktop-ready-notes:43px;   /* Install Details ready/notes box in PDF        */
+
+  /* ---- PRINT PAGE DIMENSIONS : DESKTOP (Safari path) ----
+     These control the desktop-Safari print page footprint. Body must stay under one printable
+     sheet to avoid a blank 2nd page; page = body height minus the body's top/bottom padding. */
+  --pg-print-desktop-body-width:   1040px;  /* desktop print body width (narrower keeps right border in) */
+  --pg-print-desktop-body-height:  1290px;  /* desktop print body height (one sheet, trimmed for headroom) */
+  --pg-print-desktop-page-height:  1272px;  /* desktop print .page height (body height minus 0.1in pad x2) */
+  --pg-print-desktop-margin:       0.1in;   /* desktop print paper margin (body padding all sides)        */
 
   /* =============================================
      FOOTER TEXT SIZES — controls the two items
@@ -504,7 +515,7 @@
   --w-print-desktop-ts-placement:35ch;  /* longer: fits e.g. "Install Back To Back With Panel" */
   --w-print-desktop-circuits:    3ch;
   --w-print-desktop-stand-height:8ch;
-  --w-print-desktop-tank-size:   12ch;
+  --w-print-desktop-tank-size:   13ch;
   --w-print-desktop-elec-run:    10ch;
   --w-print-desktop-install-days:8ch;
 
@@ -1562,12 +1573,13 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html.desktop-print .content, html.desktop-print .section { page-break-inside: avoid !important; break-inside: avoid !important; }
   html.desktop-print .footer { flex: 0 0 auto !important; margin-top: 0 !important; }
 
-  /* SAFARI-ONLY desktop print: cap the page to one sheet so the footer doesn't spill and no
-     blank 2nd page is generated. Total body footprint (height + 0.1in top/bottom padding) must
-     stay under the printable area; trimmed to leave headroom against Safari's print scaling. */
+  /* SAFARI-ONLY desktop print: regular desktop above uses the rigid 1050x1358 layout, which
+     in Safari spills the footer / creates a blank 2nd page. Safari overrides it with the
+     --pg-print-desktop-* variables (slightly narrower + shorter, trimmed for Safari's print
+     scaling) so the footer stays on page 1 and there's no blank page. */
   html.desktop-print-safari { overflow: hidden !important; }
-  html.desktop-print-safari body { width: 1040px !important; max-width: 1040px !important; height: 1290px !important; max-height: 1290px !important; overflow: hidden !important; }
-  html.desktop-print-safari .page { height: 1272px !important; max-height: 1272px !important; min-height: 0 !important; overflow: hidden !important; }
+  html.desktop-print-safari body { width: var(--pg-print-desktop-body-width) !important; max-width: var(--pg-print-desktop-body-width) !important; height: var(--pg-print-desktop-body-height) !important; max-height: var(--pg-print-desktop-body-height) !important; padding: var(--pg-print-desktop-margin) !important; box-sizing: border-box !important; overflow: hidden !important; }
+  html.desktop-print-safari .page { height: var(--pg-print-desktop-page-height) !important; max-height: var(--pg-print-desktop-page-height) !important; min-height: 0 !important; overflow: hidden !important; }
   html.desktop-print-safari .content { flex: 1 1 auto !important; min-height: 0 !important; overflow: hidden !important; }
   html.desktop-print-safari .footer { flex: 0 0 auto !important; margin-top: 0 !important; }
 }
