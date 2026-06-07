@@ -432,7 +432,7 @@
   --check-group-gap-desktop:     4px;    /* gap between checkbox/radio pills (desktop)       */
 
   /* ---- DESKTOP PRINT BASE FONT ---- */
-  --fs-print-phone-base:         16.6px; /* base html font-size for phone print             */
+  --fs-print-phone-base:         15.45px; /* base html font-size for phone print             */
   --fs-print-ipad-base:          16.7px; /* base html font-size for iPad print              */
   --fs-print-desktop-base:       16.7px; /* base html font-size for desktop print           */
 
@@ -1557,7 +1557,7 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
      edge, so there's no gap between the last section and the footer / page bottom. */
   html.desktop-print { font-size: 16px !important; zoom: 1 !important; }
   html.desktop-print body { width: 1050px !important; max-width: 1050px !important; margin: 0 auto !important; }
-  html.desktop-print .page { width: 1050px !important; max-width: 1050px !important; height: auto !important; min-height: 0 !important; overflow: visible !important; display: flex !important; flex-direction: column !important; padding: 0.1in !important; box-sizing: border-box !important; }
+  html.desktop-print .page { width: auto !important; max-width: none !important; height: auto !important; min-height: 0 !important; overflow: visible !important; display: flex !important; flex-direction: column !important; margin: 0.1in !important; box-sizing: border-box !important; }
   html.desktop-print .content { flex: 1 1 auto !important; height: auto !important; min-height: 0 !important; display: flex !important; flex-direction: column !important; }
   html.desktop-print .footer { flex: 0 0 auto !important; margin-top: 0 !important; }
 }
@@ -2547,7 +2547,7 @@ function printForm() {
   }
 
   // ── Shared restore trigger setup ──
-  function armRestoreAndPrint(isMobile) {
+  function armRestoreAndPrint(isMobile, deferPrint) {
     var _triggered = false;
     function triggerRestore(delay) {
       if (_triggered) return;
@@ -2579,8 +2579,18 @@ function printForm() {
     }
     document.addEventListener('visibilitychange', _onVisible);
     var _safetyTimer = setTimeout(function() { triggerRestore(0); }, 30000);
-    // ── Print — must be called synchronously within user gesture on iOS ──
-    window.print();
+    // ── Print ──
+    // On iOS, window.print() MUST be called synchronously within the user gesture.
+    // On desktop there is no such constraint, and Safari can otherwise snapshot the page
+    // BEFORE the just-applied light-mode / desktop-print (0.1in margin) styles have painted.
+    // Deferring past two animation frames guarantees a repaint first.
+    if (deferPrint) {
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() { window.print(); });
+      });
+    } else {
+      window.print();
+    }
   }
 
   // ── Safari: span-replace inputs for reliable fill rendering ──
@@ -2641,7 +2651,7 @@ function printForm() {
   // phone/iPad scaling machinery and let the page print at its on-screen size.
   document.documentElement.classList.add('desktop-print');
   void document.body.offsetHeight;
-  armRestoreAndPrint(false);
+  armRestoreAndPrint(false, true);
 
 }
 
