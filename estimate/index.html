@@ -2630,6 +2630,20 @@ function printForm() {
   var prevTitle = document.title;
   document.title = getEstimateFilename('pdf').replace(/\.pdf$/, '');
 
+  // ── Kill ALL transitions/animations on screen IMMEDIATELY (not just @media print) ──
+  // Root cause of the faded dark print: stripping .dark-mode triggers the body's
+  // 'transition: background-color 0.3s' fade, and WebKit's print snapshot fires mid-fade,
+  // compositing a translucent (drifting-alpha) state. Printing from an already-light page
+  // works because there's no in-flight transition. Forcing transitions off makes the
+  // dark->light switch instant, so the snapshot captures a fully-light page.
+  var _instantSwitch = document.getElementById('print-instant-switch');
+  if (!_instantSwitch) {
+    _instantSwitch = document.createElement('style');
+    _instantSwitch.id = 'print-instant-switch';
+    _instantSwitch.textContent = '*, *::before, *::after { transition: none !important; animation: none !important; animation-play-state: paused !important; }';
+    document.head.appendChild(_instantSwitch);
+  }
+
   // ── Strip dark mode and seasonal (same as install form pattern) ──
   var wasDark = document.body.classList.contains('dark-mode');
   var wasMobileSafariClass = document.body.classList.contains('mobile-safari');
@@ -2677,6 +2691,7 @@ function printForm() {
     el = document.getElementById('force-print-light'); if (el) el.remove();
     el = document.getElementById('safari-page-fix');  if (el) el.remove();
     el = document.getElementById('no-transitions');   if (el) el.remove();
+    el = document.getElementById('print-instant-switch'); if (el) el.remove();
     if (wasDark) document.body.classList.add('dark-mode');
     document.documentElement.classList.remove('desktop-print');
     document.documentElement.classList.remove('ipad-print');
@@ -2727,8 +2742,12 @@ function printForm() {
     // BEFORE the just-applied light-mode / desktop-print (0.1in margin) styles have painted.
     // Deferring past two animation frames guarantees a repaint first.
     if (deferPrint) {
+      // Two animation frames to commit layout/paint, then a short timeout so the now-instant
+      // dark->light switch is fully rasterized before WebKit takes the print snapshot.
       requestAnimationFrame(function() {
-        requestAnimationFrame(function() { window.print(); });
+        requestAnimationFrame(function() {
+          setTimeout(function() { window.print(); }, 120);
+        });
       });
     } else {
       window.print();
@@ -2864,12 +2883,17 @@ function printForm() {
             var b = getComputedStyle(document.body);
             var page = document.getElementById('page');
             var p = page ? getComputedStyle(page) : null;
+            var sh = document.querySelector('#page .section-header');
+            var shB = sh ? getComputedStyle(sh, '::before') : null;
             console.log('[PRINT] *** CRITICAL VALUES ***'
               + '\n  --print-sentinel     = ' + sentinel
               + '\n  body backgroundColor = ' + b.backgroundColor
               + '\n  body opacity         = ' + b.opacity
               + '\n  body backgroundImage = ' + b.backgroundImage
               + '\n  body color           = ' + b.color
+              + '\n  dot ::before bg      = ' + (shB ? shB.backgroundColor : 'n/a')
+              + '\n  dot ::before shadow  = ' + (shB ? shB.boxShadow : 'n/a')
+              + '\n  --icon-color-section = ' + b.getPropertyValue('--icon-color-section').trim()
               + '\n  body inline style    = ' + (document.body.getAttribute('style') || '(none)').slice(0,200)
               + '\n  page backgroundColor = ' + (p ? p.backgroundColor : 'n/a')
               + '\n  page opacity         = ' + (p ? p.opacity : 'n/a')
