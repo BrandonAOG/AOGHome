@@ -442,10 +442,10 @@
   --h-print-desktop-safari-ready-notes: 43px;
 
   /* ---- DESKTOP SAFARI : PAGE DIMENSIONS — PRINT ---- */
-  --pg-print-desktop-safari-body-width : 1040px;
+  --pg-print-desktop-safari-body-width : 1050px;
   --pg-print-desktop-safari-body-height: 1290px;
-  --pg-print-desktop-safari-page-height: 1272px;
-  --pg-print-desktop-safari-margin     : 0.1in;
+  --pg-print-desktop-safari-page-height: 1290px;
+  --pg-print-desktop-safari-side-margin: 0.1in;  /* left/right page margin only (no top/bottom) */
 
   /* ---- DESKTOP SAFARI : DATE FIELD WIDTHS ---- */
   --w-desktop-safari-today            : 145px;
@@ -1749,8 +1749,8 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
      --pg-print-desktop-* variables (slightly narrower + shorter, trimmed for Safari's print
      scaling) so the footer stays on page 1 and there's no blank page. */
   html.desktop-print-safari { overflow: hidden !important; }
-  html.desktop-print-safari body { width: var(--pg-print-desktop-body-width) !important; max-width: var(--pg-print-desktop-body-width) !important; height: var(--pg-print-desktop-body-height) !important; max-height: var(--pg-print-desktop-body-height) !important; padding: var(--pg-print-desktop-margin) !important; box-sizing: border-box !important; overflow: hidden !important; }
-  html.desktop-print-safari .page { height: var(--pg-print-desktop-page-height) !important; max-height: var(--pg-print-desktop-page-height) !important; min-height: 0 !important; overflow: hidden !important; }
+  html.desktop-print-safari body { width: var(--pg-print-desktop-safari-body-width) !important; max-width: var(--pg-print-desktop-safari-body-width) !important; height: var(--pg-print-desktop-safari-body-height) !important; max-height: var(--pg-print-desktop-safari-body-height) !important; padding: 0 var(--pg-print-desktop-safari-side-margin) !important; box-sizing: border-box !important; overflow: hidden !important; }
+  html.desktop-print-safari .page { height: var(--pg-print-desktop-safari-page-height) !important; max-height: var(--pg-print-desktop-safari-page-height) !important; min-height: 0 !important; overflow: hidden !important; }
   html.desktop-print-safari .content { flex: 1 1 auto !important; min-height: 0 !important; overflow: hidden !important; }
   html.desktop-print-safari .footer { flex: 0 0 auto !important; margin-top: 0 !important; }
 
