@@ -432,7 +432,7 @@
   --check-group-gap-desktop:     4px;    /* gap between checkbox/radio pills (desktop)       */
 
   /* ---- DESKTOP PRINT BASE FONT ---- */
-  --fs-print-phone-base:         15.45px; /* base html font-size for phone print             */
+  --fs-print-phone-base:         15.4px; /* base html font-size for phone print             */
   --fs-print-ipad-base:          16.7px; /* base html font-size for iPad print              */
   --fs-print-desktop-base:       16.7px; /* base html font-size for desktop print           */
 
@@ -1759,7 +1759,8 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html.desktop-print *, html.desktop-print *::before, html.desktop-print *::after,
   body.dark-mode *, body.dark-mode *::before, body.dark-mode *::after,
   html.dark-mode-pending body *, html.dark-mode-pending body *::before, html.dark-mode-pending body *::after {
-    background-color: #ffffff !important; color: #1F2937 !important;
+    background: #ffffff !important; background-color: #ffffff !important; background-image: none !important;
+    color: #1F2937 !important;
     box-shadow: none !important; text-shadow: none !important;
     border-color: rgba(217,119,6,0.4) !important;
     animation: none !important; transition: none !important;
