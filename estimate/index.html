@@ -504,7 +504,7 @@
   --w-print-desktop-ts-placement:35ch;  /* longer: fits e.g. "Install Back To Back With Panel" */
   --w-print-desktop-circuits:    3ch;
   --w-print-desktop-stand-height:8ch;
-  --w-print-desktop-tank-size:   12ch;
+  --w-print-desktop-tank-size:   13ch;
   --w-print-desktop-elec-run:    10ch;
   --w-print-desktop-install-days:8ch;
 
@@ -1562,14 +1562,12 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html.desktop-print .content, html.desktop-print .section { page-break-inside: avoid !important; break-inside: avoid !important; }
   html.desktop-print .footer { flex: 0 0 auto !important; margin-top: 0 !important; }
 
-  /* SAFARI-ONLY desktop print: the rigid fixed-height layout above clips/overlaps in Safari.
-     Use a slightly narrower body so the right border stays inside the printable area, and cap
-     the PAGE (not the content) to one sheet height so the footer can't spill to a 2nd page.
-     One sheet at 1040px width ~= 1040*(11/8.5)=1346px; minus the body's 0.1in top+bottom
-     padding (~19px) leaves ~1327px for the page box. */
+  /* SAFARI-ONLY desktop print: cap the page to one sheet so the footer doesn't spill and no
+     blank 2nd page is generated. Total body footprint (height + 0.1in top/bottom padding) must
+     stay under the printable area; trimmed to leave headroom against Safari's print scaling. */
   html.desktop-print-safari { overflow: hidden !important; }
-  html.desktop-print-safari body { width: 1040px !important; max-width: 1040px !important; height: 1346px !important; max-height: 1346px !important; overflow: hidden !important; }
-  html.desktop-print-safari .page { height: 1327px !important; max-height: 1327px !important; min-height: 0 !important; overflow: hidden !important; }
+  html.desktop-print-safari body { width: 1040px !important; max-width: 1040px !important; height: 1290px !important; max-height: 1290px !important; overflow: hidden !important; }
+  html.desktop-print-safari .page { height: 1272px !important; max-height: 1272px !important; min-height: 0 !important; overflow: hidden !important; }
   html.desktop-print-safari .content { flex: 1 1 auto !important; min-height: 0 !important; overflow: hidden !important; }
   html.desktop-print-safari .footer { flex: 0 0 auto !important; margin-top: 0 !important; }
 }
