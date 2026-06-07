@@ -432,7 +432,7 @@
   --check-group-gap-desktop:     4px;    /* gap between checkbox/radio pills (desktop)       */
 
   /* ---- DESKTOP PRINT BASE FONT ---- */
-  --fs-print-phone-base:         16.6px; /* base html font-size for phone print             */
+  --fs-print-phone-base:         15.45px; /* base html font-size for phone print             */
   --fs-print-ipad-base:          16.7px; /* base html font-size for iPad print              */
   --fs-print-desktop-base:       16.7px; /* base html font-size for desktop print           */
 
@@ -1555,10 +1555,11 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   /* Desktop: full-page actual size. .page is a fixed-height flex column: .content flexes to fill
      all space (sections spread evenly via space-between) and PUSHES the footer to the very bottom
      edge, so there's no gap between the last section and the footer / page bottom. */
-  html.desktop-print { font-size: 16px !important; zoom: 1 !important; }
-  html.desktop-print body { width: 1050px !important; max-width: 1050px !important; margin: 0 auto !important; }
-  html.desktop-print .page { width: auto !important; max-width: none !important; height: auto !important; min-height: 0 !important; overflow: visible !important; display: flex !important; flex-direction: column !important; margin: 0.1in !important; box-sizing: border-box !important; }
-  html.desktop-print .content { flex: 1 1 auto !important; height: auto !important; min-height: 0 !important; display: flex !important; flex-direction: column !important; }
+  html.desktop-print { font-size: 16px !important; zoom: 1 !important; height: auto !important; overflow: hidden !important; }
+  html.desktop-print body { width: 1050px !important; max-width: 1050px !important; margin: 0 auto !important; height: 1358px !important; max-height: 1358px !important; overflow: hidden !important; }
+  html.desktop-print .page { width: auto !important; max-width: none !important; height: 1339px !important; max-height: 1339px !important; min-height: 0 !important; overflow: hidden !important; display: flex !important; flex-direction: column !important; margin: 0.1in !important; box-sizing: border-box !important; }
+  html.desktop-print .content { flex: 1 1 auto !important; height: auto !important; min-height: 0 !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; }
+  html.desktop-print .content, html.desktop-print .section { page-break-inside: avoid !important; break-inside: avoid !important; }
   html.desktop-print .footer { flex: 0 0 auto !important; margin-top: 0 !important; }
 }
 
@@ -1581,6 +1582,13 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
     --amber: #D97706 !important; --bg: #FFFFFF !important; --bg3: #F8F8F8 !important;
     --panel: #FFFFFF !important; --text: #1F2937 !important; --text-muted: #6B7280 !important;
     --glow: none !important; --icon-color-primary: #D97706 !important; --icon-color-section: #D97706 !important;
+  }
+  /* body.dark-mode (and seasonal) set --icon-color-section to neon cyan at higher specificity than
+     ":root, body", so the ::before accent squares (background: var(--icon-color-section)) printed
+     cyan. Re-declare the icon vars at matching specificity so the dots print amber. */
+  body.dark-mode, body[class*="seasonal-"] {
+    --icon-color-section: #D97706 !important; --icon-color-primary: #D97706 !important;
+    --cyan: #D97706 !important; --glow: none !important;
   }
   html, body, * { color-scheme: light !important; }
   input[type=date] { color-scheme: light !important; }
