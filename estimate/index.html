@@ -1555,7 +1555,7 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   /* Desktop: full-page actual size. .page is a fixed-height flex column: .content flexes to fill
      all space (sections spread evenly via space-between) and PUSHES the footer to the very bottom
      edge, so there's no gap between the last section and the footer / page bottom. */
-  html.desktop-print { font-size: 16px !important; zoom: 1 !important; height: auto !important; overflow: hidden !important; }
+  html.desktop-print { font-size: var(--fs-print-desktop-base) !important; zoom: 1 !important; height: auto !important; overflow: hidden !important; }
   html.desktop-print body { width: 1050px !important; max-width: 1050px !important; margin: 0 auto !important; height: 1358px !important; max-height: 1358px !important; overflow: hidden !important; padding: 0.1in !important; box-sizing: border-box !important; background: #ffffff !important; }
   html.desktop-print .page { width: 100% !important; max-width: 100% !important; height: 100% !important; max-height: 100% !important; min-height: 0 !important; overflow: hidden !important; display: flex !important; flex-direction: column !important; margin: 0 !important; box-sizing: border-box !important; }
   html.desktop-print .content { flex: 1 1 auto !important; height: auto !important; min-height: 0 !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; }
