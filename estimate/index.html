@@ -1746,7 +1746,7 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   /* Variable reset — applies on every desktop print path regardless of class. */
   html.desktop-print, html.desktop-print body,
   body.dark-mode, html.dark-mode-pending body, body[class*="seasonal-"], :root, body {
-    color-scheme: only light !important;
+    color-scheme: light !important;
     background: #ffffff !important; background-image: none !important; color: #1F2937 !important;
     --cyan: #D97706 !important; --cyan-dim: #B45309 !important; --cyan-dark: #92400E !important;
     --amber: #D97706 !important; --bg: #FFFFFF !important; --bg2: #FFFFFF !important; --bg3: #F8F8F8 !important;
@@ -2643,7 +2643,7 @@ function printForm() {
   // pass can still render the page dark via color-scheme even after the .dark-mode class is gone.
   // Inline on documentElement is the strongest signal; restored in restore().
   var _prevColorScheme = document.documentElement.style.colorScheme;
-  document.documentElement.style.colorScheme = 'only light';
+  document.documentElement.style.colorScheme = 'light';
   // Strip mobile-safari so iPad screen rules don't bleed into print rendering
   document.body.classList.remove('mobile-safari');
   var _printSeasonalCanvas = document.getElementById('seasonal-canvas');
@@ -2807,8 +2807,8 @@ function printForm() {
   }
   (function applyNuclearLight() {
     var LIGHT_BG = '#ffffff', DARK_TXT = '#1F2937', AMBER = '#D97706';
-    forceLight(document.documentElement, { 'color-scheme': 'only light', 'background': LIGHT_BG, '-webkit-print-color-adjust': 'exact', 'print-color-adjust': 'exact' });
-    forceLight(document.body, { 'color-scheme': 'only light', 'background': LIGHT_BG, 'background-image': 'none', 'color': DARK_TXT, '-webkit-print-color-adjust': 'exact', 'print-color-adjust': 'exact' });
+    forceLight(document.documentElement, { 'background': LIGHT_BG, '-webkit-print-color-adjust': 'exact', 'print-color-adjust': 'exact' });
+    forceLight(document.body, { 'background': LIGHT_BG, 'background-image': 'none', 'color': DARK_TXT, '-webkit-print-color-adjust': 'exact', 'print-color-adjust': 'exact' });
     var pg = document.getElementById('page');
     forceLight(pg, { 'background': LIGHT_BG, 'background-image': 'none', 'box-shadow': 'none', 'border': '1.5pt solid ' + AMBER, '-webkit-print-color-adjust': 'exact', 'print-color-adjust': 'exact' });
     // Every descendant: clear dark fills/glows, keep text dark.
