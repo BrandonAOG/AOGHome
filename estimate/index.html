@@ -774,6 +774,7 @@
   --pd-ts-bottom-screen:           1px;   /* bottom padding of Transfer Switch section body (screen)        */
   --pd-ts-bottom-print:            1px;   /* bottom padding of Transfer Switch section body (phone print)   */
   --pd-ts-bottom-print-ipad:       0px;   /* bottom padding of Transfer Switch section body (iPad print)    */
+  --pd-ts-bottom-print-desktop-safari: 0px; /* bottom padding of Transfer Switch section body (desktop Safari print) */
 
   /* ---- PAD NOTES BOTTOM MARGIN ---- */
   --mb-pad-notes-phone:        4px;   /* space below Precast Pad notes box to section border (phone screen)   */
@@ -1801,6 +1802,11 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html.desktop-print-safari #new_tank_size, html.desktop-print-safari #existing_tank_size { width: var(--w-print-desktop-safari-tank-size) !important; min-width: var(--w-print-desktop-safari-tank-size) !important; max-width: var(--w-print-desktop-safari-tank-size) !important; }
   html.desktop-print-safari #install_days { width: var(--w-print-desktop-safari-install-days) !important; }
   html.desktop-print-safari #elec_run_ft { width: var(--w-print-desktop-safari-elec-run) !important; min-width: var(--w-print-desktop-safari-elec-run) !important; max-width: var(--w-print-desktop-safari-elec-run) !important; flex-shrink: 0 !important; }
+  /* Transfer Switch: remove the gap between its last row and the section bottom border.
+     Mirrors the iPad-print fix — collapse the last inline-row's min-height and zero the
+     section-body bottom padding. */
+  html.desktop-print-safari #transfer-switch-row .section-body { padding-bottom: var(--pd-ts-bottom-print-desktop-safari) !important; }
+  html.desktop-print-safari #transfer-switch-row .inline-row:last-child { min-height: 0 !important; height: auto !important; max-height: fit-content !important; margin-bottom: 0 !important; padding-bottom: 0 !important; }
 
 }
 
