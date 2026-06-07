@@ -354,175 +354,175 @@
   --pg-print-desktop-margin:       0.1in;   /* desktop print paper margin (body padding all sides)        */
 
   /* =============================================
-     DESKTOP SAFARI OVERRIDES — full independent copy of every desktop SCREEN + PRINT
-     variable, so desktop Safari can be tuned separately from regular desktop. Seeded with
-     the current desktop values. The html.desktop-print-safari rules below reference these.
+     DESKTOP SAFARI OVERRIDES
+     Independent copy of every desktop SCREEN + PRINT variable so desktop Safari
+     can be tuned separately from regular desktop. Organized to mirror the main
+     variable sections. Seeded with current desktop values (trimmed page dims).
      ============================================= */
 
-  /* ---- suffix-style desktop vars (logo, divider, gaps, margins, etc.) ---- */
-  --logo-size-screen-desktop-safari: 40px;
-  --logo-size-print-desktop-safari: 48px;
-  --fs-fuel-label-desktop-safari: 0.75rem;
-  --fs-fuel-label-print-desktop-safari: 0.75rem;
-  --divider-margin-desktop-safari: 8px 0;
-  --divider-margin-print-desktop-safari: 4px 0;
-  --gps-btn-width-desktop-safari: 30px;
-  --gps-btn-height-desktop-safari: 26px;
-  --grid4-gap-desktop-safari: 10px;
-  --grid4-gap-print-desktop-safari: 8px;
-  --grid23-gap-desktop-safari: 10px;
-  --grid23-gap-print-desktop-safari: 8px;
-  --check-group-gap-desktop-safari: 4px;
-  --fs-bore-label-desktop-safari: 0.65rem;
-  --mb-bore-label-desktop-safari: -8px;
-  --fs-survey-legend-desktop-safari: 0.58rem;
-  --gap-install-row-desktop-safari: 8px;
-  --mb-section-desktop-safari: 10px;
-  --pb-content-desktop-safari: 14px;
-  --pb-content-print-desktop-safari: 4px;
-  --action-bar-clearance-desktop-safari: 50px;
-  --mt-notes-box-desktop-safari: 10px;
-  --mt-notes-box-print-desktop-safari: 10px;
-  --mb-pad-notes-desktop-safari: 4px;
-  --mb-pad-notes-print-desktop-safari: 0px;
-  --mb-fuel-run-desktop-safari: 4px;
-  --mb-fuel-run-print-desktop-safari: 4px;
-  --fs-desktop-safari-company-name: 1.1rem;
-  --fs-desktop-safari-doc-title: 1.1rem;
-  --fs-desktop-safari-section-header: 0.7rem;
-  --fs-desktop-safari-col-label: 0.6rem;
-  --fs-desktop-safari-label: 0.58rem;
-  --fs-desktop-safari-inline-label: 0.58rem;
-  --fs-desktop-safari-input: 0.88rem;
-  --fs-desktop-safari-yn-label: 0.65rem;
-  --fs-desktop-safari-check-item: 0.6rem;
-  --fs-desktop-safari-gas-label: 0.6rem;
+  /* ---- DESKTOP SAFARI : FONT SIZES — SCREEN ---- */
+  --fs-desktop-safari-company-name      : 1.1rem;
+  --fs-desktop-safari-doc-title         : 1.1rem;
+  --fs-desktop-safari-section-header    : 0.7rem;
+  --fs-desktop-safari-col-label         : 0.6rem;
+  --fs-desktop-safari-label             : 0.58rem;
+  --fs-desktop-safari-inline-label      : 0.58rem;
+  --fs-desktop-safari-input             : 0.88rem;
+  --fs-desktop-safari-yn-label          : 0.65rem;
+  --fs-desktop-safari-check-item        : 0.6rem;
+  --fs-desktop-safari-gas-label         : 0.6rem;
   --fs-desktop-safari-address-suggestion: 0.78rem;
-  --fs-print-desktop-safari-company-name: 1.2rem;
-  --fs-print-desktop-safari-doc-title: 1.2rem;
+
+  /* ---- DESKTOP SAFARI : FONT SIZES — PRINT ---- */
+  --fs-print-desktop-safari-company-name  : 1.2rem;
+  --fs-print-desktop-safari-doc-title     : 1.2rem;
   --fs-print-desktop-safari-section-header: 0.95rem;
-  --fs-print-desktop-safari-col-label: 0.95rem;
-  --fs-print-desktop-safari-label: 0.85rem;
-  --fs-print-desktop-safari-inline-label: 0.85rem;
-  --fs-print-desktop-safari-input: 1.1rem;
-  --fs-print-desktop-safari-date: 1.2rem;
-  --fs-print-desktop-safari-notes: 1rem;
-  --fs-print-desktop-safari-yn-label: 0.85rem;
-  --fs-print-desktop-safari-check-item: 0.85rem;
-  --fs-print-desktop-safari-gas-label: 0.75rem;
-  --pd-desktop-safari-header: 8px 32px;
-  --pd-desktop-safari-content: 14px 18px;
+  --fs-print-desktop-safari-col-label     : 0.95rem;
+  --fs-print-desktop-safari-label         : 0.85rem;
+  --fs-print-desktop-safari-inline-label  : 0.85rem;
+  --fs-print-desktop-safari-input         : 1.1rem;
+  --fs-print-desktop-safari-date          : 1.2rem;
+  --fs-print-desktop-safari-notes         : 1rem;
+  --fs-print-desktop-safari-yn-label      : 0.85rem;
+  --fs-print-desktop-safari-check-item    : 0.85rem;
+  --fs-print-desktop-safari-gas-label     : 0.75rem;
+
+  /* ---- DESKTOP SAFARI : BASE FONT — PRINT ---- */
+  --fs-print-desktop-safari-base: 16.7px;
+
+  /* ---- DESKTOP SAFARI : PADDING — SCREEN ---- */
+  --pd-desktop-safari-header        : 8px 32px;
+  --pd-desktop-safari-content       : 14px 18px;
   --pd-desktop-safari-section-header: 6px 16px;
-  --pd-desktop-safari-section-body: 5px 12px;
-  --pd-desktop-safari-top-col: 12px 14px;
-  --pd-desktop-safari-col-label: 3px 12px 3px 8px;
-  --pd-desktop-safari-input: 3px 6px;
-  --pd-desktop-safari-input-date: 4px 5px;
-  --pd-desktop-safari-textarea: 5px 6px;
-  --pd-desktop-safari-yn-label: 0 10px;
-  --pd-desktop-safari-check-item: 0px 8px 0px 6px;
-  --pd-desktop-safari-flood-item: 2px 14px;
-  --pd-desktop-safari-gas-box: 6px 8px;
-  --pd-desktop-safari-footer: 3px 22px;
-  --pd-print-desktop-safari-header: 10px 28px;
-  --pd-print-desktop-safari-content: 4px 14px;
+  --pd-desktop-safari-section-body  : 5px 12px;
+  --pd-desktop-safari-top-col       : 12px 14px;
+  --pd-desktop-safari-col-label     : 3px 12px 3px 8px;
+  --pd-desktop-safari-input         : 3px 6px;
+  --pd-desktop-safari-input-date    : 4px 5px;
+  --pd-desktop-safari-textarea      : 5px 6px;
+  --pd-desktop-safari-yn-label      : 0 10px;
+  --pd-desktop-safari-check-item    : 0px 8px 0px 6px;
+  --pd-desktop-safari-flood-item    : 2px 14px;
+  --pd-desktop-safari-gas-box       : 6px 8px;
+  --pd-desktop-safari-footer        : 3px 22px;
+
+  /* ---- DESKTOP SAFARI : PADDING — PRINT ---- */
+  --pd-print-desktop-safari-header        : 10px 28px;
+  --pd-print-desktop-safari-content       : 4px 14px;
   --pd-print-desktop-safari-section-header: 4px 12px;
-  --pd-print-desktop-safari-section-body: 4px 12px;
-  --pd-print-desktop-safari-top-col: 6px 12px;
-  --pd-print-desktop-safari-col-label: 2px 10px 2px 7px;
-  --pd-print-desktop-safari-input: 2px 5px;
-  --pd-print-desktop-safari-textarea: 0px;
-  --pd-print-desktop-safari-yn-label: 0 10px;
-  --pd-print-desktop-safari-check-item: 0 8px 0 6px;
-  --pd-print-desktop-safari-flood-item: 3px 12px;
-  --pd-print-desktop-safari-gas-box: 4px 8px;
-  --pd-print-desktop-safari-footer: 4px 20px;
-  --w-desktop-safari-today: 145px;
-  --w-desktop-safari-est-date: 145px;
-  --w-desktop-safari-est-done-on: 145px;
-  --w-print-desktop-safari-today: 300px;
-  --w-print-desktop-safari-est-date: 300px;
-  --w-print-desktop-safari-est-done-on: 300px;
-  --h-desktop-safari-input: 32px;
+  --pd-print-desktop-safari-section-body  : 4px 12px;
+  --pd-print-desktop-safari-top-col       : 6px 12px;
+  --pd-print-desktop-safari-col-label     : 2px 10px 2px 7px;
+  --pd-print-desktop-safari-input         : 2px 5px;
+  --pd-print-desktop-safari-textarea      : 0px;
+  --pd-print-desktop-safari-yn-label      : 0 10px;
+  --pd-print-desktop-safari-check-item    : 0 8px 0 6px;
+  --pd-print-desktop-safari-flood-item    : 3px 12px;
+  --pd-print-desktop-safari-gas-box       : 4px 8px;
+  --pd-print-desktop-safari-footer        : 4px 20px;
+
+  /* ---- DESKTOP SAFARI : HEIGHTS — SCREEN ---- */
+  --h-desktop-safari-input     : 32px;
   --h-desktop-safari-input-date: 34px;
-  --h-desktop-safari-field-row: 32px;
+  --h-desktop-safari-field-row : 32px;
   --h-desktop-safari-inline-row: 30px;
-  --h-desktop-safari-yn-group: 22px;
-  --h-desktop-safari-yn-label: 22px;
+  --h-desktop-safari-yn-group  : 22px;
+  --h-desktop-safari-yn-label  : 22px;
   --h-desktop-safari-check-item: 30px;
-  --h-print-desktop-safari-input: 31px;
-  --h-print-desktop-safari-field-row: 31px;
-  --h-print-desktop-safari-inline-row: 31px;
-  --h-print-desktop-safari-yn-label: 27px;
-  --h-print-desktop-safari-check-item: 26px;
-  --h-print-desktop-safari-gen-notes: 43px;
-  --h-print-desktop-safari-pad-notes: 43px;
-  --h-print-desktop-safari-gas-notes: 43px;
+
+  /* ---- DESKTOP SAFARI : HEIGHTS — PRINT ---- */
+  --h-print-desktop-safari-input      : 31px;
+  --h-print-desktop-safari-field-row  : 31px;
+  --h-print-desktop-safari-inline-row : 31px;
+  --h-print-desktop-safari-yn-label   : 27px;
+  --h-print-desktop-safari-check-item : 26px;
+  --h-print-desktop-safari-gen-notes  : 43px;
+  --h-print-desktop-safari-pad-notes  : 43px;
+  --h-print-desktop-safari-gas-notes  : 43px;
   --h-print-desktop-safari-ready-notes: 43px;
-  --pg-print-desktop-safari-body-width: 1040px;
+
+  /* ---- DESKTOP SAFARI : PAGE DIMENSIONS — PRINT ---- */
+  --pg-print-desktop-safari-body-width : 1040px;
   --pg-print-desktop-safari-body-height: 1290px;
   --pg-print-desktop-safari-page-height: 1272px;
-  --pg-print-desktop-safari-margin: 0.1in;
-  --fs-desktop-safari-footer: 0.55rem;
-  --fs-desktop-safari-ver-span: 0.72rem;
-  --fs-print-desktop-safari-footer: 0.55rem;
-  --fs-print-desktop-safari-ver-span: 0.72rem;
-  None: 40px;
-  None: 48px;
-  None: 0.75rem;
-  None: 0.75rem;
-  None: 8px 0;
-  None: 4px 0;
-  None: 30px;
-  None: 26px;
-  None: 10px;
-  None: 8px;
-  None: 10px;
-  None: 8px;
-  None: 4px;
-  --fs-print-desktop-safari-base: 16.7px;
-  --w-desktop-safari-gen-size: 15ch;
-  --w-desktop-safari-num-panels: 8ch;
-  --w-desktop-safari-num-ts: 8ch;
-  --w-desktop-safari-ts-type: 20ch;
+  --pg-print-desktop-safari-margin     : 0.1in;
+
+  /* ---- DESKTOP SAFARI : DATE FIELD WIDTHS ---- */
+  --w-desktop-safari-today            : 145px;
+  --w-desktop-safari-est-date         : 145px;
+  --w-desktop-safari-est-done-on      : 145px;
+  --w-print-desktop-safari-today      : 300px;
+  --w-print-desktop-safari-est-date   : 300px;
+  --w-print-desktop-safari-est-done-on: 300px;
+
+  /* ---- DESKTOP SAFARI : INPUT FIELD WIDTHS — SCREEN ---- */
+  --w-desktop-safari-gen-size    : 15ch;
+  --w-desktop-safari-num-panels  : 8ch;
+  --w-desktop-safari-num-ts      : 8ch;
+  --w-desktop-safari-ts-type     : 20ch;
   --w-desktop-safari-ts-placement: 35ch;
-  --w-desktop-safari-circuits: 5ch;
+  --w-desktop-safari-circuits    : 5ch;
   --w-desktop-safari-stand-height: 10ch;
-  --w-desktop-safari-tank-size: 10ch;
-  --w-desktop-safari-elec-run: 10ch;
+  --w-desktop-safari-tank-size   : 10ch;
+  --w-desktop-safari-elec-run    : 10ch;
   --w-desktop-safari-install-days: 12ch;
-  --w-print-desktop-safari-gen-size: 20ch;
-  --w-print-desktop-safari-num-panels: 3ch;
-  --w-print-desktop-safari-num-ts: 3ch;
-  --w-print-desktop-safari-ts-type: 20ch;
+
+  /* ---- DESKTOP SAFARI : INPUT FIELD WIDTHS — PRINT ---- */
+  --w-print-desktop-safari-gen-size    : 20ch;
+  --w-print-desktop-safari-num-panels  : 3ch;
+  --w-print-desktop-safari-num-ts      : 3ch;
+  --w-print-desktop-safari-ts-type     : 20ch;
   --w-print-desktop-safari-ts-placement: 35ch;
-  --w-print-desktop-safari-circuits: 3ch;
+  --w-print-desktop-safari-circuits    : 3ch;
   --w-print-desktop-safari-stand-height: 8ch;
-  --w-print-desktop-safari-tank-size: 13ch;
-  --w-print-desktop-safari-elec-run: 10ch;
+  --w-print-desktop-safari-tank-size   : 13ch;
+  --w-print-desktop-safari-elec-run    : 10ch;
   --w-print-desktop-safari-install-days: 8ch;
-  --gap-desktop-safari-label-sm: 4px;
-  --gap-desktop-safari-label-md: 6px;
-  --gap-desktop-safari-label-lg: 8px;
-  --gap-desktop-safari-label-xl: 12px;
+
+  /* ---- DESKTOP SAFARI : INLINE LABEL GAPS ---- */
+  --gap-desktop-safari-label-sm      : 4px;
+  --gap-desktop-safari-label-md      : 6px;
+  --gap-desktop-safari-label-lg      : 8px;
+  --gap-desktop-safari-label-xl      : 12px;
   --gap-print-desktop-safari-label-sm: 4px;
   --gap-print-desktop-safari-label-md: 6px;
   --gap-print-desktop-safari-label-lg: 8px;
   --gap-print-desktop-safari-label-xl: 12px;
-  None: 0.65rem;
-  None: -8px;
-  None: 0.58rem;
-  None: 8px;
-  None: 10px;
-  None: 14px;
-  None: 4px;
-  None: 50px;
-  None: 10px;
-  None: 10px;
-  None: 4px;
-  None: 0px;
-  None: 4px;
-  None: 4px;
+
+  /* ---- DESKTOP SAFARI : FOOTER TEXT SIZES ---- */
+  --fs-desktop-safari-footer        : 0.55rem;
+  --fs-desktop-safari-ver-span      : 0.72rem;
+  --fs-print-desktop-safari-footer  : 0.55rem;
+  --fs-print-desktop-safari-ver-span: 0.72rem;
+
+  /* ---- DESKTOP SAFARI : LOGO / FUEL / DIVIDER / GPS / GRID / MISC ---- */
+  --logo-size-screen-desktop-safari    : 40px;
+  --logo-size-print-desktop-safari     : 48px;
+  --fs-fuel-label-desktop-safari       : 0.75rem;
+  --fs-fuel-label-print-desktop-safari : 0.75rem;
+  --divider-margin-desktop-safari      : 8px 0;
+  --divider-margin-print-desktop-safari: 4px 0;
+  --gps-btn-width-desktop-safari       : 30px;
+  --gps-btn-height-desktop-safari      : 26px;
+  --grid4-gap-desktop-safari           : 10px;
+  --grid4-gap-print-desktop-safari     : 8px;
+  --grid23-gap-desktop-safari          : 10px;
+  --grid23-gap-print-desktop-safari    : 8px;
+  --check-group-gap-desktop-safari     : 4px;
+  --fs-bore-label-desktop-safari       : 0.65rem;
+  --mb-bore-label-desktop-safari       : -8px;
+  --fs-survey-legend-desktop-safari    : 0.58rem;
+  --gap-install-row-desktop-safari     : 8px;
+  --mb-section-desktop-safari          : 10px;
+  --pb-content-desktop-safari          : 14px;
+  --pb-content-print-desktop-safari    : 4px;
+  --action-bar-clearance-desktop-safari: 50px;
+  --mt-notes-box-desktop-safari        : 10px;
+  --mt-notes-box-print-desktop-safari  : 10px;
+  --mb-pad-notes-desktop-safari        : 4px;
+  --mb-pad-notes-print-desktop-safari  : 0px;
+  --mb-fuel-run-desktop-safari         : 4px;
+  --mb-fuel-run-print-desktop-safari   : 4px;
 
   /* =============================================
      FOOTER TEXT SIZES — controls the two items
