@@ -1556,8 +1556,8 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
      all space (sections spread evenly via space-between) and PUSHES the footer to the very bottom
      edge, so there's no gap between the last section and the footer / page bottom. */
   html.desktop-print { font-size: 16px !important; zoom: 1 !important; height: auto !important; overflow: hidden !important; }
-  html.desktop-print body { width: 1050px !important; max-width: 1050px !important; margin: 0 auto !important; height: 1358px !important; max-height: 1358px !important; overflow: hidden !important; }
-  html.desktop-print .page { width: auto !important; max-width: none !important; height: 1339px !important; max-height: 1339px !important; min-height: 0 !important; overflow: hidden !important; display: flex !important; flex-direction: column !important; margin: 0.1in !important; box-sizing: border-box !important; }
+  html.desktop-print body { width: 1050px !important; max-width: 1050px !important; margin: 0 auto !important; height: 1358px !important; max-height: 1358px !important; overflow: hidden !important; padding: 0.1in !important; box-sizing: border-box !important; background: #ffffff !important; }
+  html.desktop-print .page { width: 100% !important; max-width: 100% !important; height: 100% !important; max-height: 100% !important; min-height: 0 !important; overflow: hidden !important; display: flex !important; flex-direction: column !important; margin: 0 !important; box-sizing: border-box !important; }
   html.desktop-print .content { flex: 1 1 auto !important; height: auto !important; min-height: 0 !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; }
   html.desktop-print .content, html.desktop-print .section { page-break-inside: avoid !important; break-inside: avoid !important; }
   html.desktop-print .footer { flex: 0 0 auto !important; margin-top: 0 !important; }
@@ -1741,8 +1741,6 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
      below catch that case. Placed LAST so it wins the cascade over every dark rule.
    ============================================================================ */
 @media print {
-  /* Sentinel: JS reads this var during print to confirm THIS block is applied. */
-  :root { --print-sentinel: PRINT-BLOCK-ACTIVE; }
   /* Variable reset — applies on every desktop print path regardless of class. */
   html.desktop-print, html.desktop-print body,
   body.dark-mode, html.dark-mode-pending body, body[class*="seasonal-"], :root, body {
@@ -2586,38 +2584,9 @@ function getEstimateFilename(ext) {
 // ── PRINT ──
 function printForm() {
 
-  // ── DEBUG: print-sequence tracing (desktop Safari). Copy the console output back. ──
-  var DBG = true;
-  function dbg(label, extra) {
-    if (!DBG) return;
-    try { console.log('[PRINT] ' + label, extra !== undefined ? extra : ''); } catch(e) {}
-  }
-  function snap(tag) {
-    if (!DBG) return;
-    try {
-      var b = document.body, h = document.documentElement;
-      var page = document.getElementById('page');
-      var cs = getComputedStyle(b);
-      var hs = getComputedStyle(h);
-      var ps = page ? getComputedStyle(page) : null;
-      console.log('[PRINT] SNAPSHOT @ ' + tag, {
-        htmlClasses: h.className,
-        bodyClasses: b.className,
-        htmlColorScheme: h.style.colorScheme || '(unset)',
-        computedColorScheme_body: cs.colorScheme,
-        body_bgColor: cs.backgroundColor,
-        body_bgImage: cs.backgroundImage,
-        body_color: cs.color,
-        page_bgColor: ps ? ps.backgroundColor : '(no #page)',
-        page_bgImage: ps ? ps.backgroundImage : '(no #page)',
-        page_border: ps ? ps.borderTopColor : '(no #page)',
-        cssVar_panel: cs.getPropertyValue('--panel').trim(),
-        cssVar_iconSection: cs.getPropertyValue('--icon-color-section').trim(),
-        OS_prefersDark: (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
-      });
-    } catch(e) { console.log('[PRINT] snapshot error', e); }
-  }
-  dbg('printForm() called');
+  // (debug tracing removed)
+  function dbg() {}
+  function snap() {}
 
   var isMobileSafari = document.body.classList.contains('mobile-safari');
   var ua = navigator.userAgent;
@@ -2867,55 +2836,6 @@ function printForm() {
 
   void document.body.offsetHeight;
   snap('after add desktop-print + nuclear light + reflow');
-  // Capture the computed style the instant the print media actually applies — this is what
-  // Safari will render. If body/page bg here is dark, the print CSS is losing the cascade.
-  if (DBG && window.matchMedia) {
-    try {
-      var _mql = window.matchMedia('print');
-      var _onPrintMedia = function(e) {
-        if (e.matches) {
-          dbg('matchMedia(print) => MATCHES (entering print render)');
-          snap('INSIDE print media query');
-          try {
-            var rootCS = getComputedStyle(document.documentElement);
-            var sentinel = rootCS.getPropertyValue('--print-sentinel').trim();
-            console.log('[PRINT] SENTINEL (should be PRINT-BLOCK-ACTIVE) = "' + sentinel + '"');
-            var b = getComputedStyle(document.body);
-            var page = document.getElementById('page');
-            var p = page ? getComputedStyle(page) : null;
-            var sh = document.querySelector('#page .section-header');
-            var shB = sh ? getComputedStyle(sh, '::before') : null;
-            console.log('[PRINT] *** CRITICAL VALUES ***'
-              + '\n  --print-sentinel     = ' + sentinel
-              + '\n  body backgroundColor = ' + b.backgroundColor
-              + '\n  body opacity         = ' + b.opacity
-              + '\n  body backgroundImage = ' + b.backgroundImage
-              + '\n  body color           = ' + b.color
-              + '\n  dot ::before bg      = ' + (shB ? shB.backgroundColor : 'n/a')
-              + '\n  dot ::before shadow  = ' + (shB ? shB.boxShadow : 'n/a')
-              + '\n  --icon-color-section = ' + b.getPropertyValue('--icon-color-section').trim()
-              + '\n  body inline style    = ' + (document.body.getAttribute('style') || '(none)').slice(0,200)
-              + '\n  page backgroundColor = ' + (p ? p.backgroundColor : 'n/a')
-              + '\n  page opacity         = ' + (p ? p.opacity : 'n/a')
-              + '\n  page backgroundImage = ' + (p ? p.backgroundImage : 'n/a')
-              + '\n  page print-color-adj = ' + (p ? (p.printColorAdjust || p.webkitPrintColorAdjust) : 'n/a')
-              + '\n  --panel              = ' + b.getPropertyValue('--panel').trim()
-              + '\n  --text               = ' + b.getPropertyValue('--text').trim()
-              + '\n  --bg                 = ' + b.getPropertyValue('--bg').trim()
-              + '\n  OS prefers dark      = ' + (window.matchMedia('(prefers-color-scheme: dark)').matches));
-          } catch(err) { console.log('[PRINT] critical-values error', err); }
-        } else {
-          dbg('matchMedia(print) => no longer matches (left print)');
-        }
-      };
-      if (_mql.addEventListener) _mql.addEventListener('change', _onPrintMedia);
-      else if (_mql.addListener) _mql.addListener(_onPrintMedia);
-    } catch(e) { dbg('matchMedia(print) listener error', e); }
-    // Also log right before window.print() fires (after the rAF defer).
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() { snap('one frame before window.print()'); });
-    });
-  }
   armRestoreAndPrint(false, true);
 
 }
