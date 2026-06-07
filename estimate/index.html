@@ -1741,6 +1741,8 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
      below catch that case. Placed LAST so it wins the cascade over every dark rule.
    ============================================================================ */
 @media print {
+  /* Sentinel: JS reads this var during print to confirm THIS block is applied. */
+  :root { --print-sentinel: PRINT-BLOCK-ACTIVE; }
   /* Variable reset — applies on every desktop print path regardless of class. */
   html.desktop-print, html.desktop-print body,
   body.dark-mode, html.dark-mode-pending body, body[class*="seasonal-"], :root, body {
@@ -2670,6 +2672,7 @@ function printForm() {
       else r.input.removeAttribute('style');
     });
     _printReplaced = [];
+    if (typeof window.__undoForcedLight === 'function') { window.__undoForcedLight(); window.__undoForcedLight = null; }
     var el;
     el = document.getElementById('force-print-light'); if (el) el.remove();
     el = document.getElementById('safari-page-fix');  if (el) el.remove();
@@ -2790,8 +2793,60 @@ function printForm() {
   // phone/iPad scaling machinery and let the page print at its on-screen size.
   dbg('>>> DESKTOP branch taken');
   document.documentElement.classList.add('desktop-print');
+
+  // ── NUCLEAR LIGHT FORCING ──
+  // The @media print CSS was not reliably winning the cascade against the dark theme on
+  // desktop Safari, so force light appearance via INLINE styles (priority 'important'),
+  // which outrank every stylesheet rule. Originals are stashed and undone in restore().
+  var _forcedLight = [];
+  function forceLight(el, props) {
+    if (!el) return;
+    var prev = el.getAttribute('style') || '';
+    _forcedLight.push({ el: el, prev: prev });
+    Object.keys(props).forEach(function(k) { el.style.setProperty(k, props[k], 'important'); });
+  }
+  (function applyNuclearLight() {
+    var LIGHT_BG = '#ffffff', DARK_TXT = '#1F2937', AMBER = '#D97706';
+    forceLight(document.documentElement, { 'color-scheme': 'only light', 'background': LIGHT_BG });
+    forceLight(document.body, { 'color-scheme': 'only light', 'background': LIGHT_BG, 'background-image': 'none', 'color': DARK_TXT });
+    var pg = document.getElementById('page');
+    forceLight(pg, { 'background': LIGHT_BG, 'background-image': 'none', 'box-shadow': 'none', 'border': '1.5pt solid ' + AMBER });
+    // Every descendant: clear dark fills/glows, keep text dark.
+    var all = document.querySelectorAll('#page *');
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      var tag = el.tagName;
+      // Skip the drawn checkbox boxes (amber fills) and SVGs (handled below).
+      if (el.classList && (el.classList.contains('print-cb-box') || el.classList.contains('print-cb-mark'))) continue;
+      forceLight(el, { 'background': LIGHT_BG, 'background-image': 'none', 'color': DARK_TXT,
+                       'box-shadow': 'none', 'text-shadow': 'none' });
+    }
+    // Amber accents: titles, section/column headers, their ::before dots can't be inlined,
+    // but the text elements can.
+    document.querySelectorAll('#page .doc-title, #page .company-name, #page .section-header, #page .col-label, #page .icon-themed').forEach(function(el){
+      forceLight(el, { 'color': AMBER });
+    });
+    document.querySelectorAll('#page .section-header, #page .col-label').forEach(function(el){
+      forceLight(el, { 'background': '#f5f5f5' });
+    });
+    // SVG icons → amber stroke.
+    document.querySelectorAll('#page .section-header svg, #page .section-header svg *, #page .col-label svg, #page .col-label svg *, #page .icon-themed svg, #page .icon-themed svg *').forEach(function(el){
+      forceLight(el, { 'stroke': AMBER, 'color': AMBER, 'background': 'transparent', 'fill': 'none' });
+    });
+    // Inputs/fields: white bg, dark text incl. Safari's text-fill-color.
+    document.querySelectorAll('#page input, #page textarea, #page select').forEach(function(el){
+      forceLight(el, { 'background': LIGHT_BG, 'color': DARK_TXT, '-webkit-text-fill-color': DARK_TXT, 'border-color': AMBER });
+    });
+    dbg('nuclear light applied to elements', _forcedLight.length);
+  })();
+  // expose for restore()
+  window.__undoForcedLight = function() {
+    _forcedLight.forEach(function(r){ if (r.prev) r.el.setAttribute('style', r.prev); else r.el.removeAttribute('style'); });
+    _forcedLight = [];
+  };
+
   void document.body.offsetHeight;
-  snap('after add desktop-print + reflow');
+  snap('after add desktop-print + nuclear light + reflow');
   // Capture the computed style the instant the print media actually applies — this is what
   // Safari will render. If body/page bg here is dark, the print CSS is losing the cascade.
   if (DBG && window.matchMedia) {
@@ -2802,16 +2857,21 @@ function printForm() {
           dbg('matchMedia(print) => MATCHES (entering print render)');
           snap('INSIDE print media query');
           try {
+            var rootCS = getComputedStyle(document.documentElement);
+            var sentinel = rootCS.getPropertyValue('--print-sentinel').trim();
+            console.log('[PRINT] SENTINEL (should be PRINT-BLOCK-ACTIVE) = "' + sentinel + '"');
             var b = getComputedStyle(document.body);
             var page = document.getElementById('page');
             var p = page ? getComputedStyle(page) : null;
             console.log('[PRINT] *** CRITICAL VALUES ***'
+              + '\n  --print-sentinel     = ' + sentinel
               + '\n  body backgroundColor = ' + b.backgroundColor
               + '\n  body backgroundImage = ' + b.backgroundImage
               + '\n  body color           = ' + b.color
               + '\n  page backgroundColor = ' + (p ? p.backgroundColor : 'n/a')
               + '\n  page backgroundImage = ' + (p ? p.backgroundImage : 'n/a')
               + '\n  --panel              = ' + b.getPropertyValue('--panel').trim()
+              + '\n  --text               = ' + b.getPropertyValue('--text').trim()
               + '\n  --bg                 = ' + b.getPropertyValue('--bg').trim()
               + '\n  OS prefers dark      = ' + (window.matchMedia('(prefers-color-scheme: dark)').matches));
           } catch(err) { console.log('[PRINT] critical-values error', err); }
