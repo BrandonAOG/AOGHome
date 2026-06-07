@@ -432,7 +432,7 @@
   --check-group-gap-desktop:     4px;    /* gap between checkbox/radio pills (desktop)       */
 
   /* ---- DESKTOP PRINT BASE FONT ---- */
-  --fs-print-phone-base:         15.4px; /* base html font-size for phone print             */
+  --fs-print-phone-base:         15.45px; /* base html font-size for phone print             */
   --fs-print-ipad-base:          16.7px; /* base html font-size for iPad print              */
   --fs-print-desktop-base:       16.7px; /* base html font-size for desktop print           */
 
@@ -2584,10 +2584,45 @@ function getEstimateFilename(ext) {
 // ── PRINT ──
 function printForm() {
 
+  // ── DEBUG: print-sequence tracing (desktop Safari). Copy the console output back. ──
+  var DBG = true;
+  function dbg(label, extra) {
+    if (!DBG) return;
+    try { console.log('[PRINT] ' + label, extra !== undefined ? extra : ''); } catch(e) {}
+  }
+  function snap(tag) {
+    if (!DBG) return;
+    try {
+      var b = document.body, h = document.documentElement;
+      var page = document.getElementById('page');
+      var cs = getComputedStyle(b);
+      var hs = getComputedStyle(h);
+      var ps = page ? getComputedStyle(page) : null;
+      console.log('[PRINT] SNAPSHOT @ ' + tag, {
+        htmlClasses: h.className,
+        bodyClasses: b.className,
+        htmlColorScheme: h.style.colorScheme || '(unset)',
+        computedColorScheme_body: cs.colorScheme,
+        body_bgColor: cs.backgroundColor,
+        body_bgImage: cs.backgroundImage,
+        body_color: cs.color,
+        page_bgColor: ps ? ps.backgroundColor : '(no #page)',
+        page_bgImage: ps ? ps.backgroundImage : '(no #page)',
+        page_border: ps ? ps.borderTopColor : '(no #page)',
+        cssVar_panel: cs.getPropertyValue('--panel').trim(),
+        cssVar_iconSection: cs.getPropertyValue('--icon-color-section').trim(),
+        OS_prefersDark: (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+      });
+    } catch(e) { console.log('[PRINT] snapshot error', e); }
+  }
+  dbg('printForm() called');
+
   var isMobileSafari = document.body.classList.contains('mobile-safari');
   var ua = navigator.userAgent;
   var isMacSafari = /Macintosh/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium|Firefox|Edge/.test(ua);
   var isAnySafari  = isMobileSafari || isMacSafari;
+  dbg('detection', { isMobileSafari: isMobileSafari, isMacSafari: isMacSafari, isAnySafari: isAnySafari, maxTouchPoints: navigator.maxTouchPoints, ua: ua });
+  snap('start (before any strip)');
 
   // ── Set PDF filename ──
   var prevTitle = document.title;
@@ -2596,8 +2631,10 @@ function printForm() {
   // ── Strip dark mode and seasonal (same as install form pattern) ──
   var wasDark = document.body.classList.contains('dark-mode');
   var wasMobileSafariClass = document.body.classList.contains('mobile-safari');
+  dbg('wasDark', wasDark);
   var _printSeasonalClasses = [];
   document.body.classList.forEach(function(c) { if (c.indexOf('seasonal-') === 0) _printSeasonalClasses.push(c); });
+  dbg('seasonalClasses found', _printSeasonalClasses);
   _printSeasonalClasses.forEach(function(c) { document.body.classList.remove(c); });
   document.body.classList.remove('dark-mode');
   // Force light color-scheme directly on <html> — when the OS is in dark mode, Safari's print
@@ -2611,6 +2648,8 @@ function printForm() {
   if (_printSeasonalCanvas) _printSeasonalCanvas.style.display = 'none';
   var _seasonalSheet = document.getElementById('seasonal-styles');
   if (_seasonalSheet) _seasonalSheet.parentNode.removeChild(_seasonalSheet);
+  dbg('dark-mode-pending on html?', document.documentElement.classList.contains('dark-mode-pending'));
+  snap('after dark/seasonal strip');
 
   // ── Print appearance (light mode, sizing, page setup) now lives in the STATIC
   //    @media print stylesheet in <head>, so it can't be torn down by the restore
@@ -2749,8 +2788,31 @@ function printForm() {
   // checkbox/radio controls, browser-native sizing. Dark mode is still stripped above so it
   // prints the light appearance. We mark <html> so a desktop-only print rule can neutralize the
   // phone/iPad scaling machinery and let the page print at its on-screen size.
+  dbg('>>> DESKTOP branch taken');
   document.documentElement.classList.add('desktop-print');
   void document.body.offsetHeight;
+  snap('after add desktop-print + reflow');
+  // Capture the computed style the instant the print media actually applies — this is what
+  // Safari will render. If body/page bg here is dark, the print CSS is losing the cascade.
+  if (DBG && window.matchMedia) {
+    try {
+      var _mql = window.matchMedia('print');
+      var _onPrintMedia = function(e) {
+        if (e.matches) {
+          dbg('matchMedia(print) => MATCHES (entering print render)');
+          snap('INSIDE print media query');
+        } else {
+          dbg('matchMedia(print) => no longer matches (left print)');
+        }
+      };
+      if (_mql.addEventListener) _mql.addEventListener('change', _onPrintMedia);
+      else if (_mql.addListener) _mql.addListener(_onPrintMedia);
+    } catch(e) { dbg('matchMedia(print) listener error', e); }
+    // Also log right before window.print() fires (after the rAF defer).
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() { snap('one frame before window.print()'); });
+    });
+  }
   armRestoreAndPrint(false, true);
 
 }
