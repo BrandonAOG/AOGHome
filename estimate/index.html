@@ -1744,7 +1744,7 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   /* Variable reset — applies on every desktop print path regardless of class. */
   html.desktop-print, html.desktop-print body,
   body.dark-mode, html.dark-mode-pending body, body[class*="seasonal-"], :root, body {
-    color-scheme: light !important;
+    color-scheme: only light !important;
     background: #ffffff !important; background-image: none !important; color: #1F2937 !important;
     --cyan: #D97706 !important; --cyan-dim: #B45309 !important; --cyan-dark: #92400E !important;
     --amber: #D97706 !important; --bg: #FFFFFF !important; --bg2: #FFFFFF !important; --bg3: #F8F8F8 !important;
@@ -2641,7 +2641,7 @@ function printForm() {
   // pass can still render the page dark via color-scheme even after the .dark-mode class is gone.
   // Inline on documentElement is the strongest signal; restored in restore().
   var _prevColorScheme = document.documentElement.style.colorScheme;
-  document.documentElement.style.colorScheme = 'light';
+  document.documentElement.style.colorScheme = 'only light';
   // Strip mobile-safari so iPad screen rules don't bleed into print rendering
   document.body.classList.remove('mobile-safari');
   var _printSeasonalCanvas = document.getElementById('seasonal-canvas');
@@ -2801,6 +2801,20 @@ function printForm() {
         if (e.matches) {
           dbg('matchMedia(print) => MATCHES (entering print render)');
           snap('INSIDE print media query');
+          try {
+            var b = getComputedStyle(document.body);
+            var page = document.getElementById('page');
+            var p = page ? getComputedStyle(page) : null;
+            console.log('[PRINT] *** CRITICAL VALUES ***'
+              + '\n  body backgroundColor = ' + b.backgroundColor
+              + '\n  body backgroundImage = ' + b.backgroundImage
+              + '\n  body color           = ' + b.color
+              + '\n  page backgroundColor = ' + (p ? p.backgroundColor : 'n/a')
+              + '\n  page backgroundImage = ' + (p ? p.backgroundImage : 'n/a')
+              + '\n  --panel              = ' + b.getPropertyValue('--panel').trim()
+              + '\n  --bg                 = ' + b.getPropertyValue('--bg').trim()
+              + '\n  OS prefers dark      = ' + (window.matchMedia('(prefers-color-scheme: dark)').matches));
+          } catch(err) { console.log('[PRINT] critical-values error', err); }
         } else {
           dbg('matchMedia(print) => no longer matches (left print)');
         }
