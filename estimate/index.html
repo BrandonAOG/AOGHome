@@ -1733,15 +1733,17 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
 
 /* ============================================================================
    DESKTOP SAFARI PRINT — FORCE LIGHT MODE
-   Self-contained, highest-priority light-mode enforcement for the desktop print
-   path (html.desktop-print, set by printForm() on desktop browsers). Placed LAST
-   so it wins the cascade over every dark-mode / seasonal rule, regardless of
-   whether the .dark-mode / .dark-mode-pending classes were stripped in time.
-   This is the CSS safety net; printForm() also strips the classes + sets
-   color-scheme:light and defers window.print() until after a repaint.
+   Covers BOTH print paths:
+   - In-app print button: printForm() adds html.desktop-print, strips dark/seasonal
+     classes, sets color-scheme:light, and defers window.print() past a repaint.
+   - Native browser Cmd+P / File>Print: printForm() never runs, so the .dark-mode /
+     .dark-mode-pending / seasonal-* classes are still present. The unscoped variants
+     below catch that case. Placed LAST so it wins the cascade over every dark rule.
    ============================================================================ */
 @media print {
-  html.desktop-print, html.desktop-print body {
+  /* Variable reset — applies on every desktop print path regardless of class. */
+  html.desktop-print, html.desktop-print body,
+  body.dark-mode, html.dark-mode-pending body, body[class*="seasonal-"], :root, body {
     color-scheme: light !important;
     background: #ffffff !important; background-image: none !important; color: #1F2937 !important;
     --cyan: #D97706 !important; --cyan-dim: #B45309 !important; --cyan-dark: #92400E !important;
@@ -1751,7 +1753,12 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
     --icon-color-primary: #D97706 !important; --icon-color-section: #D97706 !important;
     --border: rgba(217,119,6,0.4) !important; --border-bright: rgba(217,119,6,0.4) !important;
   }
-  html.desktop-print *, html.desktop-print *::before, html.desktop-print *::after {
+  /* Blanket light surfaces — both the desktop-print class path and the raw Cmd+P path
+     (where .dark-mode lingers). The body.dark-mode prefix matches the dark theme's
+     specificity so it can't lose to it. */
+  html.desktop-print *, html.desktop-print *::before, html.desktop-print *::after,
+  body.dark-mode *, body.dark-mode *::before, body.dark-mode *::after,
+  html.dark-mode-pending body *, html.dark-mode-pending body *::before, html.dark-mode-pending body *::after {
     background-color: #ffffff !important; color: #1F2937 !important;
     box-shadow: none !important; text-shadow: none !important;
     border-color: rgba(217,119,6,0.4) !important;
@@ -1760,22 +1767,38 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   }
   /* Re-assert the amber accents the blanket rule above would otherwise flatten. */
   html.desktop-print .doc-title, html.desktop-print .company-name,
-  html.desktop-print .section-header, html.desktop-print .col-label,
-  html.desktop-print .icon-themed { color: #D97706 !important; }
+  html.desktop-print .section-header, html.desktop-print .col-label, html.desktop-print .icon-themed,
+  body.dark-mode .doc-title, body.dark-mode .company-name,
+  body.dark-mode .section-header, body.dark-mode .col-label, body.dark-mode .icon-themed,
+  .doc-title, .company-name, .section-header, .col-label, .icon-themed { color: #D97706 !important; }
   html.desktop-print .section-header svg, html.desktop-print .section-header svg *,
   html.desktop-print .col-label svg, html.desktop-print .col-label svg *,
-  html.desktop-print .icon-themed, html.desktop-print .icon-themed * { stroke: #D97706 !important; color: #D97706 !important; }
-  html.desktop-print .section-header, html.desktop-print .col-label { background: #f5f5f5 !important; }
-  html.desktop-print .section-header::before, html.desktop-print .col-label::before {
+  html.desktop-print .icon-themed, html.desktop-print .icon-themed *,
+  body.dark-mode .section-header svg, body.dark-mode .section-header svg *,
+  body.dark-mode .col-label svg, body.dark-mode .col-label svg *,
+  .section-header svg, .section-header svg *, .col-label svg, .col-label svg * { stroke: #D97706 !important; color: #D97706 !important; }
+  html.desktop-print .section-header, html.desktop-print .col-label,
+  body.dark-mode .section-header, body.dark-mode .col-label,
+  .section-header, .col-label { background: #f5f5f5 !important; }
+  html.desktop-print .section-header::before, html.desktop-print .col-label::before,
+  body.dark-mode .section-header::before, body.dark-mode .col-label::before,
+  .section-header::before, .col-label::before {
     background: #D97706 !important; box-shadow: none !important; animation: none !important; }
-  html.desktop-print .page { border: 1.5pt solid #D97706 !important; background: #ffffff !important; }
-  html.desktop-print .yn-group .yn-y:checked + .yn-label-y { background: #34d399 !important; color: #064e3b !important; }
-  html.desktop-print .yn-group .yn-n:checked + .yn-label-n { background: #fca5a5 !important; color: #7f1d1d !important; }
-  html.desktop-print .check-item:has(input:checked) { background: #fde68a !important; border-color: #D97706 !important; }
-  html.desktop-print .check-item:has(input:checked) span { color: #92400E !important; }
-  /* Hide live decorative/seasonal layers on the desktop print path. */
-  html.desktop-print #seasonal-canvas { display: none !important; }
-  html.desktop-print body::before, html.desktop-print body::after { display: none !important; content: none !important; }
+  html.desktop-print .page, body.dark-mode .page, .page { border: 1.5pt solid #D97706 !important; background: #ffffff !important; }
+  html.desktop-print .yn-group .yn-y:checked + .yn-label-y, body.dark-mode .yn-group .yn-y:checked + .yn-label-y, .yn-group .yn-y:checked + .yn-label-y { background: #34d399 !important; color: #064e3b !important; }
+  html.desktop-print .yn-group .yn-n:checked + .yn-label-n, body.dark-mode .yn-group .yn-n:checked + .yn-label-n, .yn-group .yn-n:checked + .yn-label-n { background: #fca5a5 !important; color: #7f1d1d !important; }
+  html.desktop-print .check-item:has(input:checked), body.dark-mode .check-item:has(input:checked), .check-item:has(input:checked) { background: #fde68a !important; border-color: #D97706 !important; }
+  html.desktop-print .check-item:has(input:checked) span, body.dark-mode .check-item:has(input:checked) span, .check-item:has(input:checked) span { color: #92400E !important; }
+  /* Inputs/fields: kill dark fill incl. Safari's -webkit-text-fill-color. */
+  html.desktop-print input, html.desktop-print textarea, html.desktop-print select,
+  body.dark-mode input, body.dark-mode textarea, body.dark-mode select,
+  input, textarea, select {
+    background: #ffffff !important; color: #1F2937 !important; -webkit-text-fill-color: #1F2937 !important;
+    border-color: #D97706 !important; box-shadow: none !important; text-shadow: none !important; }
+  /* Hide live decorative/seasonal layers on every desktop print path. */
+  html.desktop-print #seasonal-canvas, #seasonal-canvas { display: none !important; }
+  html.desktop-print body::before, html.desktop-print body::after,
+  body::before, body::after, body[class*="seasonal-"]::before, body[class*="seasonal-"]::after { display: none !important; content: none !important; }
 }
 </style>
 </head>
