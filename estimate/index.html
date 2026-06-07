@@ -432,7 +432,7 @@
   --check-group-gap-desktop:     4px;    /* gap between checkbox/radio pills (desktop)       */
 
   /* ---- DESKTOP PRINT BASE FONT ---- */
-  --fs-print-phone-base:         15.45px; /* base html font-size for phone print             */
+  --fs-print-phone-base:         16.6px; /* base html font-size for phone print             */
   --fs-print-ipad-base:          16.7px; /* base html font-size for iPad print              */
   --fs-print-desktop-base:       16.7px; /* base html font-size for desktop print           */
 
@@ -1588,6 +1588,20 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   input[type=radio],input[type=checkbox],.check-item input[type=radio],.check-item input[type=checkbox] { accent-color:#D97706!important; }
   /* Race guard: if the .dark-mode class lingers at print time these match its specificity. */
   body.dark-mode, body.dark-mode *, body.dark-mode *::before, body.dark-mode *::after { background:white!important;color:#1F2937!important;box-shadow:none!important;text-shadow:none!important;border-color:rgba(217,119,6,0.4)!important; }
+  /* Higher-specificity dark-mode kills: the theme sets text/field colors via rules like
+     body.dark-mode input[type="text"] (0,0,2,1), which outrank "body.dark-mode *" (0,0,1,1)
+     and survive into print. These explicit selectors match/beat them so nothing stays dark. */
+  body.dark-mode input, body.dark-mode textarea, body.dark-mode select,
+  body.dark-mode input[type="text"], body.dark-mode input[type="email"], body.dark-mode input[type="tel"],
+  body.dark-mode input[type="date"], body.dark-mode input[type="number"] {
+    background:#ffffff!important; color:#1F2937!important; border-color:#D97706!important;
+    text-shadow:none!important; box-shadow:none!important; -webkit-text-fill-color:#1F2937!important; }
+  body.dark-mode label, body.dark-mode .inline-label, body.dark-mode legend, body.dark-mode .survey-legend,
+  body.dark-mode .check-item span, body.dark-mode .yn-group .yn-label { color:#1F2937!important; text-shadow:none!important; }
+  body.dark-mode .section, body.dark-mode .top-grid, body.dark-mode .top-col, body.dark-mode .gas-appliances-box,
+  body.dark-mode .yn-group, body.dark-mode .check-item { background:#ffffff!important; border-color:#D97706!important; box-shadow:none!important; }
+  body.dark-mode .section::before, body.dark-mode .top-grid::before, body.dark-mode .section-header::before, body.dark-mode .col-label::before { background:#D97706!important; box-shadow:none!important; animation:none!important; }
+  body.dark-mode .section-header, body.dark-mode .col-label { background:#f5f5f5!important; color:#D97706!important; text-shadow:none!important; }
   body.dark-mode .doc-title, body.dark-mode .company-name, body.dark-mode .section-header, body.dark-mode .col-label, body.dark-mode .icon-themed { color:#D97706!important; }
   body.dark-mode .section-header svg, body.dark-mode .section-header svg *, body.dark-mode .icon-themed, body.dark-mode .icon-themed * { stroke:#D97706!important; color:#D97706!important; }
   body.dark-mode .print-cb-box.cb-checked { background:#D97706!important; border-color:#D97706!important; }
