@@ -1561,6 +1561,14 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html.desktop-print .content { flex: 1 1 auto !important; height: auto !important; min-height: 0 !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; }
   html.desktop-print .content, html.desktop-print .section { page-break-inside: avoid !important; break-inside: avoid !important; }
   html.desktop-print .footer { flex: 0 0 auto !important; margin-top: 0 !important; }
+
+  /* SAFARI-ONLY desktop print: Safari clips/overlaps with the rigid fixed-height layout above,
+     so for Safari let the page flow naturally (no fixed height, no overflow clipping) and use a
+     slightly narrower body so the right border stays inside the printable area. */
+  html.desktop-print-safari { overflow: visible !important; }
+  html.desktop-print-safari body { width: 1040px !important; max-width: 1040px !important; height: auto !important; max-height: none !important; overflow: visible !important; }
+  html.desktop-print-safari .page { height: auto !important; max-height: none !important; overflow: visible !important; }
+  html.desktop-print-safari .content { overflow: visible !important; }
 }
 
 /* ============================================================================
@@ -2663,6 +2671,7 @@ function printForm() {
     el = document.getElementById('print-instant-switch'); if (el) el.remove();
     if (wasDark) document.body.classList.add('dark-mode');
     document.documentElement.classList.remove('desktop-print');
+    document.documentElement.classList.remove('desktop-print-safari');
     document.documentElement.classList.remove('ipad-print');
     document.documentElement.style.colorScheme = _prevColorScheme || '';
     if (wasMobileSafariClass) document.body.classList.add('mobile-safari');
@@ -2781,6 +2790,7 @@ function printForm() {
   // phone/iPad scaling machinery and let the page print at its on-screen size.
   dbg('>>> DESKTOP branch taken');
   document.documentElement.classList.add('desktop-print');
+  if (isMacSafari) document.documentElement.classList.add('desktop-print-safari');
 
   // ── NUCLEAR LIGHT FORCING ──
   // The @media print CSS was not reliably winning the cascade against the dark theme on
