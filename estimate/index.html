@@ -1730,6 +1730,53 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html.ipad-print #gas_notes  { height:var(--h-print-ipad-gas-notes)!important;min-height:var(--h-print-ipad-gas-notes)!important;max-height:var(--h-print-ipad-gas-notes)!important; }
   html.ipad-print #ready_notes { height:var(--h-print-ipad-ready-notes)!important;min-height:var(--h-print-ipad-ready-notes)!important;max-height:var(--h-print-ipad-ready-notes)!important;width:100%!important;margin-top:2px!important;box-sizing:border-box!important; }
 }
+
+/* ============================================================================
+   DESKTOP SAFARI PRINT — FORCE LIGHT MODE
+   Self-contained, highest-priority light-mode enforcement for the desktop print
+   path (html.desktop-print, set by printForm() on desktop browsers). Placed LAST
+   so it wins the cascade over every dark-mode / seasonal rule, regardless of
+   whether the .dark-mode / .dark-mode-pending classes were stripped in time.
+   This is the CSS safety net; printForm() also strips the classes + sets
+   color-scheme:light and defers window.print() until after a repaint.
+   ============================================================================ */
+@media print {
+  html.desktop-print, html.desktop-print body {
+    color-scheme: light !important;
+    background: #ffffff !important; background-image: none !important; color: #1F2937 !important;
+    --cyan: #D97706 !important; --cyan-dim: #B45309 !important; --cyan-dark: #92400E !important;
+    --amber: #D97706 !important; --bg: #FFFFFF !important; --bg2: #FFFFFF !important; --bg3: #F8F8F8 !important;
+    --panel: #FFFFFF !important; --panel2: #FFFFFF !important; --text: #1F2937 !important; --text-muted: #6B7280 !important;
+    --glow: none !important; --glow-amber: none !important;
+    --icon-color-primary: #D97706 !important; --icon-color-section: #D97706 !important;
+    --border: rgba(217,119,6,0.4) !important; --border-bright: rgba(217,119,6,0.4) !important;
+  }
+  html.desktop-print *, html.desktop-print *::before, html.desktop-print *::after {
+    background-color: #ffffff !important; color: #1F2937 !important;
+    box-shadow: none !important; text-shadow: none !important;
+    border-color: rgba(217,119,6,0.4) !important;
+    animation: none !important; transition: none !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  /* Re-assert the amber accents the blanket rule above would otherwise flatten. */
+  html.desktop-print .doc-title, html.desktop-print .company-name,
+  html.desktop-print .section-header, html.desktop-print .col-label,
+  html.desktop-print .icon-themed { color: #D97706 !important; }
+  html.desktop-print .section-header svg, html.desktop-print .section-header svg *,
+  html.desktop-print .col-label svg, html.desktop-print .col-label svg *,
+  html.desktop-print .icon-themed, html.desktop-print .icon-themed * { stroke: #D97706 !important; color: #D97706 !important; }
+  html.desktop-print .section-header, html.desktop-print .col-label { background: #f5f5f5 !important; }
+  html.desktop-print .section-header::before, html.desktop-print .col-label::before {
+    background: #D97706 !important; box-shadow: none !important; animation: none !important; }
+  html.desktop-print .page { border: 1.5pt solid #D97706 !important; background: #ffffff !important; }
+  html.desktop-print .yn-group .yn-y:checked + .yn-label-y { background: #34d399 !important; color: #064e3b !important; }
+  html.desktop-print .yn-group .yn-n:checked + .yn-label-n { background: #fca5a5 !important; color: #7f1d1d !important; }
+  html.desktop-print .check-item:has(input:checked) { background: #fde68a !important; border-color: #D97706 !important; }
+  html.desktop-print .check-item:has(input:checked) span { color: #92400E !important; }
+  /* Hide live decorative/seasonal layers on the desktop print path. */
+  html.desktop-print #seasonal-canvas { display: none !important; }
+  html.desktop-print body::before, html.desktop-print body::after { display: none !important; content: none !important; }
+}
 </style>
 </head>
 
