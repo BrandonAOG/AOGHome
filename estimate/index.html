@@ -1185,7 +1185,7 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
 
 @media print {
   html { font-size: var(--fs-print-phone-base) !important; }
-  @page { size: 8.5in 11in; margin: 0.2in; }
+  @page { size: 8.5in 11in; margin: 0; }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; animation-play-state: paused !important; transition: none !important; }
   .toolbar, .action-bar, #save-status, #theme-toggle-btn, #offline-banner, #address-suggestions, #gps-status, #gps-btn { display: none !important; }
   .header::after { display: none !important; }
@@ -1761,7 +1761,7 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
 
 /* ---- Force light appearance for every print ---- */
 @media print {
-  @page { margin: 0.2in; }
+  @page { margin: 0; }
   :root, body {
     color-scheme: light !important;
     --cyan: #D97706 !important; --cyan-dim: #B45309 !important; --cyan-dark: #92400E !important;
@@ -2781,6 +2781,10 @@ function printForm() {
 
   // (debug tracing removed)
 
+  // Clear any desktop-only @page margin from a previous print so mobile/iPad never inherit it.
+  var _oldPgM = document.getElementById('desktop-page-margin');
+  if (_oldPgM) _oldPgM.parentNode.removeChild(_oldPgM);
+
   var isMobileSafari = document.body.classList.contains('mobile-safari');
   var ua = navigator.userAgent;
   var isMacSafari = /Macintosh/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium|Firefox|Edge/.test(ua);
@@ -2981,6 +2985,13 @@ function printForm() {
   // phone/iPad scaling machinery and let the page print at its on-screen size.
   document.documentElement.classList.add('desktop-print');
   if (isMacSafari) document.documentElement.classList.add('desktop-print-safari');
+
+  // Desktop PDF only: 0.2in margins on all sides. Injected here (not in static CSS) because
+  // @page can't be scoped to a class, and a global @page margin also changes the iOS prints.
+  var _pgM = document.createElement('style');
+  _pgM.id = 'desktop-page-margin';
+  _pgM.textContent = '@page { margin: 0.2in; }';
+  document.head.appendChild(_pgM);
 
   // ── NUCLEAR LIGHT FORCING ──
   // The @media print CSS was not reliably winning the cascade against the dark theme on
@@ -3257,12 +3268,6 @@ function capturePageToCanvas() {
       });
     });
 
-    // Capture-only build marker (so we can tell a fresh render from a cached page).
-    // Appended to the footer version text; reverted in restore().
-    var _verSpan = document.getElementById('ver-span');
-    var _verText = _verSpan ? _verSpan.textContent : null;
-    if (_verSpan) { _verSpan.textContent = _verText + '  ·  build ' + Date.now().toString().slice(-5); }
-
     // Replace ::before dots with real spans on live DOM BEFORE html2canvas clones
     // ::before pseudo-elements carry computed styles into clone — real spans carry inline styles
     var injectedDots = [];
@@ -3352,7 +3357,6 @@ function capturePageToCanvas() {
       page.style.overflow  = prevOverflow;
       document.body.style.padding = prevBodyPad;
       // Revert capture visual tweaks
-      if (_verSpan && _verText !== null) { _verSpan.textContent = _verText; }
       _captureTweaks.forEach(function(t) { if (t[1] === null) { t[0].removeAttribute('style'); } else { t[0].setAttribute('style', t[1]); } });
       _captureTweaks = [];
       var fs = document.getElementById('capture-force-style'); if (fs) fs.remove();
