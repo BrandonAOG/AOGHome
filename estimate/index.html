@@ -3249,9 +3249,9 @@ function capturePageToCanvas() {
         if (e.matches('.section-header, .col-label')) {
           e.style.setProperty('font-size', (parseFloat(window.getComputedStyle(e).fontSize) + 2) + 'px', 'important');
         }
-        // Plain field labels (top grid) + the generator "Size" label miss the .inline-label
-        // size boost, so they render smaller — match them to the inline-label size (0.88rem).
-        else if (e.matches('.field-row label:not(.yn-label), .flood-item label:not(.yn-label), label[for="gen_size"]')) {
+        // Make every field/inline label the same size in the capture: the plain field labels,
+        // the generator "Size" label, AND the .inline-label elements all forced to one value.
+        else if (e.matches('.inline-label, .field-row label:not(.yn-label), .field-block label:not(.yn-label), .flood-item label:not(.yn-label), label[for="gen_size"], .survey-legend')) {
           e.style.setProperty('font-size', '0.88rem', 'important');
         }
       });
