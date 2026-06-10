@@ -1206,7 +1206,7 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
   .top-grid::before { background: none !important; }
   .top-col { padding: var(--pd-print-phone-top-col) !important; background: #ffffff !important; border-color: #D97706 !important; }
   .top-col:first-child { border-right: 1px solid #D97706 !important; border-bottom: none !important; }
-  .col-label { display: inline-flex !important; background: #f5f5f5 !important; border-color: #D97706 !important; border-left-color: #D97706 !important; color: #D97706 !important; text-shadow: none !important; margin-bottom: 4px !important; font-size: var(--fs-print-phone-col-label) !important; padding: var(--pd-print-phone-col-label) !important; }
+  .col-label { display: inline-flex !important; background: #DCEBF9 !important; border-color: #D97706 !important; border-left-color: #D97706 !important; color: #D97706 !important; text-shadow: none !important; margin-bottom: 4px !important; font-size: var(--fs-print-phone-col-label) !important; padding: var(--pd-print-phone-col-label) !important; }
   .col-label::before { background: #D97706 !important; box-shadow: none !important; animation: none !important; }
   .col-label svg, .col-label svg * { stroke: #D97706 !important; color: #D97706 !important; }
   .flood-bar { display: flex !important; background: #ffffff !important; border: 1px solid #D97706 !important; border-top: none !important; margin-bottom: 0 !important; flex-shrink: 0 !important; }
@@ -1215,7 +1215,7 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
   #est_done_on { width: auto !important; min-width: 0 !important; align-self: flex-start !important; }
   .section { background: #ffffff !important; border: 1px solid #D97706 !important; margin-bottom: 0 !important; flex-shrink: 0 !important; flex-grow: 0 !important; page-break-inside: avoid !important; break-inside: avoid !important; }
   .section::before { background: none !important; }
-  .section-header { background: #f5f5f5 !important; color: #D97706 !important; border-bottom: 1px solid #D97706 !important; text-shadow: none !important; padding: var(--pd-print-phone-section-header) !important; font-size: var(--fs-print-phone-section-header) !important; }
+  .section-header { background: #DCEBF9 !important; color: #D97706 !important; border-bottom: 1px solid #D97706 !important; text-shadow: none !important; padding: var(--pd-print-phone-section-header) !important; font-size: var(--fs-print-phone-section-header) !important; }
   .section-header::before { background: #D97706 !important; box-shadow: none !important; animation: none !important; }
   .col-label::before { background: #D97706 !important; box-shadow: none !important; animation: none !important; }
   body[class*="seasonal-"] .section-header::before,
@@ -1802,7 +1802,7 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   .section-header::before, .col-label::before {
     background:#D97706!important; box-shadow:none!important; animation:none!important;
     -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; }
-  body.dark-mode .section-header, body.dark-mode .col-label { background:#f5f5f5!important; color:#D97706!important; text-shadow:none!important; }
+  body.dark-mode .section-header, body.dark-mode .col-label { background:#DCEBF9!important; color:#D97706!important; text-shadow:none!important; }
   body.dark-mode .doc-title, body.dark-mode .company-name, body.dark-mode .section-header, body.dark-mode .col-label, body.dark-mode .icon-themed { color:#D97706!important; }
   body.dark-mode .section-header svg, body.dark-mode .section-header svg *, body.dark-mode .icon-themed, body.dark-mode .icon-themed * { stroke:#D97706!important; color:#D97706!important; }
   body.dark-mode .print-cb-box.cb-checked { background:#D97706!important; border-color:#D97706!important; }
@@ -1818,9 +1818,9 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   .doc-title::before,.doc-title::after,.company-name::before,.company-name::after,.header::after { content:none!important;display:none!important; }
   html,body { background:white!important; }
   .page { border:1.5pt solid #D97706!important;background:white!important; }
-  .section-header { background:#f5f5f5!important;color:#D97706!important;text-shadow:none!important; }
+  .section-header { background:#DCEBF9!important;color:#D97706!important;text-shadow:none!important; }
   .section-header svg,.section-header svg * { stroke:#D97706!important; }
-  .col-label { color:#D97706!important;background:#f5f5f5!important;text-shadow:none!important; }
+  .col-label { color:#D97706!important;background:#DCEBF9!important;text-shadow:none!important; }
   .yn-group { background:white!important;border-color:#D97706!important; }
   .yn-group .yn-label { color:#6B7280!important;background:white!important;text-shadow:none!important;box-shadow:none!important; }
   .yn-group .yn-y:checked + .yn-label-y { background:#34d399!important;color:#064e3b!important;text-shadow:none!important;box-shadow:none!important; }
@@ -1975,7 +1975,7 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   .section-header svg, .section-header svg *, .col-label svg, .col-label svg * { stroke: #D97706 !important; color: #D97706 !important; }
   html.desktop-print .section-header, html.desktop-print .col-label,
   body.dark-mode .section-header, body.dark-mode .col-label,
-  .section-header, .col-label { background: #f5f5f5 !important; }
+  .section-header, .col-label { background: #DCEBF9 !important; }
   html.desktop-print .section-header::before, html.desktop-print .col-label::before,
   body.dark-mode .section-header::before, body.dark-mode .col-label::before,
   .section-header::before, .col-label::before {
@@ -3053,7 +3053,7 @@ function printForm() {
       forceLight(el, { 'color': AMBER });
     });
     document.querySelectorAll('#page .section-header, #page .col-label').forEach(function(el){
-      forceLight(el, { 'background': '#f5f5f5' });
+      forceLight(el, { 'background': '#DCEBF9' });
     });
     // SVG icons → amber stroke.
     document.querySelectorAll('#page .section-header svg, #page .section-header svg *, #page .col-label svg, #page .col-label svg *, #page .icon-themed svg, #page .icon-themed svg *').forEach(function(el){
@@ -3193,7 +3193,7 @@ function capturePageToCanvas() {
       'body.dark-mode .page, html.dark-mode-pending .page { background: #ffffff !important; box-shadow: none !important; }',
       'body.dark-mode .header, html.dark-mode-pending .header { background: #ffffff !important; box-shadow: none !important; }',
       'body.dark-mode .section, html.dark-mode-pending .section { background: #ffffff !important; box-shadow: none !important; }',
-      'body.dark-mode .section-header, html.dark-mode-pending .section-header { background: #f5f5f5 !important; }',
+      'body.dark-mode .section-header, html.dark-mode-pending .section-header { background: #DCEBF9 !important; }',
       'body.dark-mode input, body.dark-mode textarea, body.dark-mode select { background: #ffffff !important; box-shadow: none !important; }',
       'body.dark-mode .yn-group { background: #ffffff !important; }',
       'body.dark-mode .check-item { background: #ffffff !important; box-shadow: none !important; }',
@@ -3259,9 +3259,9 @@ function capturePageToCanvas() {
         e.style.setProperty('top', '-1px', 'important');
         // Section titles + the top column labels (Customer/Property Info) a touch larger in the capture.
         if (e.matches('.section-header, .col-label')) {
-          e.style.setProperty('font-size', (parseFloat(window.getComputedStyle(e).fontSize) + 2) + 'px', 'important');
+          e.style.setProperty('font-size', '17px', 'important');
           // Match section titles + the two top pills to one light-blue background.
-          e.style.setProperty('background', '#CDE2F5', 'important');
+          e.style.setProperty('background', '#DCEBF9', 'important');
         }
         // Make every field/inline label the same size in the capture: the plain field labels,
         // the generator "Size" label, AND the .inline-label elements all forced to one value.
@@ -4788,7 +4788,7 @@ function injectSeasonalStyles() {
     '  body[class*="seasonal-"] .section-header::before, body[class*="seasonal-"] .col-label::before { background:#D97706 !important; box-shadow:none !important; animation:none !important; animation-play-state:paused !important; }',
     '  body[class*="seasonal-"] { background:#ffffff !important; }',
     '  body[class*="seasonal-"] .page { border-color:#D97706 !important; box-shadow:none !important; }',
-    '  body[class*="seasonal-"] .section-header { background:#f5f5f5 !important; color:#D97706 !important; }',
+    '  body[class*="seasonal-"] .section-header { background:#DCEBF9 !important; color:#D97706 !important; }',
     '  body[class*="seasonal-"] .header { background:#ffffff !important; }',
     '  body[class*="seasonal-"] .doc-title::after, body[class*="seasonal-"] .company-name::after { content:"" !important; }',
     '  body[class*="seasonal-"] input, body[class*="seasonal-"] textarea { background:#ffffff !important; color:#1F2937 !important; }',
