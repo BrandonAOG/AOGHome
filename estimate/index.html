@@ -3228,16 +3228,16 @@ function capturePageToCanvas() {
     var _tweak = function(el, fn) { if (!el) return; _captureTweaks.push([el, el.getAttribute('style')]); fn(el); };
     page.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input[type="date"], select').forEach(function(el) {
       _tweak(el, function(e) {
-        e.style.setProperty('font-size', '16px', 'important');
+        e.style.setProperty('font-size', '17px', 'important');
         e.style.setProperty('box-sizing', 'border-box', 'important');
         e.style.setProperty('height', '30px', 'important');
         e.style.setProperty('min-height', '30px', 'important');
         e.style.setProperty('padding-top', '6px', 'important');
         e.style.setProperty('padding-bottom', '0px', 'important');
         if (e.id === 'gen_size') {
-          e.style.setProperty('width', '150px', 'important');
-          e.style.setProperty('min-width', '150px', 'important');
-          e.style.setProperty('max-width', '150px', 'important');
+          e.style.setProperty('width', '154px', 'important');
+          e.style.setProperty('min-width', '154px', 'important');
+          e.style.setProperty('max-width', '154px', 'important');
         }
       });
     });
@@ -3398,7 +3398,7 @@ function capturePageToCanvas() {
                 'border-radius:'  + computed.borderRadius,
                 'box-sizing:'     + computed.boxSizing,
                 'font-family:'    + computed.fontFamily,
-                'font-size:'      + computed.fontSize,
+                'font-size:'      + (parseFloat(computed.fontSize) + 0.5) + 'px',
                 'font-weight:'    + computed.fontWeight,
                 'line-height:'    + computed.lineHeight,
                 'color:'          + computed.color,
