@@ -3398,6 +3398,8 @@ function capturePageToCanvas() {
                 'height:'         + computed.height,
                 'max-height:'     + computed.maxHeight,
                 'padding:'        + computed.padding,
+                // Shift text up a bit so the larger font doesn't clip at the bottom.
+                'padding-top:'    + Math.max(0, parseFloat(computed.paddingTop) - 4) + 'px',
                 'margin:'         + computed.margin,
                 'margin-top:'     + computed.marginTop,
                 'margin-bottom:'  + computed.marginBottom,
