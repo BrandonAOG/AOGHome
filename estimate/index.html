@@ -3217,6 +3217,10 @@ function capturePageToCanvas() {
       '#new_tank_size, #existing_tank_size { width: var(--w-print-tank-size) !important; min-width: var(--w-print-tank-size) !important; max-width: var(--w-print-tank-size) !important; flex: 0 0 auto !important; }',
       /* Image capture only: html2canvas seats text ~1px low, so lift all text up 1px in the render. */
       'input, textarea, select, label, legend, .inline-label, .check-item span, .yn-group .yn-label, .col-label, .section-header, .footer-text, #ver-span, .gas-appliances-label, .company-name, .doc-title { position: relative !important; top: -1px !important; }',
+      /* Image capture only: input text 1px larger. */
+      'input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input[type="date"], textarea, select { font-size: calc(var(--fs-phone-input) + 1px) !important; }',
+      /* Image capture only: generator size box a tad wider. */
+      '#gen_size { width: 17ch !important; min-width: 17ch !important; max-width: 17ch !important; }',
     ].join('\n');
     document.head.appendChild(forceStyle);
 
