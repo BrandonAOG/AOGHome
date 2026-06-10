@@ -1185,7 +1185,7 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
 
 @media print {
   html { font-size: var(--fs-print-phone-base) !important; }
-  @page { size: 8.5in 11in; margin: 0; }
+  @page { size: 8.5in 11in; margin: 0.2in; }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; animation-play-state: paused !important; transition: none !important; }
   .toolbar, .action-bar, #save-status, #theme-toggle-btn, #offline-banner, #address-suggestions, #gps-status, #gps-btn { display: none !important; }
   .header::after { display: none !important; }
@@ -1761,7 +1761,7 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
 
 /* ---- Force light appearance for every print ---- */
 @media print {
-  @page { margin: 0; }
+  @page { margin: 0.2in; }
   :root, body {
     color-scheme: light !important;
     --cyan: #D97706 !important; --cyan-dim: #B45309 !important; --cyan-dark: #92400E !important;
