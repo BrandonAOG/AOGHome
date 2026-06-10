@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scatextarea { ... min-height: 44px; height: 44px; ... }le=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Generator Installation Estimate</title>
@@ -218,8 +218,8 @@
   /* ---- PRINT PADDING : PHONE ---- */
   --pd-print-phone-header:           8px 28px;  /* header bar in PDF                                    */
   --pd-print-phone-content:          4px 14px;   /* outer page margins in PDF                            */
-  --pd-print-phone-section-header:   4px 12px;   /* section title bars in PDF                            */
-  --pd-print-phone-section-body:     4px 12px;   /* inside section content in PDF                        */
+  --pd-print-phone-section-header:   3px 12px;   /* section title bars in PDF                            */
+  --pd-print-phone-section-body:     3px 12px;   /* inside section content in PDF                        */
   --pd-print-phone-top-col:          6px 12px;   /* Customer Info & Property Info columns in PDF          */
   --pd-print-phone-col-label:        2px 10px 2px 7px; /* column label pill in PDF                       */
   --pd-print-phone-input:            2px 5px;    /* inside text fields in PDF (Name, Phone, Best Email…) */
@@ -313,15 +313,15 @@
   --h-desktop-check-item: 30px;  /* checkbox/radio pill (Easy/Med/Hard, Whole House…) */
 
   /* ---- PRINT HEIGHTS : PHONE ---- */
-  --h-print-phone-input:        31px;   /* text fields in PDF (Name, Phone, Best Email…) */
-  --h-print-phone-field-row:    31px;   /* row container in PDF                          */
+  --h-print-phone-input:        30px;   /* text fields in PDF (Name, Phone, Best Email…) */
+  --h-print-phone-field-row:    30px;   /* row container in PDF                          */
   --h-print-phone-inline-row:   31px;   /* inline row in PDF                             */
   --h-print-phone-yn-label:     27px;   /* Y/N button height in PDF                      */
   --h-print-phone-check-item:   26px;   /* checkbox/radio pill height in PDF             */
-  --h-print-phone-gen-notes:    42px;   /* Generator notes text box height in PDF        */
-  --h-print-phone-pad-notes:    42px;   /* Precast Pad notes text box height in PDF      */
-  --h-print-phone-gas-notes:    42px;   /* Fuel Tank / gas appliances notes box in PDF   */
-  --h-print-phone-ready-notes:  42px;   /* Install Details ready/notes box in PDF        */
+  --h-print-phone-gen-notes:    42px;   /* Generator notes text box height in PDF (2 lines) */
+  --h-print-phone-pad-notes:    42px;   /* Precast Pad notes text box height in PDF (2 lines) */
+  --h-print-phone-gas-notes:    42px;   /* Fuel Tank / gas appliances notes box in PDF (2 lines) */
+  --h-print-phone-ready-notes:  42px;   /* Install Details ready/notes box in PDF (2 lines) */
 
   /* ---- PRINT HEIGHTS : iPAD ---- */
   --h-print-ipad-input:         26.5px;  /* text fields in iPad PDF                          */
@@ -329,10 +329,10 @@
   --h-print-ipad-inline-row:    31px;  /* inline row in iPad PDF                           */
   --h-print-ipad-yn-label:      27px;  /* Y/N button height in iPad PDF                    */
   --h-print-ipad-check-item:    26px;  /* checkbox/radio pill height in iPad PDF           */
-  --h-print-ipad-gen-notes:     43px;   /* Generator notes text box height in PDF        */
-  --h-print-ipad-pad-notes:     43px;   /* Precast Pad notes text box height in PDF      */
-  --h-print-ipad-gas-notes:     42px;   /* Fuel Tank / gas appliances notes box in PDF   */
-  --h-print-ipad-ready-notes:   43px;   /* Install Details ready/notes box in PDF        */
+  --h-print-ipad-gen-notes:     48px;   /* Generator notes text box height in PDF (2 lines) */
+  --h-print-ipad-pad-notes:     48px;   /* Precast Pad notes text box height in PDF (2 lines) */
+  --h-print-ipad-gas-notes:     48px;   /* Fuel Tank / gas appliances notes box in PDF (2 lines) */
+  --h-print-ipad-ready-notes:   48px;   /* Install Details ready/notes box in PDF (2 lines) */
 
   /* ---- PRINT HEIGHTS : DESKTOP ---- */
   --h-print-desktop-input:      31px;  /* text fields in desktop PDF                       */
@@ -360,19 +360,6 @@
      variable sections. Seeded with current desktop values (trimmed page dims).
      ============================================= */
 
-  /* ---- DESKTOP SAFARI : FONT SIZES — SCREEN ---- */
-  --fs-desktop-safari-company-name      : 1.1rem;
-  --fs-desktop-safari-doc-title         : 1.1rem;
-  --fs-desktop-safari-section-header    : 0.7rem;
-  --fs-desktop-safari-col-label         : 0.6rem;
-  --fs-desktop-safari-label             : 0.58rem;
-  --fs-desktop-safari-inline-label      : 0.58rem;
-  --fs-desktop-safari-input             : 0.88rem;
-  --fs-desktop-safari-yn-label          : 0.65rem;
-  --fs-desktop-safari-check-item        : 0.6rem;
-  --fs-desktop-safari-gas-label         : 0.6rem;
-  --fs-desktop-safari-address-suggestion: 0.78rem;
-
   /* ---- DESKTOP SAFARI : FONT SIZES — PRINT ---- */
   --fs-print-desktop-safari-company-name  : 1.2rem;
   --fs-print-desktop-safari-doc-title     : 1.2rem;
@@ -390,22 +377,6 @@
   /* ---- DESKTOP SAFARI : BASE FONT — PRINT ---- */
   --fs-print-desktop-safari-base: 16.2px;
 
-  /* ---- DESKTOP SAFARI : PADDING — SCREEN ---- */
-  --pd-desktop-safari-header        : 8px 32px;
-  --pd-desktop-safari-content       : 14px 18px;
-  --pd-desktop-safari-section-header: 6px 16px;
-  --pd-desktop-safari-section-body  : 5px 12px;
-  --pd-desktop-safari-top-col       : 12px 14px;
-  --pd-desktop-safari-col-label     : 3px 12px 3px 8px;
-  --pd-desktop-safari-input         : 3px 6px;
-  --pd-desktop-safari-input-date    : 4px 5px;
-  --pd-desktop-safari-textarea      : 5px 6px;
-  --pd-desktop-safari-yn-label      : 0 10px;
-  --pd-desktop-safari-check-item    : 0px 8px 0px 6px;
-  --pd-desktop-safari-flood-item    : 2px 14px;
-  --pd-desktop-safari-gas-box       : 6px 8px;
-  --pd-desktop-safari-footer        : 3px 22px;
-
   /* ---- DESKTOP SAFARI : PADDING — PRINT ---- */
   --pd-print-desktop-safari-header        : 10px 28px;
   --pd-print-desktop-safari-content       : 4px 14px;
@@ -420,15 +391,6 @@
   --pd-print-desktop-safari-flood-item    : 3px 12px;
   --pd-print-desktop-safari-gas-box       : 4px 8px;
   --pd-print-desktop-safari-footer        : 4px 20px;
-
-  /* ---- DESKTOP SAFARI : HEIGHTS — SCREEN ---- */
-  --h-desktop-safari-input     : 32px;
-  --h-desktop-safari-input-date: 34px;
-  --h-desktop-safari-field-row : 32px;
-  --h-desktop-safari-inline-row: 30px;
-  --h-desktop-safari-yn-group  : 22px;
-  --h-desktop-safari-yn-label  : 22px;
-  --h-desktop-safari-check-item: 30px;
 
   /* ---- DESKTOP SAFARI : HEIGHTS — PRINT ---- */
   --h-print-desktop-safari-input      : 31px;
@@ -445,27 +407,13 @@
   --pg-print-desktop-safari-body-width : 1050px;
   --pg-print-desktop-safari-body-height: 1340px;
   --pg-print-desktop-safari-page-height: 1340px;
-  --pg-print-desktop-safari-side-margin: 0.15in;  /* left/right page margin only (no top/bottom) */
+  --pg-print-desktop-safari-side-margin: 0.15in;  /* left/right page margin only */
+  --pg-print-desktop-safari-top-margin : 0in;     /* top page margin (0 = flush to top) */
 
   /* ---- DESKTOP SAFARI : DATE FIELD WIDTHS ---- */
-  --w-desktop-safari-today            : 145px;
-  --w-desktop-safari-est-date         : 145px;
-  --w-desktop-safari-est-done-on      : 145px;
   --w-print-desktop-safari-today      : 300px;
   --w-print-desktop-safari-est-date   : 300px;
   --w-print-desktop-safari-est-done-on: 300px;
-
-  /* ---- DESKTOP SAFARI : INPUT FIELD WIDTHS — SCREEN ---- */
-  --w-desktop-safari-gen-size    : 15ch;
-  --w-desktop-safari-num-panels  : 8ch;
-  --w-desktop-safari-num-ts      : 8ch;
-  --w-desktop-safari-ts-type     : 20ch;
-  --w-desktop-safari-ts-placement: 35ch;
-  --w-desktop-safari-circuits    : 5ch;
-  --w-desktop-safari-stand-height: 10ch;
-  --w-desktop-safari-tank-size   : 10ch;
-  --w-desktop-safari-elec-run    : 10ch;
-  --w-desktop-safari-install-days: 12ch;
 
   /* ---- DESKTOP SAFARI : INPUT FIELD WIDTHS — PRINT ---- */
   --w-print-desktop-safari-gen-size    : 20ch;
@@ -480,48 +428,24 @@
   --w-print-desktop-safari-install-days: 8ch;
 
   /* ---- DESKTOP SAFARI : INLINE LABEL GAPS ---- */
-  --gap-desktop-safari-label-sm      : 4px;
-  --gap-desktop-safari-label-md      : 6px;
-  --gap-desktop-safari-label-lg      : 8px;
-  --gap-desktop-safari-label-xl      : 12px;
   --gap-print-desktop-safari-label-sm: 4px;
   --gap-print-desktop-safari-label-md: 6px;
   --gap-print-desktop-safari-label-lg: 8px;
   --gap-print-desktop-safari-label-xl: 12px;
 
   /* ---- DESKTOP SAFARI : FOOTER TEXT SIZES ---- */
-  --fs-desktop-safari-footer        : 0.55rem;
-  --fs-desktop-safari-ver-span      : 0.72rem;
   --fs-print-desktop-safari-footer  : 0.55rem;
   --fs-print-desktop-safari-ver-span: 0.72rem;
 
   /* ---- DESKTOP SAFARI : LOGO / FUEL / DIVIDER / GPS / GRID / MISC ---- */
-  --logo-size-screen-desktop-safari    : 40px;
   --logo-size-print-desktop-safari     : 48px;
-  --fs-fuel-label-desktop-safari       : 0.75rem;
   --fs-fuel-label-print-desktop-safari : 0.75rem;
-  --divider-margin-desktop-safari      : 8px 0;
   --divider-margin-print-desktop-safari: 4px 0;
-  --gps-btn-width-desktop-safari       : 30px;
-  --gps-btn-height-desktop-safari      : 26px;
-  --grid4-gap-desktop-safari           : 10px;
   --grid4-gap-print-desktop-safari     : 8px;
-  --grid23-gap-desktop-safari          : 10px;
   --grid23-gap-print-desktop-safari    : 8px;
-  --check-group-gap-desktop-safari     : 4px;
-  --fs-bore-label-desktop-safari       : 0.65rem;
-  --mb-bore-label-desktop-safari       : -8px;
-  --fs-survey-legend-desktop-safari    : 0.58rem;
-  --gap-install-row-desktop-safari     : 8px;
-  --mb-section-desktop-safari          : 10px;
-  --pb-content-desktop-safari          : 14px;
   --pb-content-print-desktop-safari    : 4px;
-  --action-bar-clearance-desktop-safari: 50px;
-  --mt-notes-box-desktop-safari        : 10px;
   --mt-notes-box-print-desktop-safari  : 10px;
-  --mb-pad-notes-desktop-safari        : 4px;
   --mb-pad-notes-print-desktop-safari  : 0px;
-  --mb-fuel-run-desktop-safari         : 4px;
   --mb-fuel-run-print-desktop-safari   : 4px;
 
   /* =============================================
@@ -758,7 +682,7 @@
   --pb-content-print-desktop:   4px;  /* print desktop                                       */
 
   /* ---- ACTION BAR CLEARANCE ---- */
-  --action-bar-clearance-phone:   50px;  /* pushes page down so header clears the fixed action bar (phone) */
+  --action-bar-clearance-phone:   calc(50px + env(safe-area-inset-top, 0px));  /* pushes page down so header clears the fixed action bar (phone), incl. notch inset */
   --action-bar-clearance-ipad:    50px;  /* (iPad)                                                         */
   --action-bar-clearance-desktop: 50px;  /* (desktop)                                                      */
 
@@ -963,6 +887,18 @@ body.offline { padding-top: 0; }
 body.dark-mode .toolbar {
   background: linear-gradient(90deg, rgba(15,21,53,0.8) 0%, rgba(26,40,71,0.6) 100%);
   border-bottom-color: rgba(0,255,200,0.1);
+}
+
+/* Narrow phones: scroll the toolbar left/right instead of shrinking buttons */
+@media screen and (max-width: 600px) {
+  .toolbar {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none;
+  }
+  .toolbar::-webkit-scrollbar { display: none; }
+  .toolbar > *, .toolbar .btn { flex: 0 0 auto !important; width: auto !important; }
 }
 
 .btn {
@@ -1249,7 +1185,7 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
 
 @media print {
   html { font-size: var(--fs-print-phone-base) !important; }
-  @page { size: 8.5in 11in; margin: 0.1in; }
+  @page { size: 8.5in 11in; margin: 0; }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; animation-play-state: paused !important; transition: none !important; }
   .toolbar, .action-bar, #save-status, #theme-toggle-btn, #offline-banner, #address-suggestions, #gps-status, #gps-btn { display: none !important; }
   .header::after { display: none !important; }
@@ -1291,7 +1227,7 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
   .grid-4 { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: var(--grid4-gap-print) !important; margin-bottom: 4px !important; }
   .grid-4 .yn-group, .grid-3 .yn-group, .grid-2 .yn-group { width: fit-content !important; min-width: 0 !important; align-self: flex-start !important; }
   .grid-4 .field-block, .grid-3 .field-block, .grid-2 .field-block { min-width: 0 !important; overflow: hidden !important; }
-  .field-row { margin-bottom: 2px !important; flex-wrap: nowrap !important; min-height: var(--h-print-phone-field-row) !important; }
+  .field-row { margin-bottom: 1px !important; flex-wrap: nowrap !important; min-height: var(--h-print-phone-field-row) !important; }
   .inline-row { margin-bottom: 2px !important; flex-wrap: wrap !important; min-height: var(--h-print-phone-inline-row) !important; }
   /* FIX: on phone the @media(max-width:768px) rule sets inline-row inputs to flex:1 1 60px so they
      fill the narrow screen. That rule is still active when printing from a phone, so on the 1050px
@@ -1413,6 +1349,7 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
   padding: 4px 8px;
   padding-top: max(4px, env(safe-area-inset-top, 4px));
   display: flex; gap: 4px; flex-wrap: nowrap; align-items: center;
+  overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
   box-shadow: 0 4px 18px rgba(0,0,0,0.3);
   border-bottom: 1px solid var(--border-bright);
   transition: background-color 0.3s ease; box-sizing: border-box;
@@ -1426,7 +1363,7 @@ body.dark-mode .action-bar {
   padding: 6px 8px; font-size: 10px; font-weight: bold; letter-spacing: 0.5px;
   border: 1px solid rgba(217,119,6,0.4); background: rgba(217,119,6,0.05);
   border-radius: 0; cursor: pointer; color: var(--cyan); text-transform: uppercase;
-  font-family: Arial, sans-serif; white-space: nowrap; flex: 1; min-width: 0;
+  font-family: Arial, sans-serif; white-space: nowrap; flex: 0 0 auto; min-width: 0;
   text-align: center; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;
   clip-path: polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
   -webkit-tap-highlight-color: transparent; touch-action: manipulation;
@@ -1442,12 +1379,9 @@ body.dark-mode .action-bar .ab-btn { color: #00FFC8; border-color: rgba(0,255,20
   -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
 body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08); border-color: rgba(0,255,200,0.2); color: #00FFC8; }
+.action-bar::-webkit-scrollbar { display: none; }
 @media (max-width: 480px) {
   .action-bar { padding: 4px 4px; gap: 3px; }
-  .action-bar .ab-btn { padding: 6px 4px; font-size: 9px; }
-}
-@media (max-width: 360px) {
-  .action-bar .ab-btn { font-size: 8px; padding: 6px 3px; letter-spacing: 0; }
 }
 
 /* ===== iPAD SCREEN — all elements ===== */
@@ -1750,7 +1684,7 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
      --pg-print-desktop-* variables (slightly narrower + shorter, trimmed for Safari's print
      scaling) so the footer stays on page 1 and there's no blank page. */
   html.desktop-print-safari { overflow: hidden !important; }
-  html.desktop-print-safari body { width: var(--pg-print-desktop-safari-body-width) !important; max-width: var(--pg-print-desktop-safari-body-width) !important; height: var(--pg-print-desktop-safari-body-height) !important; max-height: var(--pg-print-desktop-safari-body-height) !important; padding: 0 var(--pg-print-desktop-safari-side-margin) !important; box-sizing: border-box !important; overflow: hidden !important; }
+  html.desktop-print-safari body { width: var(--pg-print-desktop-safari-body-width) !important; max-width: var(--pg-print-desktop-safari-body-width) !important; height: var(--pg-print-desktop-safari-body-height) !important; max-height: var(--pg-print-desktop-safari-body-height) !important; padding: var(--pg-print-desktop-safari-top-margin) var(--pg-print-desktop-safari-side-margin) 0 var(--pg-print-desktop-safari-side-margin) !important; box-sizing: border-box !important; overflow: hidden !important; }
   html.desktop-print-safari .page { height: var(--pg-print-desktop-safari-page-height) !important; max-height: var(--pg-print-desktop-safari-page-height) !important; min-height: 0 !important; overflow: hidden !important; }
   html.desktop-print-safari .content { flex: 1 1 auto !important; min-height: 0 !important; overflow: hidden !important; }
   html.desktop-print-safari .footer { flex: 0 0 auto !important; margin-top: 0 !important; }
@@ -1807,6 +1741,11 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
      section-body bottom padding. */
   html.desktop-print-safari #transfer-switch-row .section-body { padding-bottom: var(--pd-ts-bottom-print-desktop-safari) !important; }
   html.desktop-print-safari #transfer-switch-row .inline-row:last-child { min-height: 0 !important; height: auto !important; max-height: fit-content !important; margin-bottom: 0 !important; padding-bottom: 0 !important; }
+
+  /* Safari-independent base font, content padding, and footer padding (mirrors regular desktop). */
+  html.desktop-print-safari { font-size: var(--fs-print-desktop-safari-base) !important; }
+  html.desktop-print-safari .content { padding: var(--pd-print-desktop-safari-content) !important; padding-bottom: var(--pb-content-print-desktop-safari) !important; }
+  html.desktop-print-safari .footer { padding: var(--pd-print-desktop-safari-footer) !important; flex: 0 0 auto !important; margin-top: 0 !important; }
 
 }
 
@@ -1937,21 +1876,30 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   html:not(.ipad-print):not(.desktop-print) #pad_notes  { height:var(--h-print-phone-pad-notes)!important;min-height:var(--h-print-phone-pad-notes)!important;max-height:var(--h-print-phone-pad-notes)!important; }
   html:not(.ipad-print):not(.desktop-print) #gas_notes  { height:var(--h-print-phone-gas-notes)!important;min-height:var(--h-print-phone-gas-notes)!important;max-height:var(--h-print-phone-gas-notes)!important; }
   html:not(.ipad-print):not(.desktop-print) #ready_notes { height:var(--h-print-phone-ready-notes)!important;min-height:var(--h-print-phone-ready-notes)!important;max-height:var(--h-print-phone-ready-notes)!important; }
-  /* Kill the phantom 2nd page. The 1050px-wide layout is scaled to fit one 8.5x11 sheet;
-     one page tall at that width is ~1358px (1050 / (8.5/11)). Pin .page to exactly that
-     height and clip, so nothing can spill onto a second sheet. Sections must not break. */
+  /* NATURAL BLOCK FLOW (matches the maintenance/QC sheet) — no fixed page height, no flex
+     distribution, no clipping. The page grows to its natural content height and the footer
+     flows right after the last section. Because nothing is distributed or clipped, iOS can't
+     recompute it differently between the print preview and the generated PDF — so the PDF
+     matches the preview (kills the reflow). Tightened element spacing keeps it on one sheet. */
   html:not(.ipad-print):not(.desktop-print) .page {
-    height: 1358px !important;
-    max-height: 1358px !important;
+    display: block !important;
+    height: auto !important;
     min-height: 0 !important;
-    overflow: hidden !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  html:not(.ipad-print):not(.desktop-print) .content {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
   }
   html:not(.ipad-print):not(.desktop-print) .content,
   html:not(.ipad-print):not(.desktop-print) .section {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
-  html:not(.ipad-print):not(.desktop-print) .footer { margin-bottom: 0 !important; padding-bottom: 0 !important; }
+  html:not(.ipad-print):not(.desktop-print) .footer { margin-top: 0 !important; margin-bottom: 0 !important; padding-bottom: 0 !important; }
 }
 
 /* ---- iPAD print sizing (mirrors the old injected safari-page-fix; the html.ipad-print
@@ -2832,15 +2780,11 @@ function getEstimateFilename(ext) {
 function printForm() {
 
   // (debug tracing removed)
-  function dbg() {}
-  function snap() {}
 
   var isMobileSafari = document.body.classList.contains('mobile-safari');
   var ua = navigator.userAgent;
   var isMacSafari = /Macintosh/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium|Firefox|Edge/.test(ua);
   var isAnySafari  = isMobileSafari || isMacSafari;
-  dbg('detection', { isMobileSafari: isMobileSafari, isMacSafari: isMacSafari, isAnySafari: isAnySafari, maxTouchPoints: navigator.maxTouchPoints, ua: ua });
-  snap('start (before any strip)');
 
   // ── Set PDF filename ──
   var prevTitle = document.title;
@@ -2863,10 +2807,8 @@ function printForm() {
   // ── Strip dark mode and seasonal (same as install form pattern) ──
   var wasDark = document.body.classList.contains('dark-mode');
   var wasMobileSafariClass = document.body.classList.contains('mobile-safari');
-  dbg('wasDark', wasDark);
   var _printSeasonalClasses = [];
   document.body.classList.forEach(function(c) { if (c.indexOf('seasonal-') === 0) _printSeasonalClasses.push(c); });
-  dbg('seasonalClasses found', _printSeasonalClasses);
   _printSeasonalClasses.forEach(function(c) { document.body.classList.remove(c); });
   document.body.classList.remove('dark-mode');
   // Force light color-scheme directly on <html> — when the OS is in dark mode, Safari's print
@@ -2880,8 +2822,6 @@ function printForm() {
   if (_printSeasonalCanvas) _printSeasonalCanvas.style.display = 'none';
   var _seasonalSheet = document.getElementById('seasonal-styles');
   if (_seasonalSheet) _seasonalSheet.parentNode.removeChild(_seasonalSheet);
-  dbg('dark-mode-pending on html?', document.documentElement.classList.contains('dark-mode-pending'));
-  snap('after dark/seasonal strip');
 
   // ── Print appearance (light mode, sizing, page setup) now lives in the STATIC
   //    @media print stylesheet in <head>, so it can't be torn down by the restore
@@ -2903,6 +2843,18 @@ function printForm() {
     });
     _printReplaced = [];
     if (typeof window.__undoForcedLight === 'function') { window.__undoForcedLight(); window.__undoForcedLight = null; }
+    // Guaranteed belt-and-suspenders cleanup: regardless of what the tracked undo did, strip the
+    // exact inline properties the print-forcing sets from <html>, <body>, #page and every element
+    // inside #page. This prevents a broken half-state (text reverted but backgrounds stuck white).
+    (function hardClearForcedInline(){
+      var FORCED = ['background','background-color','background-image','color','-webkit-text-fill-color',
+                    'box-shadow','text-shadow','border','border-color','stroke','fill',
+                    '-webkit-print-color-adjust','print-color-adjust'];
+      function strip(el){ if(!el) return; for(var i=0;i<FORCED.length;i++){ try{ el.style.removeProperty(FORCED[i]); }catch(e){} } }
+      strip(document.documentElement); strip(document.body);
+      var pg=document.getElementById('page'); strip(pg);
+      if(pg){ var all=pg.querySelectorAll('*'); for(var i=0;i<all.length;i++) strip(all[i]); }
+    })();
     var el;
     el = document.getElementById('force-print-light'); if (el) el.remove();
     el = document.getElementById('safari-page-fix');  if (el) el.remove();
@@ -3027,7 +2979,6 @@ function printForm() {
   // checkbox/radio controls, browser-native sizing. Dark mode is still stripped above so it
   // prints the light appearance. We mark <html> so a desktop-only print rule can neutralize the
   // phone/iPad scaling machinery and let the page print at its on-screen size.
-  dbg('>>> DESKTOP branch taken');
   document.documentElement.classList.add('desktop-print');
   if (isMacSafari) document.documentElement.classList.add('desktop-print-safari');
 
@@ -3035,13 +2986,39 @@ function printForm() {
   // The @media print CSS was not reliably winning the cascade against the dark theme on
   // desktop Safari, so force light appearance via INLINE styles (priority 'important'),
   // which outrank every stylesheet rule. Originals are stashed and undone in restore().
-  var _forcedLight = [];
+  // Map element -> { propName: originalInlineValue } captured the FIRST time each property is
+  // forced. Restoring per-property (not the whole style string) means repeated forceLight calls
+  // on the same element can't pollute the saved baseline, so restore() fully reverts every
+  // forced property (this is what was leaving text stuck dark-on-dark after printing).
+  var _forcedProps = [];  // [{ el, prop, orig }]
+  var _forcedKeys = (typeof Set !== 'undefined') ? new Set() : null;  // "uid|prop" seen guard
+  var _flUid = 0;
   function forceLight(el, props) {
     if (!el) return;
-    var prev = el.getAttribute('style') || '';
-    _forcedLight.push({ el: el, prev: prev });
-    Object.keys(props).forEach(function(k) { el.style.setProperty(k, props[k], 'important'); });
+    if (el.__flUid == null) { el.__flUid = ++_flUid; }
+    Object.keys(props).forEach(function(k) {
+      var key = el.__flUid + '|' + k;
+      var seen = _forcedKeys ? _forcedKeys.has(key) : false;
+      if (!seen) {
+        if (_forcedKeys) _forcedKeys.add(key);
+        // original inline value of this specific property (empty string if not set inline)
+        _forcedProps.push({ el: el, prop: k, orig: el.style.getPropertyValue(k), prio: el.style.getPropertyPriority(k) });
+      }
+      el.style.setProperty(k, props[k], 'important');
+    });
   }
+  // Define the undo BEFORE applying any forces, so it always exists even if something in the
+  // forcing routine throws partway through. restore() relies on this to revert.
+  window.__undoForcedLight = function() {
+    _forcedProps.forEach(function(r){
+      try {
+        if (r.orig) r.el.style.setProperty(r.prop, r.orig, r.prio || '');
+        else r.el.style.removeProperty(r.prop);
+      } catch(e) {}
+    });
+    _forcedProps = [];
+    if (_forcedKeys) _forcedKeys.clear();
+  };
   (function applyNuclearLight() {
     var LIGHT_BG = '#ffffff', DARK_TXT = '#1F2937', AMBER = '#D97706';
     forceLight(document.documentElement, { 'background': LIGHT_BG, '-webkit-print-color-adjust': 'exact', 'print-color-adjust': 'exact' });
@@ -3075,16 +3052,9 @@ function printForm() {
     document.querySelectorAll('#page input, #page textarea, #page select').forEach(function(el){
       forceLight(el, { 'background': LIGHT_BG, 'color': DARK_TXT, '-webkit-text-fill-color': DARK_TXT, 'border-color': AMBER });
     });
-    dbg('nuclear light applied to elements', _forcedLight.length);
   })();
-  // expose for restore()
-  window.__undoForcedLight = function() {
-    _forcedLight.forEach(function(r){ if (r.prev) r.el.setAttribute('style', r.prev); else r.el.removeAttribute('style'); });
-    _forcedLight = [];
-  };
 
   void document.body.offsetHeight;
-  snap('after add desktop-print + nuclear light + reflow');
   armRestoreAndPrint(false, true);
 
 }
@@ -3230,6 +3200,12 @@ function capturePageToCanvas() {
       '.grid-3 { grid-template-columns: 1fr 1fr 1fr !important; }',
       '.grid-4 { grid-template-columns: repeat(4, 1fr) !important; }',
       '.logo-img { width: 48px !important; height: 48px !important; object-fit: contain !important; display: block !important; }',
+      // Tighten the space between the top page border and the header.
+      '#page { padding-top: 0 !important; }',
+      '.content { padding-top: 0 !important; }',
+      '.header { min-height: 0 !important; padding-top: 2px !important; padding-bottom: 4px !important; margin-top: 0 !important; }',
+      '.company-name { font-size: 0.85rem !important; line-height: 1.05 !important; }',
+      '.doc-title { font-size: 0.95rem !important; }',
       '.section-header::before, .col-label::before { display: none !important; content: none !important; }',
       '#transfer-switch-row .section-body { padding-bottom: 0px !important; }',
       '#transfer-switch-row .inline-row:last-child { min-height: 0 !important; height: auto !important; max-height: fit-content !important; margin-bottom: 0 !important; padding-bottom: 0 !important; flex-wrap: nowrap !important; overflow: hidden !important; }',
@@ -3239,6 +3215,8 @@ function capturePageToCanvas() {
          tank-size width here instead of the on-screen phone width. Edit --w-print-tank-size
          (or --w-print-ipad-tank-size on iPad) and it now flows through to the saved PDF too. */
       '#new_tank_size, #existing_tank_size { width: var(--w-print-tank-size) !important; min-width: var(--w-print-tank-size) !important; max-width: var(--w-print-tank-size) !important; flex: 0 0 auto !important; }',
+      /* Image capture only: html2canvas seats text ~1px low, so lift all text up 1px in the render. */
+      'input, textarea, select, label, legend, .inline-label, .check-item span, .yn-group .yn-label, .col-label, .section-header, .footer-text, #ver-span, .gas-appliances-label, .company-name, .doc-title { position: relative !important; top: -1px !important; }',
     ].join('\n');
     document.head.appendChild(forceStyle);
 
@@ -3344,6 +3322,15 @@ function capturePageToCanvas() {
           scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false, imageTimeout: 15000,
           width: CAPTURE_W, height: CAPTURE_H, windowWidth: CAPTURE_W, scrollX: 0, scrollY: 0,
           onclone: function(clonedDoc) {
+            // Hide placeholder hint text in the captured image (clone only —
+            // live DOM untouched). Strip the attribute AND force transparent.
+            clonedDoc.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(function(el){
+              el.setAttribute('placeholder', '');
+            });
+            var _phStyle = clonedDoc.createElement('style');
+            _phStyle.textContent = 'input::placeholder,textarea::placeholder{color:transparent!important;opacity:0!important;}' +
+              'input::-webkit-input-placeholder,textarea::-webkit-input-placeholder{color:transparent!important;opacity:0!important;}';
+            clonedDoc.head.appendChild(_phStyle);
             // Strip dark-mode and seasonal classes + their style tags from clone
             var cb = clonedDoc.body;
             cb.classList.remove('dark-mode');
@@ -3428,7 +3415,7 @@ function capturePageToCanvas() {
           }
         }).then(function(canvas) {
           restore();
-          resolve(cropCanvasToContent(canvas));
+          resolve(addCaptureMargin(cropCanvasToContent(canvas)));
         }).catch(function(err) {
           restore();
           reject(err);
@@ -3440,6 +3427,22 @@ function capturePageToCanvas() {
     }); });
     });
   });
+}
+
+// Wrap a captured canvas in a uniform 0.15in white margin on all sides.
+// 0.15in relative to an 8.5in-wide page = canvas.width * 0.15/8.5 px.
+function addCaptureMargin(canvas) {
+  try {
+    var m = Math.round(canvas.width * 0.15 / 8.5);
+    var out = document.createElement('canvas');
+    out.width  = canvas.width  + m * 2;
+    out.height = canvas.height + m * 2;
+    var ctx = out.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, out.width, out.height);
+    ctx.drawImage(canvas, m, m);
+    return out;
+  } catch (e) { return canvas; }
 }
 
 // ── iPHONE SAVE ──
