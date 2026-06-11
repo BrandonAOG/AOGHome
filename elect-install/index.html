@@ -2275,12 +2275,12 @@ if (document.readyState === 'loading') {
 
     // (a0b) a BARE aught-homophone as the entire utterance is always "aught"
     //       (you said just the word "aught" and the phone heard "art")
-    if (/^\s*(aught|ought|oughta|naught|nought|art|arts|ot|aut|otto|auto|odd|yacht|yaught|out|all)\s*$/.test(t)) {
+    if (/^\s*(aught|ought|oughta|naught|nought|art|arts|ot|aut|otto|auto|odd|yacht|yaught|out|all|hot|hott|haught|hawt|aha|ha|ah|aw|oh)\s*$/.test(t)) {
       return ' aught ';
     }
 
     // (a) number + aught-ish word (any homophone) -> "N aught"  [always safe: number-anchored]
-    t = t.replace(/\b(one|two|three|four|1|2|3|4)\s+(aught|ought|oughta|naught|nought|not|odd|art|arts|auto|otto|ot|oot|yacht|yaught|yachts|aut|all|oh|aw|ah|out|o)\b/g,
+    t = t.replace(/\b(one|two|three|four|1|2|3|4)\s+(aught|ought|oughta|naught|nought|not|odd|art|arts|auto|otto|ot|oot|yacht|yaught|yachts|aut|all|oh|aw|ah|out|o|hot|hott|haught|hawt|what|watt)\b/g,
       (m, num) => num + ' aught');
 
     if (!wireContext) return t;
@@ -2297,12 +2297,12 @@ if (document.readyState === 'loading') {
 
     // (b) in wire context only, a SAFE-set standalone aught word -> "aught"
     //     (these are not common English words that appear elsewhere on this form)
-    t = t.replace(/\b(aught|ought|oughta|naught|nought|yacht|yaught|art|arts|ot|aut|otto)\b/g, 'aught');
+    t = t.replace(/\b(aught|ought|oughta|naught|nought|yacht|yaught|art|arts|ot|aut|otto|hot|hott|haught|hawt)\b/g, 'aught');
 
     // (b2) metal directly followed by a riskier aught-homophone -> that means a
     //      single-aught (1/0) size, e.g. "copper auto 50", "copper odd 50".
     //      Safe because it's pinned between the metal word and the rest.
-    t = t.replace(/\b(copper|cu|cooper|coper|aluminum|aluminium|al|alum)\s+(odd|art|arts|auto|otto|ot|oot|out|all|oh|o|aut)\b/g,
+    t = t.replace(/\b(copper|cu|cooper|coper|aluminum|aluminium|al|alum)\s+(odd|art|arts|auto|otto|ot|oot|out|all|oh|o|aut|hot|hott|what|watt)\b/g,
       '$1 aught');
 
     // (c) collapse "aught oh/zero/o" and accidental "aught aught"
