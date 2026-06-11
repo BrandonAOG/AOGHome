@@ -1246,7 +1246,7 @@ body.dark-mode .ft-label { color: #7DD3FC; }
           <div class="section-row"><label>Connected To Mobile Link:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
           <div class="section-row"><label>Battery Connected:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
           <div class="section-row"><label>Generator Electrical Made Up:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
-          <div class="section-row"><label>Generator Set to NG or LQ in Controller &amp; In Generator:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
+          <div class="section-row"><label>Generator Set to NG or LP in Controller:</label><input type="checkbox"> NG <input type="checkbox"> LP</div>
           <div class="section-row"><label>Generator Manual:</label><input type="checkbox"> Transfer Switch <input type="checkbox"> Homeowner</div>
           <div class="section-row"><label>Needs Completed:</label><input type="text" style="width:100%;border:none;border-bottom:1px solid var(--text);"></div>
         </div>
@@ -1266,7 +1266,7 @@ body.dark-mode .ft-label { color: #7DD3FC; }
           <div class="section-row"><label>Transfer Switch(es) Made Up:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
           <div class="section-row"><label>Generator Made Up:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
           <div class="section-row" data-multi="true"><label>Generator Electrical Run:</label><input type="checkbox"> Surface Mount <input type="checkbox"> U.G. <input type="checkbox"> Attic</div>
-          <div class="section-row"><label>Generator Set to NG or LQ in Controller &amp; In Generator:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
+          <div class="section-row"><label>Generator Set to NG or LP in Controller:</label><input type="checkbox"> NG <input type="checkbox"> LP</div>
           <div class="section-row"><label>60A Load Shed Installed &amp; Programmed:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
           <div class="section-row"><label>100A Load Shed Installed &amp; Programmed:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
         </div>
@@ -2242,6 +2242,12 @@ if (document.readyState === 'loading') {
     [/\bkilowatts?\b|\bkilo watts?\b/g, 'kw'],
     // "22kw generator" / "generator 22kw" / "22kw generator size" -> Generator Size field.
     // Canonicalize to "generator size 22kw" so the field matcher + value extraction work.
+    // common mis-transcriptions of "generator" -> generator (so "48kw <mishear>" still
+    // routes to Generator Size). Kept specific to avoid touching unrelated words.
+    [/\bgenerador\b|\bgenerter\b|\bgenerater\b|\bgenertor\b|\bgenertaot\b|\bgeneratot\b|\bgenarator\b|\bgenorator\b|\bgenertator\b|\bjenerator\b|\bgeneratør\b/g, 'generator'],
+    // "NNkw gen" / "gen NNkw" (clipped) -> generator, but only next to a kw value
+    [/\b(\d{1,3}kw)\s+gen\b/g, '$1 generator'],
+    [/\bgen\s+(\d{1,3}kw)\b/g, 'generator $1'],
     [/\b(\d{1,3}kw)\s+generator(?:\s+size)?\b/g, 'generator size $1'],
     [/\bgenerator\s+(?:size\s+)?(\d{1,3}kw)\b/g, 'generator size $1'],
     // "grounds and neutrals separated" in ANY order/filler:
@@ -2626,7 +2632,7 @@ if (document.readyState === 'loading') {
     'connected to mobile link': ['mobile link'],
     'battery connected': ['battery'],
     'generator electrical made up': ['electrical made up'],
-    'generator set to ng or lq in controller and in generator': ['ng or lq','set to ng','set to lq','fuel set'],
+    'generator set to ng or lp in controller': ['generator set to ng or lp','set to ng or lp','ng or lp','set to ng','set to lp','set the fuel','fuel set','fuel type'],
     'generator manual': ['generator manual','manual left','manual on site','manual'],
     'harness plugged in transfer switch es': ['harness plugged in','harness'],
     'grounding updated': ['grounding'],
@@ -2675,6 +2681,8 @@ if (document.readyState === 'loading') {
     'homeowner': ['homeowner','home owner'],
     'ase': ['ase','a s e'],
     'nse': ['nse','n s e'],
+    'ng': ['ng','natural gas','n g','nat gas'],
+    'lp': ['lp','propane','liquid propane','lq','l p','l q','liquified propane','liquefied petroleum'],
     'inside': ['inside'],
     'outside': ['outside'],
     '16space': ['16 space','sixteen space'],
