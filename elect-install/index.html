@@ -1,8 +1,16 @@
 <!DOCTYPE html>
+<!--
+© 2026 Brandon Keilholz — All rights reserved.
+Created by Brandon Keilholz. Licensed for use by Always On Generators.
+This form, its code, layout, and content are proprietary.
+Unauthorized copying, reproduction, or distribution is prohibited and
+may result in liability for statutory damages of up to $150,000 per work
+for willful infringement under 17 U.S.C. § 504, plus attorney's fees.
+-->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#D97706">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -74,7 +82,7 @@ body.dark-mode {
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { width: 100%; height: 100%; overflow-x: hidden; }
+html { width: 100%; height: 100%; overflow-x: clip; }
 
 body {
   font-family: Arial, sans-serif;
@@ -86,36 +94,98 @@ body {
   padding: 0;
   padding-bottom: env(safe-area-inset-bottom, 24px);
   -webkit-text-size-adjust: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
   transition: background-color 0.3s ease, color 0.3s ease;
   min-height: 100vh;
 }
 
+@media screen {
 body.dark-mode {
   background: linear-gradient(135deg, #0A0E27 0%, #0F1535 25%, #0A1628 50%, #0F1535 75%, #0A0E27 100%);
-  background-attachment: fixed;
   background-size: 400% 400%;
 }
+}
 
-/* ===== STICKY ACTION BAR ===== */
+/* ===== ACTION BAR — fixed at top, always visible ===== */
 .action-bar {
-  position: sticky; top: 0; z-index: 1000; width: 100%;
-  background: var(--panel); padding: 12px 16px;
-  display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 99999;
+  width: 100%;
+  background: var(--panel); padding: 4px 8px;
+  padding-top: max(4px, env(safe-area-inset-top, 4px));
+  display: flex; justify-content: center; gap: 4px; flex-wrap: nowrap; align-items: center;
   box-shadow: 0 4px 18px rgba(0,0,0,0.3);
   border-bottom: 1px solid var(--border-bright);
-  transition: all 0.3s ease; max-width: 1050px; box-sizing: border-box;
+  transition: background-color 0.3s ease; box-sizing: border-box;
 }
-@media (max-width: 768px) { .action-bar { padding: 10px 12px; gap: 8px; } }
+
+.action-bar .btn {
+  padding: 6px 8px;
+  font-size: 10px;
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.action-bar .theme-toggle-btn {
+  flex-shrink: 0;
+}
+
+/* Shrink button text on small phones */
+@media (max-width: 480px) {
+  .action-bar { padding: 4px 4px; gap: 3px; }
+  .action-bar .btn { padding: 6px 4px; font-size: 9px; }
+}
+
+/* Very small screens — hide emoji, keep text */
+@media (max-width: 360px) {
+  .action-bar .btn { font-size: 8px; padding: 6px 3px; letter-spacing: 0; }
+}
+
+@media (max-width: 768px) { .action-bar { padding: 4px 6px; gap: 4px; } }
+
+@media screen {
+/* ===== VOICE ENTRY ===== */
+#btn-voice.listening {
+  background: var(--red) !important; color: #fff !important;
+  animation: voicePulse 1.2s ease-in-out infinite;
+}
+@keyframes voicePulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.5); }
+  50% { box-shadow: 0 0 0 8px rgba(220,38,38,0); }
+}
+#voice-status {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: 18px; z-index: 99999; max-width: 92vw;
+  background: var(--panel); color: var(--text);
+  border: 1px solid var(--border-bright); border-radius: 24px;
+  padding: 10px 18px; font-family: Arial, sans-serif; font-size: 14px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.25); display: none; text-align: center;
+}
+#voice-status.show { display: block; }
+#voice-status.ok { border-color: var(--green); color: var(--green); font-weight: bold; }
+#voice-status.err { border-color: var(--red); color: var(--red); }
+body.dark-mode #voice-status { background: var(--panel2); }
+.voice-filled {
+  background: rgba(5,150,105,0.25) !important;
+  transition: background 0.4s ease;
+}
 
 body.dark-mode .action-bar {
   background: linear-gradient(90deg, rgba(15,21,53,0.9) 0%, rgba(26,40,71,0.8) 50%, rgba(15,21,53,0.9) 100%);
   border-bottom-color: rgba(0,255,200,0.25);
   box-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 20px rgba(0,255,200,0.08);
 }
+}
 
 .btn {
-  padding: 9px 18px; font-size: 11px; font-weight: bold; letter-spacing: 0.5px;
+  padding: 9px 18px; font-size: 10px; font-weight: bold; letter-spacing: 0.5px;
   border: 1px solid rgba(217,119,6,0.4); background: rgba(217,119,6,0.05);
   border-radius: 0; cursor: pointer; transition: all 0.15s ease;
   font-family: Arial, sans-serif; color: var(--cyan); text-transform: uppercase;
@@ -123,7 +193,7 @@ body.dark-mode .action-bar {
   -webkit-tap-highlight-color: transparent; touch-action: manipulation;
   white-space: nowrap; flex-shrink: 0;
 }
-@media (max-width: 640px) { .btn { padding: 8px 14px; font-size: 10px; } }
+@media (max-width: 640px) { .btn { padding: 8px 14px; font-size: 9px; } }
 body.dark-mode .btn { background: rgba(0,255,200,0.08); border-color: rgba(0,255,200,0.25); color: #00FFC8; text-shadow: 0 0 4px rgba(0,255,200,0.3); }
 .btn:hover { border-color: var(--cyan); color: var(--cyan); box-shadow: var(--glow); transform: translateY(-1px); }
 body.dark-mode .btn:hover { background: rgba(0,255,200,0.12); border-color: #00FFC8; box-shadow: 0 0 12px rgba(0,255,200,0.25); text-shadow: 0 0 8px rgba(0,255,200,0.6); }
@@ -153,13 +223,13 @@ body.dark-mode .theme-icon { opacity: 0; transform: rotate(-180deg); }
 body.dark-mode .theme-icon.theme-icon-moon { opacity: 1; transform: rotate(0deg); }
 
 #save-status {
-  color: var(--text-muted); font-size: 11px; min-height: 16px;
+  color: var(--text-muted); font-size: 10px; min-height: 16px;
   text-align: center; transition: color 0.3s ease; width: 100%; font-family: Arial, sans-serif;
 }
-@media (max-width: 640px) { #save-status { font-size: 10px; } }
+@media (max-width: 640px) { #save-status { font-size: 9px; } }
 body.dark-mode #save-status { color: #7DD3FC; }
 
-.page-wrapper { width: 100%; max-width: 1050px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; padding: 0; }
+.page-wrapper { width: 100%; max-width: 1050px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; padding: 0; padding-top: 44px; }
 
 .form-page {
   width: 100%; max-width: 1050px; background: var(--panel);
@@ -168,9 +238,11 @@ body.dark-mode #save-status { color: #7DD3FC; }
 }
 @media (max-width: 768px) { .form-page { padding: 16px; } }
 @media (max-width: 480px) { .form-page { padding: 12px; } }
+@media screen {
 body.dark-mode .form-page {
   background: linear-gradient(135deg, rgba(15,21,53,0.95) 0%, rgba(10,14,39,0.98) 100%);
   box-shadow: 0 0 1px rgba(0,255,200,0.3), 0 0 20px rgba(0,255,200,0.15);
+}
 }
 
 input[type="text"], input[type="email"], input[type="tel"],
@@ -182,10 +254,12 @@ input[type="date"], input[type="number"], textarea, select {
   caret-color: var(--cyan); max-width: 100%;
 }
 @media (max-width: 480px) { input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], textarea, select { font-size: 10px; padding: 2px 3px; } }
+@media screen {
 body.dark-mode input[type="text"], body.dark-mode input[type="email"], body.dark-mode input[type="tel"],
 body.dark-mode input[type="date"], body.dark-mode input[type="number"], body.dark-mode textarea, body.dark-mode select {
   background: rgba(10,14,39,0.6); border-bottom-color: rgba(0,255,200,0.2);
   color: #E0F7FF; caret-color: #00FFC8; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+}
 }
 input::placeholder, textarea::placeholder { color: var(--text-dim) !important; opacity: 1; }
 body.dark-mode input::placeholder, body.dark-mode textarea::placeholder { color: rgba(125,211,252,0.4) !important; }
@@ -195,16 +269,43 @@ input[type="date"]:focus, input[type="number"]:focus, textarea:focus, select:foc
   border-bottom-color: var(--cyan); background: rgba(217,119,6,0.04);
   box-shadow: 0 2px 0 0 rgba(217,119,6,0.3);
 }
+@media screen {
 body.dark-mode input[type="text"]:focus, body.dark-mode input[type="email"]:focus,
 body.dark-mode input[type="tel"]:focus, body.dark-mode input[type="date"]:focus,
 body.dark-mode input[type="number"]:focus, body.dark-mode textarea:focus, body.dark-mode select:focus {
   border-bottom-color: #00FFC8; background: rgba(26,40,71,0.8);
   box-shadow: inset 0 0 12px rgba(0,255,200,0.1), 0 0 12px rgba(0,255,200,0.2);
 }
+}
 
-input[type="checkbox"] { width: 14px; height: 14px; cursor: pointer; vertical-align: middle; margin: 2px 4px 2px 0; accent-color: var(--cyan); flex-shrink: 0; }
+input[type="checkbox"] {
+  -webkit-appearance: none; appearance: none;
+  width: 14px; height: 14px; min-width: 14px;
+  border: 2px solid #D97706; border-radius: 2px;
+  background: #fff; cursor: pointer;
+  vertical-align: middle; margin: 2px 4px 2px 0;
+  flex-shrink: 0; position: relative; display: inline-block;
+  overflow: visible;
+  transition: background 0.15s, border-color 0.15s;
+}
+input[type="checkbox"]:checked {
+  background: #D97706; border-color: #D97706;
+}
+input[type="checkbox"]:checked::after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 2px; top: -1px;
+  width: 5px; height: 9px;
+  border: 2px solid #000;
+  border-top: none; border-left: none;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
 @media (max-width: 480px) { input[type="checkbox"] { width: 12px; height: 12px; margin: 1px 3px 1px 0; } }
-body.dark-mode input[type="checkbox"] { accent-color: #00FFC8; }
+body.dark-mode input[type="checkbox"] { border-color: #00FFC8; }
+body.dark-mode input[type="checkbox"]:checked { background: #00FFC8; border-color: #00FFC8; }
+body.dark-mode input[type="checkbox"]:checked::after { border-color: #000; }
 
 textarea { resize: vertical; border: 1px solid rgba(217,119,6,0.2); padding: 6px; min-height: 40px; font-family: Arial, sans-serif; }
 body.dark-mode textarea { border-color: rgba(0,255,200,0.15); }
@@ -217,16 +318,20 @@ body.dark-mode textarea:focus { border-color: #00FFC8; box-shadow: 0 0 8px rgba(
   padding: 2px 6px 2px 3px; border-radius: 3px; font-size: 10px; font-weight: bold;
   border: 1px solid transparent; transition: background 0.15s, border-color 0.15s;
   vertical-align: middle; user-select: none; white-space: nowrap; flex-shrink: 0; font-family: Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  min-height: 32px; min-width: 44px; justify-content: center;
 }
 @media (max-width: 480px) { .yn-checkbox-wrap { font-size: 9px; padding: 1px 4px 1px 2px; } }
 .yn-checkbox-wrap.yn-yes { border-color: #bbb; }
 .yn-checkbox-wrap.yn-no { border-color: #bbb; }
 .yn-checkbox-wrap.yn-yes.checked { background: #059669; border-color: #047857; color: #fff; }
 .yn-checkbox-wrap.yn-no.checked { background: #DC2626; border-color: #b91c1c; color: #fff; }
-.yn-checkbox-wrap.yn-yes.checked input, .yn-checkbox-wrap.yn-no.checked input { accent-color: #fff; }
 .yn-checkbox-wrap.yn-opt { border-color: #bbb; }
 .yn-checkbox-wrap.yn-opt.checked { background: #D97706; border-color: #b45309; color: #fff; }
-.yn-checkbox-wrap.yn-opt.checked input { accent-color: #fff; }
+
+/* Safari: invert the native checkbox to white when inside a colored checked pill */
+/* yn-checkbox-wrap checked — white checkmark via ::after already set above */
+.yn-checkbox-wrap.checked input[type="checkbox"]:checked::after { border-color: #000; }
 body.dark-mode .yn-checkbox-wrap { border-color: rgba(0,255,200,0.3); }
 body.dark-mode .yn-checkbox-wrap.checked { border-color: rgba(0,255,200,0.5); }
 
@@ -247,8 +352,10 @@ table.mat-table th, table.mat-table td {
 
 table.mat-table th { background: #4B5563; color: #FFFFFF; font-weight: bold; font-size: 9px; }
 @media (max-width: 480px) { table.mat-table th { font-size: 8px; } }
+@media screen {
 body.dark-mode table.mat-table th { background: #1E3A5F; color: #00FFC8; }
 body.dark-mode table.mat-table td { border-color: rgba(0,255,200,0.2); background: rgba(15,21,53,0.6); color: #E0F7FF; }
+}
 
 table.mat-table td.row-label {
   text-align: left; font-weight: bold; background: #fafafa;
@@ -256,22 +363,79 @@ table.mat-table td.row-label {
   white-space: normal; word-break: break-word; line-height: 1.3;
 }
 @media (max-width: 480px) { table.mat-table td.row-label { font-size: 8px; min-width: 80px; } }
+@media screen {
 body.dark-mode table.mat-table td.row-label { background: rgba(36,52,88,0.6); color: #E0F7FF; }
+}
 
 #fittings-table td.row-label { font-size: 10px; min-width: 130px; }
+#fittings-table tr.repeat-header th { background: #374151; color: #fff; font-size: 9px; padding: 3px 2px; text-align: center; border: 1px solid #4B5563; }
+#fittings-table tr.repeat-header th.row-label { background: #374151; }
+body.dark-mode #fittings-table tr.repeat-header th { background: #1E3A5F; color: #00FFC8; border-color: rgba(0,255,200,0.2); }
 #wireway-table  td.row-label { font-size: 10px; min-width: 110px; }
 #polaris-table  td.row-label { font-size: 10px; min-width: 110px; }
+
+/* Wireway + Polaris side-by-side on desktop, stacked on mobile */
+.wireway-polaris-row { display: flex; gap: 10px; align-items: flex-start; }
+.wireway-polaris-row .grid-section { flex: 1; min-width: 0; }
+
+/* Full-width Other field — last item on page 2 */
+.footer-other-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  margin-top: 4px;
+  width: 100%;
+}
+.footer-other-label {
+  font-size: 10px;
+  font-weight: bold;
+  color: var(--text);
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: Arial, sans-serif;
+}
+.footer-other-input {
+  flex: 1;
+  width: 100% !important;
+  min-width: 0;
+  border: none !important;
+  border-bottom: 1px solid rgba(217,119,6,0.4) !important;
+  background: transparent !important;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  color: var(--text);
+  padding: 2px 4px;
+}
+body.dark-mode .footer-other-label { color: #E0F7FF; }
+body.dark-mode .footer-other-input { border-bottom-color: rgba(0,255,200,0.3) !important; color: #E0F7FF; }
+#wireway-table td input[type="text"],
+#polaris-table td input[type="text"] {
+  width: 28px !important;
+  min-width: 28px !important;
+  max-width: 28px !important;
+  text-align: center;
+}
+@media screen {
 body.dark-mode #fittings-table td.row-label,
 body.dark-mode #wireway-table  td.row-label,
 body.dark-mode #polaris-table  td.row-label { background: rgba(36,52,88,0.6); color: #E0F7FF; }
+}
 
+table.mat-table td {
+  vertical-align: middle;
+  overflow: visible;
+}
 table.mat-table td input[type="text"] {
-  width: 100%; height: 100%; border: none; border-bottom: none;
-  text-align: center; font-size: 9px; padding: 1px;
+  width: 100%; height: 18px; border: none; border-bottom: none;
+  text-align: center; font-size: 9px; padding: 0;
+  line-height: 18px; vertical-align: middle;
   background: transparent; color: var(--text); font-family: Arial, sans-serif;
+  display: block; box-sizing: border-box;
 }
 @media (max-width: 480px) { table.mat-table td input[type="text"] { font-size: 8px; } }
+@media screen {
 body.dark-mode table.mat-table td input[type="text"] { color: #E0F7FF; }
+}
 
 /* ===== REMOVE BUTTON ===== */
 .ts-remove-btn { background: #DC2626; color: #fff; border: none; border-radius: 3px; font-size: 9px; padding: 4px 8px; cursor: pointer; font-family: Arial, sans-serif; white-space: nowrap; transition: background 0.15s; flex-shrink: 0; }
@@ -291,22 +455,74 @@ body.dark-mode .add-ts-btn:hover { background: #059669; }
 /* ===== FOOTER FIELDS ===== */
 .footer-fields { margin-top: 20px; padding-top: 10px; border-top: 1px solid rgba(217,119,6,0.2); font-size: 11px; width: 100%; overflow-x: hidden; font-family: Arial, sans-serif; }
 body.dark-mode .footer-fields { border-top-color: rgba(0,255,200,0.15); }
-.footer-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 8px; width: 100%; }
-.footer-field { display: flex; align-items: flex-end; gap: 4px; white-space: nowrap; flex-shrink: 0; min-width: fit-content; }
+.footer-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 8px; width: 100%; padding: 1px 0; }
+.footer-field { display: flex; align-items: center; gap: 4px; white-space: nowrap; flex-shrink: 0; min-width: fit-content; }
 .footer-field label { font-weight: bold; font-size: 10px; white-space: nowrap; color: var(--text); flex-shrink: 0; font-family: Arial, sans-serif; }
 body.dark-mode .footer-field label { color: #E0F7FF; }
-.footer-field input[type="text"] { width: 90px; min-width: 60px; }
+.footer-field input[type="text"] { width: 90px; min-width: 60px; height: 24px; line-height: 24px; box-sizing: border-box; overflow: visible; }
 .footer-field input.wide  { width: 130px; min-width: 100px; }
 .footer-field input.short { width: 60px;  min-width: 45px; }
 
 /* ===== PAGE 1 ===== */
 .page1-header { text-align: center; margin-bottom: 14px; }
-.logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; justify-content: center; flex-wrap: wrap; }
+.logo-area {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 16px; justify-content: center; flex-wrap: wrap;
+}
+.logo-area img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 12px rgba(217,119,6,0.6))
+    drop-shadow(0 0 24px rgba(217,119,6,0.4))
+    brightness(1.1);
+  animation: logoPulse 3s ease-in-out infinite;
+}
+@keyframes logoPulse {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 12px rgba(217,119,6,0.6))
+      drop-shadow(0 0 24px rgba(217,119,6,0.4))
+      brightness(1.1);
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 18px rgba(217,119,6,0.8))
+      drop-shadow(0 0 36px rgba(217,119,6,0.6))
+      brightness(1.2);
+  }
+}
+body.dark-mode .logo-area img {
+  filter:
+    drop-shadow(0 0 12px rgba(0,255,200,0.6))
+    drop-shadow(0 0 24px rgba(0,255,200,0.4))
+    brightness(1.1);
+  animation: logoPulseDark 3s ease-in-out infinite;
+}
+@keyframes logoPulseDark {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 12px rgba(0,255,200,0.6))
+      drop-shadow(0 0 24px rgba(0,255,200,0.4))
+      brightness(1.1);
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 18px rgba(0,255,200,0.8))
+      drop-shadow(0 0 36px rgba(0,255,200,0.6))
+      brightness(1.2);
+  }
+}
 .checklist-title { font-weight: bold; font-size: 18px; border-top: 2px solid var(--text); padding-top: 10px; margin-bottom: 16px; color: var(--text); font-family: Arial, sans-serif; }
 body.dark-mode .checklist-title { border-top-color: #00FFC8; color: #00FFC8; }
 .logo-text { font-family: 'Arial Black', sans-serif; font-size: 16px; line-height: 1; color: #D97706; white-space: nowrap; }
-.logo-text span { color: var(--text); }
-body.dark-mode .logo-text span { color: #E0F7FF; }
+.logo-text span { color: #D97706; }
+.logo-always { color: #111111 !important; }
+.logo-generators { color: #111111 !important; }
+body.dark-mode .logo-always { color: #ffffff !important; }
+body.dark-mode .logo-generators { color: #ffffff !important; }
+.logo-text span.logo-on { color: #D97706 !important; }
 .top-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin-bottom: 12px; width: 100%; }
 @media (max-width: 600px) { .top-fields { grid-template-columns: 1fr; gap: 6px; } }
 .field-row { display: flex; align-items: flex-end; gap: 6px; width: 100%; min-width: 0; font-family: Arial, sans-serif; }
@@ -316,7 +532,7 @@ body.dark-mode .field-row label { color: #E0F7FF; }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; width: 100%; }
 @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; gap: 8px; } }
 .section { margin-bottom: 14px; width: 100%; }
-.section-title { font-weight: bold; font-size: 13px; margin-bottom: 8px; text-transform: uppercase; color: var(--text); font-family: Arial, sans-serif; padding-bottom: 4px; border-bottom: 1px solid rgba(217,119,6,0.2); }
+.section-title { font-weight: bold; font-size: 13px; margin-bottom: 8px; text-transform: uppercase; color: #D97706; font-family: Arial, sans-serif; padding-bottom: 4px; border-bottom: 1px solid rgba(217,119,6,0.2); }
 body.dark-mode .section-title { color: #00FFC8; border-bottom-color: rgba(0,255,200,0.2); }
 .section-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; width: 100%; font-family: Arial, sans-serif; }
 @media (max-width: 480px) { .section-row { font-size: 12px; gap: 4px 6px; margin-bottom: 6px; } }
@@ -363,7 +579,33 @@ body.dark-mode .notice { color: #7DD3FC; }
     color-adjust: exact !important;
   }
 
+  /* Always show real tables and hide mobile UI on print, regardless of screen width */
+  #mobile-p2-accordions { display: none !important; }
+  #page2 .grid-section  { display: block !important; overflow: visible !important; }
+  #page2 .footer-fields { display: block !important; }
+
   @page { size: 8.5in 11in; margin: 0.2in; }
+
+  /* Force light-mode CSS variables for Safari, which fires the print
+     renderer before JS can strip the dark-mode class from <body> */
+  html, body, body.dark-mode {
+    --bg: #FFFFFF !important;
+    --bg2: #FFFFFF !important;
+    --bg3: #F8F8F8 !important;
+    --bg4: #F0F0F0 !important;
+    --panel: #FFFFFF !important;
+    --panel2: #FAFAFA !important;
+    --border: rgba(217,119,6,0.25) !important;
+    --border-bright: rgba(217,119,6,0.5) !important;
+    --text: #1F2937 !important;
+    --text-muted: #6B7280 !important;
+    --text-dim: #9CA3AF !important;
+    --cyan: #D97706 !important;
+    --cyan-dim: #B45309 !important;
+    --cyan-dark: #92400E !important;
+    --glow: none !important;
+    --glow-amber: none !important;
+  }
 
   html, body {
     margin: 0 !important; padding: 0 !important;
@@ -372,7 +614,58 @@ body.dark-mode .notice { color: #7DD3FC; }
     overflow: visible !important;
   }
 
+  /* Kill dark-mode gradient background on body */
+  body.dark-mode {
+    background: #fff !important;
+    background-image: none !important;
+    background-attachment: initial !important;
+  }
+
   .action-bar, .theme-toggle-btn, .notice { display: none !important; }
+
+  /* Neutralise any dark-mode element backgrounds that don't use CSS vars */
+  body.dark-mode .action-bar,
+  body.dark-mode .form-page,
+  body.dark-mode .page-wrapper,
+  body.dark-mode .ts-header,
+  body.dark-mode .ts-body,
+  body.dark-mode .ts-block,
+  body.dark-mode table.mat-table td,
+  body.dark-mode table.mat-table td.row-label {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #1F2937 !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+  }
+  body.dark-mode input[type="text"],
+  body.dark-mode input[type="email"],
+  body.dark-mode input[type="tel"],
+  body.dark-mode input[type="date"],
+  body.dark-mode input[type="number"],
+  body.dark-mode textarea,
+  body.dark-mode select,
+  body.dark-mode .textarea-field,
+  body.dark-mode .inline-input {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #1F2937 !important;
+    border-color: transparent !important;
+    border-bottom-color: #333 !important;
+    -webkit-text-fill-color: #1F2937 !important;
+    color-scheme: light !important;
+    -webkit-box-shadow: inset 0 0 0 1000px #ffffff !important;
+    box-shadow: inset 0 0 0 1000px #ffffff !important;
+  }
+  body.dark-mode table.mat-table th {
+    background: #4B5563 !important;
+    color: #ffffff !important;
+  }
+  body.dark-mode .yn-checkbox-wrap { border-color: #bbb !important; color: #1F2937 !important; background: transparent !important; }
+  body.dark-mode .yn-checkbox-wrap.yn-yes.checked { background: #059669 !important; color: #fff !important; }
+  body.dark-mode .yn-checkbox-wrap.yn-no.checked  { background: #DC2626 !important; color: #fff !important; }
+  body.dark-mode .yn-checkbox-wrap.yn-opt.checked { background: #D97706 !important; color: #fff !important; }
 
   .page-wrapper { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
 
@@ -384,6 +677,7 @@ body.dark-mode .notice { color: #7DD3FC; }
     box-shadow: none !important;
     border: none !important;
     overflow: visible !important;
+    -webkit-page-break-after: always !important;
     page-break-after: always !important;
     break-after: page !important;
     height: auto !important;
@@ -396,13 +690,68 @@ body.dark-mode .notice { color: #7DD3FC; }
 
   .form-page:last-child { page-break-after: auto !important; break-after: auto !important; }
 
+  /* ── NUCLEAR: force every element white — catches all hardcoded dark-mode colours ── */
+  /* Exclude form fields so the input-specific rule below can apply the inset shadow trick */
+  .form-page *:not(input):not(textarea):not(select) {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #1F2937 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  .form-page input, .form-page textarea, .form-page select {
+    background-image: none !important;
+    color: #1F2937 !important;
+    text-shadow: none !important;
+  }
+
+  /* ── Fix grey input boxes on mobile (iOS/Android dark-mode system styling) ── */
+  .form-page input[type="text"],
+  .form-page input[type="email"],
+  .form-page input[type="tel"],
+  .form-page input[type="date"],
+  .form-page input[type="number"],
+  .form-page textarea,
+  .form-page select,
+  input[type="text"], input[type="email"], input[type="tel"],
+  input[type="date"], input[type="number"], textarea, select {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #1F2937 !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    -webkit-text-fill-color: #1F2937 !important;
+    opacity: 1 !important;
+    /* Force white background on mobile browsers that inject system grey */
+    color-scheme: light !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    /* Override any UA/autofill grey via inset box-shadow trick */
+    -webkit-box-shadow: inset 0 0 0 1000px #ffffff !important;
+    box-shadow: inset 0 0 0 1000px #ffffff !important;
+  }
+  /* Restore intentional non-white backgrounds */
+  #page1 .ts-header                       { background-color: #f0f0f0 !important; }
+  #page2 table.mat-table th              { background-color: #4B5563 !important; color: #ffffff !important; }
+  #page2 table.mat-table td.row-label    { background-color: #f0f0f0 !important; color: #1F2937 !important; }
+  #page1 .yn-checkbox-wrap.yn-yes.checked { background-color: #059669 !important; color: #fff !important; }
+  #page1 .yn-checkbox-wrap.yn-no.checked  { background-color: #DC2626 !important; color: #fff !important; }
+  #page1 .yn-checkbox-wrap.yn-opt.checked { background-color: #D97706 !important; color: #fff !important; }
+
   /* ── PAGE 1 ── */
-  #page1 * { color: #1F2937 !important; background: transparent !important; box-shadow: none !important; border-color: #555 !important; }
-  #page1 .checklist-title { border-top-color: #1F2937 !important; font-size: 15px !important; }
+  #page1 *:not(input):not(textarea):not(select) { color: #1F2937 !important; box-shadow: none !important; border-color: #555 !important; }
+  #page1 input, #page1 textarea, #page1 select { color: #1F2937 !important; border-color: #555 !important; }
+  #page1 .checklist-title { border-top-color: #1F2937 !important; font-size: 15px !important; color: #1F2937 !important; }
+  #page1 .section-title { font-size: 10px !important; color: #D97706 !important; border-bottom-color: rgba(217,119,6,0.3) !important; }
+  #page1 .logo-text { color: #D97706 !important; }
+  #page1 .logo-on { color: #D97706 !important; }
+  #page1 .logo-always, #page1 span.logo-always { color: #111111 !important; }
+  #page1 .logo-generators, #page1 span.logo-generators { color: #111111 !important; }
   #page1 .section-title { font-size: 10px !important; }
   #page1 .section-row { font-size: 9px !important; margin-bottom: 2px !important; }
-  #page1 .field-row label { font-size: 9px !important; }
-  #page1 .field-row input[type="text"] { font-size: 9px !important; }
+  #page1 .field-row label { font-size: 10px !important; }
+  #page1 .field-row input[type="text"] { font-size: 10px !important; }
   #page1 .inline-input { font-size: 9px !important; border-bottom-color: #1F2937 !important; }
   #page1 .top-fields { margin-bottom: 6px !important; gap: 2px 8px !important; grid-template-columns: 1fr 1fr !important; }
   #page1 .two-col { grid-template-columns: 1fr 1fr !important; gap: 6px 12px !important; }
@@ -416,14 +765,31 @@ body.dark-mode .notice { color: #7DD3FC; }
   #page1 .add-ts-btn { display: none !important; }
   #page1 .ts-remove-btn { display: none !important; }
   #page1 .textarea-field { border-color: #aaa !important; min-height: 30px !important; font-size: 9px !important; }
-  #page1 .yn-checkbox-wrap { border-color: #bbb !important; font-size: 8px !important; padding: 1px 3px !important; }
+  #page1 .yn-checkbox-wrap { border-color: #bbb !important; font-size: 8px !important; padding: 1px 3px !important; min-height: 0 !important; min-width: 0 !important; }
   #page1 .yn-checkbox-wrap.yn-yes.checked { background: #059669 !important; color: #fff !important; }
   #page1 .yn-checkbox-wrap.yn-no.checked  { background: #DC2626 !important; color: #fff !important; }
   #page1 .yn-checkbox-wrap.yn-opt.checked { background: #D97706 !important; color: #fff !important; }
-  #page1 input[type="checkbox"] { width: 10px !important; height: 10px !important; }
+  input[type="checkbox"] {
+    -webkit-appearance: none !important; appearance: none !important;
+    width: 10px !important; height: 10px !important; min-width: 10px !important;
+    border: 1.5px solid #D97706 !important; border-radius: 2px !important;
+    background: #fff !important; position: relative !important; display: inline-block !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  input[type="checkbox"]:checked {
+    background: #D97706 !important; border-color: #D97706 !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  input[type="checkbox"]:checked::after {
+    content: '' !important; position: absolute !important;
+    left: 1px !important; top: -2px !important;
+    width: 4px !important; height: 7px !important;
+    border: 2px solid #000 !important; border-top: none !important; border-left: none !important;
+    transform: rotate(45deg) !important; display: block !important;
+  }
+  .yn-checkbox-wrap.checked input[type="checkbox"]:checked::after { border-color: #000 !important; }
 
   /* ── PAGE 2 ── */
-  #page2 { page-break-before: always !important; break-before: page !important; }
 
   /* Scale page2-inner to fill the print page on desktop.
      On mobile Safari this wrapper is ignored — the proven-working
@@ -480,32 +846,57 @@ body.dark-mode .notice { color: #7DD3FC; }
 
   #page2 table.mat-table:not(#fittings-table):not(#wireway-table):not(#polaris-table) td.row-label { width: 68px !important; min-width: 0 !important; }
   #page2 #fittings-table td.row-label { width: 100px !important; min-width: 0 !important; }
-  #page2 #wireway-table  td.row-label { width: 85px !important; min-width: 0 !important; }
-  #page2 #polaris-table  td.row-label { width: 85px !important; min-width: 0 !important; }
+  #page2 #wireway-table  td.row-label { width: 80px !important; min-width: 0 !important; }
+  #page2 #polaris-table  td.row-label { width: 80px !important; min-width: 0 !important; }
+
+  /* Keep wireway + polaris side by side in print */
+  #page2 .wireway-polaris-row { display: flex !important; gap: 8px !important; align-items: flex-start !important; }
+  #page2 .wireway-polaris-row .grid-section { flex: 1 !important; min-width: 0 !important; overflow: visible !important; }
+
 
   #page2 table.mat-table td input[type="text"] {
     width: 100% !important; border: none !important; background: transparent !important;
     color: #1F2937 !important; padding: 0 !important; text-align: center !important;
-    height: auto !important; font-size: 10px !important;
+    height: auto !important; line-height: 1.2 !important; font-size: 10px !important;
+    display: block !important; box-sizing: border-box !important;
+  }
+  #page2 .ft-cell {
+    display: flex !important; align-items: center !important; gap: 1px !important;
+  }
+  #page2 .ft-cell input[type="text"] {
+    height: auto !important; line-height: 1.2 !important;
   }
 
+  #page2 .footer-other-row { display: flex !important; align-items: flex-end !important; gap: 4px !important; width: 100% !important; margin-top: 3px !important; }
+  #page2 .footer-other-label { font-size: 10px !important; font-weight: bold !important; white-space: nowrap !important; flex-shrink: 0 !important; color: #1F2937 !important; }
+  #page2 .footer-other-input { flex: 1 !important; width: 100% !important; border: none !important; border-bottom: 1px solid #333 !important; background: transparent !important; font-size: 10px !important; color: #1F2937 !important; padding: 0 !important; }
   #page2 .footer-fields { margin-top: 5px !important; padding-top: 4px !important; border-top: 1px solid #555 !important; font-size: 10px !important; }
-  #page2 .footer-row { display: flex !important; flex-wrap: wrap !important; gap: 2px 12px !important; margin-bottom: 3px !important; align-items: flex-end !important; }
+  #page2 .footer-row { display: flex !important; flex-wrap: wrap !important; gap: 2px 12px !important; margin-bottom: 3px !important; align-items: flex-end !important; padding: 1px 0 !important; }
   #page2 .footer-field { display: inline-flex !important; align-items: flex-end !important; gap: 3px !important; white-space: nowrap !important; }
   #page2 .footer-field label { font-size: 10px !important; font-weight: bold !important; color: #1F2937 !important; white-space: nowrap !important; }
-  #page2 .footer-field input[type="text"] { border: none !important; border-bottom: 1px solid #333 !important; background: transparent !important; color: #1F2937 !important; font-size: 10px !important; padding: 0 1px !important; height: 13px !important; width: 60px !important; min-width: 0 !important; }
+  #page2 .footer-field input[type="text"] { border: none !important; border-bottom: 1px solid #333 !important; background: transparent !important; color: #1F2937 !important; font-size: 10px !important; padding: 0 1px !important; height: auto !important; width: 60px !important; min-width: 0 !important; }
   #page2 .footer-field input.short { width: 40px !important; }
   #page2 .footer-field input.wide  { width: 90px !important; }
 
   input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], textarea, select {
-    background: #ffffff !important; color: #1F2937 !important;
-    border-bottom-color: #333 !important; border-color: #333 !important;
-    font-family: Arial, sans-serif !important; box-shadow: none !important;
+    background: #ffffff !important; background-color: #ffffff !important; color: #1F2937 !important;
+    border-color: transparent !important; border-bottom-color: #333 !important;
+    font-family: Arial, sans-serif !important;
+    -webkit-appearance: none !important; appearance: none !important;
+    -webkit-text-fill-color: #1F2937 !important; opacity: 1 !important;
+    color-scheme: light !important;
+    -webkit-box-shadow: inset 0 0 0 1000px #ffffff !important;
+    box-shadow: inset 0 0 0 1000px #ffffff !important;
   }
+  input[type="date"] { height: auto !important; line-height: 1.4 !important; padding: 1px 4px !important; min-height: 0 !important; }
   input::placeholder, textarea::placeholder { color: transparent !important; }
-  .form-page * { box-shadow: none !important; }
+  .form-page *:not(input):not(textarea):not(select) { box-shadow: none !important; }
   .logo-text { color: #D97706 !important; }
-  .logo-text span { color: #1F2937 !important; }
+  .logo-text span { color: #D97706 !important; }
+  .logo-on { color: #D97706 !important; }
+  .logo-always { color: #111111 !important; }
+  .logo-generators { color: #111111 !important; }
+  .logo-area img { filter: none !important; animation: none !important; }
 }
 
 /* ===== MOBILE-ONLY PRINT RULES (max-width: 767px) =====
@@ -513,6 +904,137 @@ body.dark-mode .notice { color: #7DD3FC; }
    These rules tighten page 2 on mobile so the footer
    stays on page 2 and doesn't spill to a 3rd page.
    ===================================================== */
+/* ===== MOBILE TABLE VIEW — SCREEN ONLY (max-width: 767px) =====
+   Shows real tables directly on mobile with compact styling.
+   ============================================================ */
+@media screen and (max-width: 767px) {
+
+  /* Show real tables and footer on mobile */
+  #page2 .grid-section { display: block !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; margin-bottom: 10px !important; }
+  #page2 .footer-fields { display: block !important; }
+  #mobile-p2-accordions { display: none !important; }
+
+  /* Stack wireway above polaris on mobile */
+  .wireway-polaris-row { flex-direction: column !important; }
+
+  /* Compact table styling */
+  #page2 table.mat-table {
+    font-size: 11px !important;
+    table-layout: auto !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  #page2 table.mat-table th {
+    background: #1F2937 !important;
+    color: #ffffff !important;
+    font-size: 10px !important;
+    padding: 5px 3px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    border: 1px solid #374151 !important;
+  }
+
+  #page2 table.mat-table td {
+    padding: 3px 3px !important;
+    text-align: center !important;
+    border: 1px solid #D1D5DB !important;
+    font-size: 11px !important;
+    vertical-align: middle !important;
+  }
+
+  body.dark-mode #page2 table.mat-table th {
+    background: #1E3A5F !important;
+    color: #00FFC8 !important;
+    border-color: rgba(0,255,200,0.2) !important;
+  }
+  body.dark-mode #page2 table.mat-table td {
+    border-color: rgba(0,255,200,0.15) !important;
+    background: rgba(15,21,53,0.6) !important;
+    color: #E0F7FF !important;
+  }
+
+  #page2 table.mat-table td.row-label {
+    text-align: left !important;
+    font-weight: bold !important;
+    font-size: 11px !important;
+    background: #F3F4F6 !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    min-width: 90px !important;
+    max-width: 110px !important;
+    padding: 4px 6px !important;
+  }
+
+  body.dark-mode #page2 table.mat-table td.row-label {
+    background: rgba(36,52,88,0.8) !important;
+    color: #E0F7FF !important;
+  }
+
+  #page2 table.mat-table td input[type="text"] {
+    width: 100% !important;
+    min-width: 30px !important;
+    font-size: 14px !important;
+    text-align: center !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 2px !important;
+    height: 28px !important;
+    color: var(--text) !important;
+  }
+
+  body.dark-mode #page2 table.mat-table td input[type="text"] {
+    color: #E0F7FF !important;
+  }
+
+  /* Grid section title */
+  #page2 .grid-section-title {
+    font-size: 12px !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    color: #D97706 !important;
+    padding: 8px 0 4px !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  /* Footer compact on mobile */
+  #page2 .footer-fields {
+    font-size: 12px !important;
+    margin-top: 8px !important;
+  }
+  #page2 .footer-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px 12px !important;
+    margin-bottom: 6px !important;
+  }
+  #page2 .footer-field {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+  #page2 .footer-field label {
+    font-size: 12px !important;
+    font-weight: bold !important;
+    white-space: nowrap !important;
+  }
+  #page2 .footer-field input[type="text"] {
+    font-size: 14px !important;
+    height: 32px !important;
+    width: 70px !important;
+    border: 1px solid var(--border-bright) !important;
+    border-radius: 3px !important;
+    background: var(--bg3) !important;
+    padding: 2px 6px !important;
+  }
+  #page2 .footer-field input.wide { width: 100px !important; }
+  #page2 .footer-field input.short { width: 50px !important; }
+
+}
+
+/* ===================================================================
+   PRINT — mobile-only tightening (unchanged from original)
+   =================================================================== */
 @media print and (max-width: 767px) {
 
   @page { size: 8.5in 11in; margin: 0.15in; }
@@ -525,7 +1047,7 @@ body.dark-mode .notice { color: #7DD3FC; }
   #page2 table.mat-table td {
     padding: 1px 1px !important;
     font-size: 11px !important;
-    line-height: 1.1 !important;
+    line-height: 1.2 !important;
   }
 
   #page2 table.mat-table th { font-size: 10px !important; }
@@ -544,52 +1066,148 @@ body.dark-mode .notice { color: #7DD3FC; }
 
   /* Compact footer */
   #page2 .footer-fields {
-    margin-top: 3px !important;
-    padding-top: 3px !important;
-    font-size: 11px !important;
+    margin-top: 1.3px !important;
+    padding-top: 1.3px !important;
+    font-size: 10.9px !important;
   }
   #page2 .footer-row {
     gap: 1px 8px !important;
     margin-bottom: 2px !important;
   }
-  #page2 .footer-field label { font-size: 11px !important; }
+  #page2 .footer-field label { font-size: 10.9px !important; }
   #page2 .footer-field input[type="text"] {
-    font-size: 11px !important;
-    height: 9px !important;
+    font-size: 10.9px !important;
+    height: auto !important;
+    line-height: 1.0 !important;
+    vertical-align: bottom !important;
+    padding-bottom: 1px !important;
     width: 45px !important;
   }
   #page2 .footer-field input.short { width: 32px !important; }
   #page2 .footer-field input.wide  { width: 65px !important; }
+}
+
+
+
+
+/* ===== FT. LABEL IN WIRE TABLE CELLS ===== */
+.ft-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  width: 100%;
+}
+.ft-cell input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  text-align: right;
+  border: none;
+  border-bottom: none;
+  background: transparent;
+  padding: 0;
+  height: 18px;
+  line-height: 18px;
+  box-sizing: border-box;
+}
+.ft-label {
+  font-size: 8px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1;
+  font-family: Arial, sans-serif;
+}
+@media screen {
+body.dark-mode .ft-label { color: #7DD3FC; }
+}
+/* Print: keep Ft. visible */
+@media print {
+  .ft-cell { display: flex !important; align-items: center !important; justify-content: center !important; gap: 1px !important; }
+  .ft-label { font-size: 7px !important; color: #555 !important; }
+}
+
+@media print {
+  .repeat-header { display: none !important; }
+  .no-print { display: none !important; }
+  .action-bar { display: none !important; }
+}
+
+/* ===== iPAD PRINT FIX =====
+   Forces same compact layout as iPhone print.
+   Scoped to iPad viewport range only — never affects desktop or iPhone. */
+@media print and (min-width: 768px) and (max-width: 1366px) {
+  input[type="text"], input[type="number"], input[type="date"], input[type="email"], input[type="tel"], textarea, select { border-color: transparent !important; border-bottom-color: #333 !important; }
+  #page2 table.mat-table td input[type="text"] { border: none !important; }
+  #page2 .footer-field input[type="text"] { border-color: transparent !important; border-bottom: 1px solid #333 !important; }
+  html, body {
+    width: 8.5in !important;
+    max-width: 8.5in !important;
+  }
+  .form-page, .page {
+    width: 8.1in !important;
+    max-width: 8.1in !important;
+    margin: 0 auto !important;
+    padding: 0.15in !important;
+    box-sizing: border-box !important;
+  }
+  .page-wrapper {
+    width: 8.5in !important;
+    max-width: 8.5in !important;
+  }
+  /* Scale up all text equally for iPad */
+  #page1 .section-row { font-size: 10px !important; }
+  #page1 .field-row label { font-size: 10px !important; }
+  #page1 .field-row input[type="text"] { font-size: 10px !important; }
+  #page1 .textarea-field { font-size: 10px !important; }
+  #page1 .section-title { font-size: 12px !important; }
+  #page1 .yn-checkbox-wrap { font-size: 9px !important; }
+  #page1 input[type="checkbox"] { width: 12px !important; height: 12px !important; }
+  #page2 table.mat-table td { font-size: 7px !important; }
+  #page2 table.mat-table th { font-size: 7px !important; }
+  #page2 table.mat-table td input[type="text"] { font-size: 7.5px !important; }
+  #page2 .footer-field { font-size: 8px !important; }
+}
+/* ===== macOS SAFARI PRINT — Page 2 font reduction =====
+   min-width: 1367px sits above the iPad block (max 1366px),
+   so this ONLY fires on desktop Mac. Mobile & iPad untouched. */
+@media print and (min-width: 1367px) {
+  #page2 table.mat-table th               { font-size: 8.5px !important; }
+  #page2 table.mat-table td               { font-size: 8.5px !important; }
+  #page2 table.mat-table td.row-label     { font-size: 8.5px !important; }
+  #page2 table.mat-table td input[type="text"] { font-size: 8.5px !important; }
+  #page2 .footer-field label              { font-size: 8.5px !important; }
+  #page2 .footer-field input[type="text"] { font-size: 8.5px !important; }
+  #page2 .grid-section-title              { font-size: 8.5px !important; }
 }
 </style>
 </head>
 <body>
 
 <!-- ACTION BAR -->
-<div class="action-bar">
-  <div style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:100%;">
-    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
-      <button class="btn" onclick="window.location.href='../'">🏠 HOME</button>
-      <button class="btn" id="btn-pdf" onclick="openPrintPreview()">📄 PDF</button>
-      <button class="btn" onclick="clearForm()">🗑 CLEAR</button>
-      <button class="btn" id="btn-iphone" onclick="saveForIPhone()">📱 iPhone</button>
-      <button class="btn" id="btn-android" onclick="saveForAndroid()">🤖 Android</button>
-      <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle dark mode" aria-label="Toggle dark mode">
-        <svg class="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="5"/>
-          <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-        </svg>
-        <svg class="theme-icon theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
-      </button>
-    </div>
-    <div id="save-status"></div>
-  </div>
+<div class="action-bar" id="action-bar">
+  <button class="btn" onclick="window.location.href='../'">🏠 HOME</button>
+  <button class="btn" id="btn-pdf" onclick="openPrintPreview()">📄 PDF</button>
+  <button class="btn" onclick="clearForm()">🗑 CLEAR</button>
+  <button class="btn" id="btn-voice" onclick="toggleVoiceEntry()">🎤 VOICE</button>
+  <button class="btn" id="btn-iphone" onclick="saveForIPhone()">📱 iPhone</button>
+  <button class="btn" id="btn-android" onclick="saveForAndroid()">🤖 Android</button>
+
+
+  <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle dark mode" aria-label="Toggle dark mode">
+    <svg class="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+    <svg class="theme-icon theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
 </div>
+<div id="save-status" style="position:fixed;top:44px;left:0;right:0;z-index:99998;text-align:center;font-size:10px;color:var(--text-muted);background:var(--panel);padding:2px 8px;display:none;font-family:Arial,sans-serif;"></div>
 
 <div class="page-wrapper">
 
@@ -598,23 +1216,23 @@ body.dark-mode .notice { color: #7DD3FC; }
     <div class="page1-header">
       <div class="logo-area">
         <img src="../logo.png"
-             onerror="this.onerror=null;this.src='https://lh3.googleusercontent.com/a/ACg8ocJP3abFJ_3mTYZ2vCcFGJ5eDsMroNqrPrfd3aX3T5Pa-Xq7SVg=s317-c-no';"
+             onerror="this.onerror=null;this.style.display='none';"
              alt="Always On Generators Logo"
-             style="width:40px;height:40px;display:block;border-radius:50%;object-fit:cover;flex-shrink:0;">
-        <div class="logo-text">ALWAYS<span>ON</span><br>
-          <span style="color:#111;font-size:10px;font-family:Arial,sans-serif;letter-spacing:1px;">GENERATORS</span>
+             style="width:42px;height:42px;display:block;object-fit:contain;flex-shrink:0;">
+        <div class="logo-text"><span class="logo-always">ALWAYS</span><span class="logo-on">ON</span><br>
+          <span class="logo-generators" style="font-size:10px;font-family:Arial,sans-serif;letter-spacing:1px;">GENERATORS</span>
         </div>
       </div>
       <div class="checklist-title">ELECTRICAL INSTALLATION CHECKLIST</div>
     </div>
 
     <div class="top-fields">
-      <div class="field-row"><label>Customer Name:</label><input type="text"></div>
-      <div class="field-row"><label>Date:</label><input type="text"></div>
-      <div class="field-row"><label>Address:</label><input type="text"></div>
+      <div class="field-row"><label>Customer Name:</label><input type="text" autocapitalize="words" autocomplete="name" enterkeyhint="next"></div>
+      <div class="field-row"><label>Date:</label><input type="date"></div>
+      <div class="field-row"><label>Address:</label><input type="text" autocapitalize="words" autocomplete="street-address" enterkeyhint="next"></div>
       <div class="field-row"><label>Install Truck:</label><input type="text"></div>
       <div class="field-row"><label>Job:</label><input type="text"></div>
-      <div class="field-row"><label>Team Member Names:</label><input type="text"></div>
+      <div class="field-row"><label>Team Member Names:</label><input type="text" autocapitalize="words" enterkeyhint="done"></div>
     </div>
 
     <div class="two-col">
@@ -647,7 +1265,7 @@ body.dark-mode .notice { color: #7DD3FC; }
           <div class="section-row"><label>Grounds and Neutrals Separated:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
           <div class="section-row"><label>Transfer Switch(es) Made Up:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
           <div class="section-row"><label>Generator Made Up:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
-          <div class="section-row"><label>Generator Electrical Run:</label><input type="checkbox"> Surface Mount <input type="checkbox"> U.G. <input type="checkbox"> Attic</div>
+          <div class="section-row" data-multi="true"><label>Generator Electrical Run:</label><input type="checkbox"> Surface Mount <input type="checkbox"> U.G. <input type="checkbox"> Attic</div>
           <div class="section-row"><label>Generator Set to NG or LQ in Controller &amp; In Generator:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
           <div class="section-row"><label>60A Load Shed Installed &amp; Programmed:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
           <div class="section-row"><label>100A Load Shed Installed &amp; Programmed:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
@@ -657,14 +1275,14 @@ body.dark-mode .notice { color: #7DD3FC; }
           <div class="section-title">Inspection(s)</div>
           <div class="section-row"><label><b>Team Member:</b></label><input class="inline-input xshort" type="text"><label><b>Double Checked By:</b></label><input class="inline-input xshort" type="text"></div>
           <div class="section-row"><label>Inspected:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
-          <div class="section-row"><label>FIRE Inspector:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
-          <div class="section-row"><label>Footing:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
           <div class="section-row"><label>County:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
-          <div class="section-row"><label>Gas Rough:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
-          <div class="section-row"><label>Tank:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
-          <div class="section-row"><label>Underground (Gas or Electric, Circle One or Both):</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
-          <div class="section-row"><label>Final Electrical Passed:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
-          <div class="section-row"><label>Final Gas:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
+          <div class="section-row"><label>Service Change:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
+          <div class="section-row"><label>Electrical Rough:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
+          <div class="section-row"><label>Electrical Final:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
+          <div class="section-row"><label>Electrical Underground:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
+          <div class="section-row"><label>Footing:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
+          <div class="section-row"><label>Pad:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
+          <div class="section-row"><label>All Pics for Inspected:</label><input type="checkbox"> YES <input type="checkbox"> NO</div>
         </div>
         <hr class="section-hr">
         <div class="section">
@@ -687,6 +1305,9 @@ body.dark-mode .notice { color: #7DD3FC; }
   <div class="form-page" id="page2">
     <div id="page2-inner">
 
+    <!-- MOBILE ACCORDION UI — built by JS, screen-only -->
+    <div id="mobile-p2-accordions"></div>
+
     <div class="grid-section">
       <table class="mat-table">
         <thead><tr>
@@ -698,11 +1319,11 @@ body.dark-mode .notice { color: #7DD3FC; }
         </tr></thead>
         <tbody><tr>
           <td class="row-label">Length</td>
-          <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-          <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-          <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-          <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-          <td><input type="text"></td>
+          <td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td>
+          <td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td>
+          <td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td>
+          <td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td>
+          <td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td>
         </tr></tbody>
       </table>
     </div>
@@ -718,10 +1339,10 @@ body.dark-mode .notice { color: #7DD3FC; }
         </tr></thead>
         <tbody><tr>
           <td class="row-label">Length</td>
-          <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-          <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-          <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-          <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+          <td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td>
+          <td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td>
+          <td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td>
+          <td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td>
         </tr></tbody>
       </table>
     </div>
@@ -736,9 +1357,9 @@ body.dark-mode .notice { color: #7DD3FC; }
         </tr></thead>
         <tbody><tr>
           <td class="row-label">Length</td>
-          <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-          <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-          <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+          <td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td>
+          <td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td>
+          <td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td><td><div class="ft-cell"><input type="text" inputmode="numeric" pattern="[0-9]*"><span class="ft-label">Ft.</span></div></td>
         </tr></tbody>
       </table>
     </div>
@@ -754,24 +1375,28 @@ body.dark-mode .notice { color: #7DD3FC; }
       </table>
     </div>
 
-    <div class="grid-section">
-      <table class="mat-table" id="wireway-table">
-        <thead><tr>
-          <th style="width:100px;">WIREWAY</th>
-          <th>3'</th><th>4'</th><th>5'</th><th>6'</th>
-        </tr></thead>
-        <tbody id="wireway-body"></tbody>
-      </table>
-    </div>
+    <div class="wireway-polaris-row">
 
-    <div class="grid-section">
-      <table class="mat-table" id="polaris-table">
-        <thead><tr>
-          <th style="width:100px;">POLARIS TAPS</th>
-          <th>2-Port</th><th>3-Port</th><th>4-Port</th><th>5-Port</th><th>6-Port</th>
-        </tr></thead>
-        <tbody id="polaris-body"></tbody>
-      </table>
+      <div class="grid-section" style="flex:1;min-width:0;">
+        <table class="mat-table" id="wireway-table">
+          <thead><tr>
+            <th style="width:80px;">WIREWAY</th>
+            <th>2'</th><th>3'</th><th>4'</th><th>5'</th><th>6'</th>
+          </tr></thead>
+          <tbody id="wireway-body"></tbody>
+        </table>
+      </div>
+
+      <div class="grid-section" style="flex:1;min-width:0;">
+        <table class="mat-table" id="polaris-table">
+          <thead><tr>
+            <th style="width:80px;">POLARIS TAPS</th>
+            <th>Straights</th><th>2-Port</th><th>3-Port</th><th>4-Port</th><th>5-Port</th>
+          </tr></thead>
+          <tbody id="polaris-body"></tbody>
+        </table>
+      </div>
+
     </div>
 
     <div class="footer-fields">
@@ -784,7 +1409,6 @@ body.dark-mode .notice { color: #7DD3FC; }
       <div class="footer-row">
         <div class="footer-field"><label>Shallow Strut (length):</label><input type="text" class="wide" inputmode="numeric"></div>
         <div class="footer-field"><label>Deep Strut (length):</label><input type="text" class="wide" inputmode="numeric"></div>
-        <div class="footer-field" style="flex:1;"><label>Other:</label><input type="text" style="width:100%;min-width:120px;"></div>
       </div>
       <div class="footer-row">
         <div class="footer-field"><label>100A Disconnects (Qty):</label><input type="text" class="short" inputmode="numeric"></div>
@@ -796,6 +1420,10 @@ body.dark-mode .notice { color: #7DD3FC; }
         <div class="footer-field"><label>PSP Load Shed Modules(60A) (Qty):</label><input type="text" class="short" inputmode="numeric"></div>
         <div class="footer-field"><label>PSP Load Shed Modules(100A) (Qty):</label><input type="text" class="short" inputmode="numeric"></div>
       </div>
+      <div class="footer-other-row">
+        <label class="footer-other-label">Other:</label>
+        <input type="text" class="footer-other-input">
+      </div>
     </div>
 
     </div><!-- end #page2-inner -->
@@ -805,7 +1433,10 @@ body.dark-mode .notice { color: #7DD3FC; }
 <p class="notice">📱 iPhone: press &amp; hold images to save  |  🤖 Android: images download to gallery</p>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <script>
+// ===== FORCE ACTION BAR TO SCROLL WITH PAGE =====
+
 // ===== THEME =====
 const THEME_KEY = 'aog_forms_theme_preference';
 function getInitialTheme() {
@@ -832,6 +1463,18 @@ function setupThemeToggle() {
 }
 applyTheme(getInitialTheme());
 
+// Keep page-wrapper clear of action bar on any screen size
+function adjustTopPadding() {
+  const bar = document.getElementById('action-bar');
+  const wrapper = document.querySelector('.page-wrapper');
+  const status = document.getElementById('save-status');
+  if (bar && wrapper) wrapper.style.paddingTop = bar.offsetHeight + 'px';
+  if (bar && status) status.style.top = bar.offsetHeight + 'px';
+}
+window.addEventListener('resize', adjustTopPadding);
+window.addEventListener('load', adjustTopPadding);
+setTimeout(adjustTopPadding, 100);
+
 // ===== BUILD TABLES =====
 const fittings = [
   "PVC Pipe","Weatherproof Seals","Weatherproof Lock Rings","Fiber Bushings",
@@ -842,14 +1485,28 @@ const fittings = [
 ];
 const fittingSizes = ['5"','4"','3-1/2"','3"','2-1/2"','2"','1-1/2"','1-1/4"','1"','¾"','½"'];
 
-fittings.forEach(name => {
+fittings.forEach((name, idx) => {
+  // Every 5 rows insert a repeat header (screen only, not print)
+  if (idx > 0 && idx % 5 === 0) {
+    const repeatHeader = document.createElement("tr");
+    repeatHeader.className = "repeat-header no-print";
+    const emptyTh = document.createElement("th");
+    emptyTh.className = "row-label";
+    repeatHeader.appendChild(emptyTh);
+    fittingSizes.forEach(size => {
+      const th = document.createElement("th");
+      th.textContent = size;
+      repeatHeader.appendChild(th);
+    });
+    document.getElementById("fittings-body").appendChild(repeatHeader);
+  }
   const tr = document.createElement("tr");
   const lbl = document.createElement("td");
   lbl.className = "row-label"; lbl.textContent = name;
   tr.appendChild(lbl);
   fittingSizes.forEach(() => {
     const td = document.createElement("td");
-    const inp = document.createElement("input"); inp.type = "text";
+    const inp = document.createElement("input"); inp.type = "text"; inp.inputMode = "numeric"; inp.pattern = "[0-9]*";
     td.appendChild(inp); tr.appendChild(td);
   });
   document.getElementById("fittings-body").appendChild(tr);
@@ -860,9 +1517,9 @@ fittings.forEach(name => {
   const lbl = document.createElement("td");
   lbl.className = "row-label"; lbl.textContent = name;
   tr.appendChild(lbl);
-  ["3'","4'","5'","6'"].forEach(() => {
+  ["2'","3'","4'","5'","6'"].forEach(() => {
     const td = document.createElement("td");
-    const inp = document.createElement("input"); inp.type = "text";
+    const inp = document.createElement("input"); inp.type = "text"; inp.inputMode = "numeric"; inp.pattern = "[0-9]*";
     td.appendChild(inp); tr.appendChild(td);
   });
   document.getElementById("wireway-body").appendChild(tr);
@@ -873,13 +1530,15 @@ fittings.forEach(name => {
   const lbl = document.createElement("td");
   lbl.className = "row-label"; lbl.textContent = name;
   tr.appendChild(lbl);
-  ["2-Port","3-Port","4-Port","5-Port","6-Port"].forEach(() => {
+  ["Straights","2-Port","3-Port","4-Port","5-Port"].forEach(() => {
     const td = document.createElement("td");
-    const inp = document.createElement("input"); inp.type = "text";
+    const inp = document.createElement("input"); inp.type = "text"; inp.inputMode = "numeric"; inp.pattern = "[0-9]*";
     td.appendChild(inp); tr.appendChild(td);
   });
   document.getElementById("polaris-body").appendChild(tr);
 });
+// Re-attach autosave to JS-built table inputs
+if (typeof attachAutosave === 'function') setTimeout(() => { attachAutosave(); restoreFormData(); }, 100);
 
 // ===== TRANSFER SWITCH =====
 let tsCount = 0;
@@ -918,7 +1577,7 @@ function buildTSBlock(num) {
 function addTransferSwitch() {
   tsCount++;
   document.getElementById("ts-container").appendChild(buildTSBlock(tsCount));
-  renumberTS(); applyYNColors();
+  renumberTS(); applyYNColors(); attachAutosave(); saveFormData();
 }
 function removeTS(btn) { btn.closest(".ts-block").remove(); renumberTS(); }
 function renumberTS() {
@@ -953,8 +1612,25 @@ function applyYNColors() {
     cb.parentNode.insertBefore(wrap, cb); wrap.appendChild(cb);
     if (textNode) { wrap.appendChild(document.createTextNode(' ' + label)); textNode.remove(); }
     function syncState() { wrap.classList.toggle('checked', cb.checked); }
-    cb.addEventListener('change', syncState);
-    wrap.addEventListener('click', (e) => { if (e.target !== cb) { cb.checked = !cb.checked; cb.dispatchEvent(new Event('change')); } });
+    function exclusiveCheck() {
+      if (!cb.checked) return;
+      const row = cb.closest('.section-row, .ts-body > div');
+      if (!row || row.dataset.multi === 'true') return;
+      row.querySelectorAll('.yn-checkbox-wrap input[type="checkbox"]').forEach(other => {
+        if (other !== cb && other.checked) {
+          other.checked = false;
+          const w = other.parentElement;
+          if (w) w.classList.remove('checked');
+        }
+      });
+    }
+    cb.addEventListener('change', () => { exclusiveCheck(); syncState(); saveFormData(); });
+    wrap.addEventListener('click', (e) => {
+      if (e.target === cb) return; // let native checkbox handle its own click
+      e.preventDefault();
+      cb.checked = !cb.checked;
+      cb.dispatchEvent(new Event('change'));
+    });
     syncState();
   });
 }
@@ -963,6 +1639,10 @@ const ynObserver = new MutationObserver(() => applyYNColors());
 // ===== CLEAR =====
 function clearForm() {
   if (!confirm("Clear all fields? This cannot be undone.")) return;
+  try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+  // Remove all extra transfer switches, keep only the first
+  document.querySelectorAll('.ts-block:not(:first-child)').forEach(el => el.remove());
+  renumberTS();
   document.querySelectorAll('input[type="text"], textarea').forEach(el => el.value = "");
   document.querySelectorAll('input[type="checkbox"]').forEach(el => {
     el.checked = false;
@@ -973,30 +1653,115 @@ function clearForm() {
   document.querySelectorAll('.ts-toggle').forEach(t => t.classList.remove('collapsed'));
 }
 
-// ===== PRINT — simple synchronous, exactly as doc9 had it =====
+// ===== FILENAME HELPER =====
+function buildFilename(ext, pageNum, totalPages) {
+  // Pull Customer Name and Address from the top-fields inputs
+  const topInputs = document.querySelectorAll('.top-fields .field-row input[type="text"]');
+  // Order: Customer Name (0), Date (1), Address (2)
+  const customerName = (topInputs[0] ? topInputs[0].value.trim() : '') || 'Customer';
+  const address      = (topInputs[2] ? topInputs[2].value.trim() : '') || 'Address';
+  // Sanitize: replace any character that's not alphanumeric, space, hyphen, or dot
+  function sanitize(s) { return s.replace(/[^a-zA-Z0-9 \-\.]/g, '').replace(/\s+/g, '_').trim() || 'Unknown'; }
+  const namePart    = sanitize(customerName);
+  const addressPart = sanitize(address);
+  const suffix = totalPages > 1 ? `_Page${pageNum}` : '';
+  return `${namePart}_${addressPart}_Elec_Install${suffix}.${ext}`;
+}
+
+// ===== PRINT =====
+let wasDarkAtPrint = false;
 function openPrintPreview() {
-  const wasDark = document.body.classList.contains('dark-mode');
-  if (wasDark) document.body.classList.remove('dark-mode');
-  const ab = document.querySelector('.action-bar');
-  const nt = document.querySelector('.notice');
-  if (ab) ab.style.display = 'none';
-  if (nt) nt.style.display = 'none';
+  const topInputs = document.querySelectorAll('.top-fields .field-row input[type="text"]');
+  const customerName = (topInputs[0] ? topInputs[0].value.trim() : '') || 'Customer';
+  const address      = (topInputs[2] ? topInputs[2].value.trim() : '') || 'Address';
+  function sanitize(s) { return s.replace(/[^a-zA-Z0-9 \-\.]/g, '').replace(/\s+/g, '_').trim() || 'Unknown'; }
+  const origTitle = document.title;
+  document.title = `${sanitize(customerName)}_${sanitize(address)}_Elec_Install`;
+
+  wasDarkAtPrint = document.body.classList.contains('dark-mode');
+  if (wasDarkAtPrint) {
+    const noTrans = document.createElement('style');
+    noTrans.id = 'no-transitions';
+    noTrans.textContent = '* { transition: none !important; animation: none !important; }';
+    document.head.appendChild(noTrans);
+    document.body.classList.remove('dark-mode');
+    void document.body.offsetHeight;
+  }
   window.print();
-  if (ab) ab.style.display = '';
-  if (nt) nt.style.display = '';
-  if (wasDark) document.body.classList.add('dark-mode');
+  document.title = origTitle;
+}
+
+// ===== CAPTURE HELPER: swap mobile accordion <=> real tables =====
+function showRealTablesForCapture() {
+  const style = document.createElement('style');
+  style.id = 'capture-override';
+  style.textContent = [
+    '#page2 .grid-section { display: block !important; }',
+    '#page2 .footer-fields { display: block !important; }',
+    '#mobile-p2-accordions { display: none !important; }',
+    'table.mat-table td { overflow: visible !important; vertical-align: middle !important; }',
+    'table.mat-table td input[type="text"] { overflow: visible !important; height: 18px !important; line-height: 18px !important; display: block !important; }',
+    '.footer-field input[type="text"] { height: 24px !important; line-height: 24px !important; overflow: visible !important; box-sizing: border-box !important; }',
+    '.footer-fields { overflow: visible !important; }',
+    '.top-fields { grid-template-columns: 1fr 1fr !important; gap: 6px 12px !important; }',
+    '.two-col { grid-template-columns: 1fr 1fr !important; gap: 8px 16px !important; }',
+    '.form-page { padding: 24px !important; }',
+    '.logo-area { flex-wrap: nowrap !important; }',
+    '.section-row { font-size: 13px !important; flex-wrap: wrap !important; }',
+    '.inline-input { font-size: 13px !important; width: 100px !important; }'
+  ].join('\n');
+  document.head.appendChild(style);
+}
+function hideRealTablesAfterCapture() {
+  const style = document.getElementById('capture-override');
+  if (style) style.remove();
 }
 
 // ===== IPHONE =====
+function forceDesktopLayout() {
+  const saved = [];
+  function setInline(el, styles) {
+    const prev = {};
+    for (const [k, v] of Object.entries(styles)) {
+      prev[k] = el.style[k];
+      el.style.setProperty(k.replace(/([A-Z])/g, '-$1').toLowerCase(), v, 'important');
+    }
+    saved.push({ el, prev, props: Object.keys(styles) });
+  }
+  // table text inputs — bump font 14px for capture
+  document.querySelectorAll('table.mat-table td input[type="text"]').forEach(el => {
+    setInline(el, { fontSize: '14px', height: 'auto', lineHeight: '1.6', padding: '2px 0', overflow: 'visible', display: 'block', boxSizing: 'border-box' });
+  });
+  document.querySelectorAll('table.mat-table td').forEach(el => {
+    setInline(el, { overflow: 'visible', height: 'auto' });
+  });
+  // footer field inputs — bump font 14px for capture
+  document.querySelectorAll('.footer-field input[type="text"]').forEach(el => {
+    setInline(el, { fontSize: '14px', height: 'auto', lineHeight: '1.6', overflow: 'visible', boxSizing: 'border-box' });
+  });
+  document.querySelectorAll('.footer-field').forEach(el => {
+    setInline(el, { alignItems: 'center', overflow: 'visible' });
+  });
+  return () => saved.forEach(({ el, prev, props }) => {
+    props.forEach(k => {
+      const cssProp = k.replace(/([A-Z])/g, '-$1').toLowerCase();
+      el.style.removeProperty(cssProp);
+      if (prev[k]) el.style[k] = prev[k];
+    });
+  });
+}
+
 function saveForIPhone() {
   setStatus('Rendering pages, please wait…');
   const pages = document.querySelectorAll('.form-page');
   const wasDark = document.body.classList.contains('dark-mode');
   if (wasDark) document.body.classList.remove('dark-mode');
+  showRealTablesForCapture();
+  const restoreLayout = forceDesktopLayout();
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px;overflow-y:auto;';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px;overflow-y:auto;';
   const closeBtn = document.createElement('button');
-  closeBtn.style.cssText = 'position:sticky;top:16px;background:#DC2626;color:#fff;border:none;border-radius:4px;padding:8px 16px;font-size:12px;cursor:pointer;font-weight:bold;z-index:10000;';
+  closeBtn.style.cssText = 'position:sticky;top:60px;background:#DC2626;color:#fff;border:none;border-radius:6px;padding:12px 28px;font-size:15px;cursor:pointer;font-weight:bold;z-index:1000000;align-self:center;margin-top:60px;margin-bottom:12px;';
   closeBtn.textContent = '✕ Close';
   const container = document.createElement('div');
   container.style.cssText = 'display:flex;flex-direction:column;gap:12px;width:100%;max-width:600px;';
@@ -1004,18 +1769,20 @@ function saveForIPhone() {
   let completed = 0;
   pages.forEach((page, idx) => {
     const wrapper = document.createElement('div'); wrapper.style.cssText = 'text-align:center;';
-    const lbl = document.createElement('div'); lbl.style.cssText = 'color:#ccc;font-size:11px;margin-bottom:8px;'; lbl.textContent = `Page ${idx+1} of ${pages.length}`;
+    const fname = buildFilename('jpg', idx + 1, pages.length);
+    const lbl = document.createElement('div'); lbl.style.cssText = 'color:#ccc;font-size:11px;margin-bottom:4px;'; lbl.textContent = `Page ${idx+1} of ${pages.length}`;
+    const fnlbl = document.createElement('div'); fnlbl.style.cssText = 'color:#aaa;font-size:10px;margin-bottom:8px;word-break:break-all;'; fnlbl.textContent = fname;
     const img = document.createElement('img');
     html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false, width: 1050, windowWidth: 1050 }).then(canvas => {
       img.src = canvas.toDataURL('image/jpeg', 0.85);
       img.style.cssText = 'max-width:100%;border:2px solid #555;border-radius:4px;display:block;margin:0 auto;';
-      img.alt = `Form page ${idx+1}`;
-      wrapper.appendChild(lbl); wrapper.appendChild(img); container.appendChild(wrapper);
+      img.alt = fname;
+      wrapper.appendChild(lbl); wrapper.appendChild(fnlbl); wrapper.appendChild(img); container.appendChild(wrapper);
       completed++;
-      if (completed === pages.length) { setStatus('Images ready. Long-press to save to Photos.'); if (wasDark) document.body.classList.add('dark-mode'); }
+      if (completed === pages.length) { hideRealTablesAfterCapture(); restoreLayout(); setStatus('Images ready. Long-press each to save to Photos.'); if (wasDark) document.body.classList.add('dark-mode'); }
     });
   });
-  closeBtn.onclick = () => { setStatus(''); if (wasDark) document.body.classList.add('dark-mode'); document.body.removeChild(overlay); };
+  closeBtn.onclick = () => { hideRealTablesAfterCapture(); restoreLayout(); setStatus(''); if (wasDark) document.body.classList.add('dark-mode'); document.body.removeChild(overlay); };
 }
 
 // ===== ANDROID =====
@@ -1024,24 +1791,81 @@ function saveForAndroid() {
   const pages = document.querySelectorAll('.form-page');
   const wasDark = document.body.classList.contains('dark-mode');
   if (wasDark) document.body.classList.remove('dark-mode');
+  showRealTablesForCapture();
+  const restoreLayout = forceDesktopLayout();
   let completed = 0;
   pages.forEach((page, idx) => {
     html2canvas(page, { scale: 2, useCORS: true, backgroundColor: '#fff', logging: false, width: 1050, windowWidth: 1050 }).then(canvas => {
       const link = document.createElement('a');
-      link.download = pages.length === 1 ? 'AlwaysOn_Generators_Form.jpg' : `AlwaysOn_Generators_Form_Page${idx+1}.jpg`;
+      link.download = buildFilename('jpg', idx + 1, pages.length);
       link.href = canvas.toDataURL('image/jpeg', 0.85); link.click();
       completed++;
-      if (completed === pages.length) { setStatus(`${pages.length} image(s) sent to your Downloads folder.`); setTimeout(() => setStatus(''), 4000); if (wasDark) document.body.classList.add('dark-mode'); }
+      if (completed === pages.length) { hideRealTablesAfterCapture(); restoreLayout(); setStatus(`${pages.length} image(s) sent to your Downloads folder.`); setTimeout(() => setStatus(''), 4000); if (wasDark) document.body.classList.add('dark-mode'); }
     });
   });
 }
 
-function setStatus(msg) { document.getElementById('save-status').textContent = msg; }
+function setStatus(msg) {
+  const el = document.getElementById('save-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
 
 // ===== INIT =====
+
+// ===== AUTOSAVE TO localStorage =====
+const SAVE_KEY = 'aog_elec_form_v1';
+
+function saveFormData() {
+  try {
+    const data = {};
+    // Text inputs and textareas — keyed by index among all saveable fields
+    document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], textarea').forEach((el, i) => {
+      data['f_' + i] = el.value;
+    });
+    // Checkboxes
+    document.querySelectorAll('input[type="checkbox"]').forEach((el, i) => {
+      data['c_' + i] = el.checked ? '1' : '0';
+    });
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  } catch(e) {}
+}
+
+function restoreFormData() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], textarea').forEach((el, i) => {
+      if (data['f_' + i] !== undefined) el.value = data['f_' + i];
+    });
+    document.querySelectorAll('input[type="checkbox"]').forEach((el, i) => {
+      if (data['c_' + i] !== undefined) {
+        el.checked = data['c_' + i] === '1';
+        const w = el.parentElement;
+        if (w && w.classList.contains('yn-checkbox-wrap')) {
+          w.classList.toggle('checked', el.checked);
+        }
+      }
+    });
+  } catch(e) {}
+}
+
+function attachAutosave() {
+  document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], textarea').forEach(el => {
+    el.addEventListener('input', saveFormData);
+  });
+  document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+    el.addEventListener('change', saveFormData);
+  });
+}
+
 function initApp() {
+  restoreFormData();
   applyYNColors();
   setupThemeToggle();
+  attachAutosave();
   const container = document.getElementById('ts-container');
   if (container) ynObserver.observe(container, { childList: true, subtree: true });
 }
@@ -1051,10 +1875,1481 @@ if (document.readyState === 'loading') {
   initApp();
 }
 
+// ===== BEFORE/AFTER PRINT =====
+window.addEventListener('beforeprint', () => {
+  // Inject compact style for page1 when multiple transfer switches are present
+  const tsCount = document.querySelectorAll('.ts-block').length;
+  if (tsCount > 1) {
+    const s = document.createElement('style');
+    s.id = 'multi-ts-print';
+    s.textContent = `
+      #page1 .section-row { font-size: 8px !important; margin-bottom: 1px !important; }
+      #page1 .field-row label { font-size: 8px !important; }
+      #page1 .field-row input[type="text"] { font-size: 8px !important; }
+      #page1 .inline-input { font-size: 8px !important; }
+      #page1 .section { margin-bottom: 4px !important; }
+      #page1 .section-title { font-size: 9px !important; margin-bottom: 2px !important; }
+      #page1 .ts-block { margin-bottom: 2px !important; border-color: #bbb !important; }
+      #page1 .ts-header { padding: 2px 4px !important; }
+      #page1 .ts-header-left { font-size: 8px !important; }
+      #page1 .ts-body { padding: 2px 4px !important; }
+      #page1 .ts-body .section-row { font-size: 8px !important; margin-bottom: 1px !important; }
+      #page1 .yn-checkbox-wrap { font-size: 7px !important; padding: 0px 2px !important; min-height: 0 !important; min-width: 0 !important; }
+      #page1 input[type="checkbox"] { width: 8px !important; height: 8px !important; min-width: 8px !important; }
+      #page1 .two-col { gap: 4px 8px !important; }
+      #page1 hr.section-hr { margin: 2px 0 !important; }
+      #page1 .top-fields { margin-bottom: 4px !important; gap: 1px 6px !important; }
+      #page1 .textarea-field { min-height: 20px !important; font-size: 8px !important; }
+    `;
+    document.head.appendChild(s);
+  }
+});
+window.addEventListener('afterprint', () => {
+  const nt = document.getElementById('no-transitions');
+  if (nt) nt.remove();
+  const mts = document.getElementById('multi-ts-print');
+  if (mts) mts.remove();
+  if (wasDarkAtPrint) document.body.classList.add('dark-mode');
+});
+
+// ===== MOBILE ACCORDION — PAGE 2 =====
+// Runs on screen only; print uses the real tables.
+function buildMobileAccordions() {
+  const container = document.getElementById('mobile-p2-accordions');
+  if (!container) return;
+
+  // --- Helper: create one accordion panel ---
+  function makeAccordion(title, badge, buildBodyFn) {
+    const wrap = document.createElement('div');
+    wrap.className = 'mob-accordion';
+
+    const btn = document.createElement('button');
+    btn.className = 'mob-acc-header';
+    btn.type = 'button';
+    btn.innerHTML = `
+      <span class="mob-acc-title">${title}</span>
+      <span class="mob-acc-badge">${badge}</span>
+      <span class="mob-filled-dot"></span>
+      <span class="mob-acc-arrow">▼</span>
+    `;
+
+    const body = document.createElement('div');
+    body.className = 'mob-acc-body';
+    buildBodyFn(body, btn);
+
+    btn.addEventListener('click', () => {
+      const isOpen = body.classList.contains('open');
+      body.classList.toggle('open', !isOpen);
+      btn.classList.toggle('open', !isOpen);
+    });
+
+    wrap.appendChild(btn);
+    wrap.appendChild(body);
+    container.appendChild(wrap);
+  }
+
+  // --- Multi-row table (Fittings, Wireway, Polaris) ---
+  // Each row of the real table = a sub-section with heading
+  // Each cell in that row = a card row
+  function addMultiRowTableAccordion(title, badge, tableId) {
+    makeAccordion(title, badge, (body, headerBtn) => {
+      const table = document.getElementById(tableId);
+      if (!table) return;
+      const colHeaders = Array.from(table.querySelectorAll('thead th')).slice(1).map(th => th.textContent.trim());
+      const rows = Array.from(table.querySelectorAll('tbody tr'));
+
+      rows.forEach(tr => {
+        const rowLabel = tr.querySelector('td.row-label')?.textContent.trim() || '';
+        const realInputs = Array.from(tr.querySelectorAll('input'));
+
+        // Sub-accordion wrapper
+        const subWrap = document.createElement('div');
+        subWrap.className = 'mob-sub-accordion';
+
+        // Clickable heading — collapsed by default
+        const subHeader = document.createElement('div');
+        subHeader.className = 'mob-section-heading mob-section-heading--toggle';
+
+        const subArrow = document.createElement('span');
+        subArrow.className = 'mob-sub-arrow';
+        subArrow.textContent = '\u25B6';
+
+        const subTitle = document.createElement('span');
+        subTitle.textContent = rowLabel;
+
+        const subDot = document.createElement('span');
+        subDot.className = 'mob-sub-dot';
+
+        subHeader.appendChild(subArrow);
+        subHeader.appendChild(subTitle);
+        subHeader.appendChild(subDot);
+
+        // Sizes container — hidden by default
+        const subBody = document.createElement('div');
+        subBody.className = 'mob-sub-body';
+
+        colHeaders.forEach((colName, i) => {
+          const row = document.createElement('div');
+          row.className = 'mob-card-row';
+
+          const lbl = document.createElement('div');
+          lbl.className = 'mob-card-label';
+          lbl.textContent = colName;
+
+          const inp = document.createElement('input');
+          inp.type = 'text';
+          inp.inputMode = 'numeric';
+          inp.pattern = '[0-9]*';
+          inp.className = 'mob-card-input';
+          inp.placeholder = '\u2014';
+
+          const realInput = realInputs[i];
+          if (realInput) {
+            inp.value = realInput.value;
+            inp.addEventListener('input', () => {
+              realInput.value = inp.value;
+              const hasRow = Array.from(subBody.querySelectorAll('.mob-card-input')).some(el => el.value.trim() !== '');
+              subDot.style.display = hasRow ? 'inline-block' : 'none';
+              const hasAny = Array.from(body.querySelectorAll('.mob-card-input')).some(el => el.value.trim() !== '');
+              headerBtn.classList.toggle('has-data', hasAny);
+            });
+          }
+
+          row.appendChild(lbl);
+          row.appendChild(inp);
+          subBody.appendChild(row);
+        });
+
+        subHeader.addEventListener('click', () => {
+          const open = subBody.classList.toggle('open');
+          subArrow.textContent = open ? '\u25BC' : '\u25B6';
+        });
+
+        subWrap.appendChild(subHeader);
+        subWrap.appendChild(subBody);
+        body.appendChild(subWrap);
+      });
+    });
+  }
+
+  // --- Footer accordion ---
+  function addFooterAccordion() {
+    makeAccordion('Hardware & Extras', 'Qty / Length', (body, headerBtn) => {
+      const realFooter = document.querySelector('#page2 .footer-fields');
+      if (!realFooter) return;
+
+      const realLabels = realFooter.querySelectorAll('.footer-field label');
+      const realInputs = realFooter.querySelectorAll('.footer-field input');
+
+      realLabels.forEach((lbl, i) => {
+        const realInput = realInputs[i];
+        if (!realInput) return;
+
+        const row = document.createElement('div');
+        row.className = 'mob-footer-row';
+
+        const labelEl = document.createElement('div');
+        labelEl.className = 'mob-footer-label';
+        labelEl.textContent = lbl.textContent.replace(':', '').trim();
+
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.inputMode = realInput.inputMode || 'text';
+        inp.pattern = realInput.pattern || '';
+        inp.className = 'mob-card-input mob-footer-input';
+        inp.placeholder = '—';
+        inp.value = realInput.value;
+
+        inp.addEventListener('input', () => {
+          realInput.value = inp.value;
+          const hasAny = Array.from(body.querySelectorAll('.mob-card-input')).some(el => el.value.trim() !== '');
+          headerBtn.classList.toggle('has-data', hasAny);
+        });
+
+        row.appendChild(labelEl);
+        row.appendChild(inp);
+        body.appendChild(row);
+      });
+    });
+  }
+
+  // --- Wire tables (need tables to exist first, so we defer slightly) ---
+  function buildAll() {
+    // Wire tables — simple 1-row (select by thead content)
+    function findTableByHeader(text) {
+      return Array.from(document.querySelectorAll('#page2 table.mat-table')).find(t => {
+        const th = t.querySelector('thead th');
+        return th && th.textContent.includes(text);
+      });
+    }
+
+    function addSimpleTableByRef(title, badge, table) {
+      if (!table) return;
+      makeAccordion(title, badge, (body, headerBtn) => {
+        const headers = Array.from(table.querySelectorAll('thead th')).slice(1);
+        const realInputs = Array.from(table.querySelectorAll('tbody tr:first-child td input'));
+        headers.forEach((th, i) => {
+          const row = document.createElement('div');
+          row.className = 'mob-card-row';
+          const lbl = document.createElement('div');
+          lbl.className = 'mob-card-label';
+          lbl.textContent = th.textContent.trim().replace(/\n/g, ' ');
+          const inp = document.createElement('input');
+          inp.type = 'text'; inp.inputMode = 'numeric'; inp.pattern = '[0-9]*';
+          inp.className = 'mob-card-input'; inp.placeholder = '—';
+          const realInput = realInputs[i];
+          if (realInput) {
+            inp.value = realInput.value;
+            inp.addEventListener('input', () => {
+              realInput.value = inp.value;
+              const hasAny = Array.from(body.querySelectorAll('.mob-card-input')).some(el => el.value.trim() !== '');
+              headerBtn.classList.toggle('has-data', hasAny);
+            });
+          }
+          const ftSuffix = document.createElement('span');
+          ftSuffix.textContent = 'Ft.';
+          ftSuffix.style.cssText = 'font-size:11px;color:var(--text-muted);flex-shrink:0;font-family:Arial,sans-serif;';
+          row.appendChild(lbl); row.appendChild(inp); row.appendChild(ftSuffix); body.appendChild(row);
+        });
+      });
+    }
+
+    addSimpleTableByRef('CU Wire', '13 sizes', findTableByHeader('CU Wire'));
+    addSimpleTableByRef('AL Wire', '12 sizes', findTableByHeader('AL Wire'));
+    addSimpleTableByRef('THHN Wire', '9 sizes', findTableByHeader('THHN'));
+
+    // Multi-row tables
+    addMultiRowTableAccordion('Fittings', '24 types × 11 sizes', 'fittings-table');
+    addMultiRowTableAccordion('Wireway', '5 sizes × 5 lengths', 'wireway-table');
+    addMultiRowTableAccordion('Polaris Taps', '6 gauges × 5 ports', 'polaris-table');
+
+    // Footer
+    addFooterAccordion();
+  }
+
+  // Tables are built by earlier JS — run after them
+  buildAll();
+}
+
+// Only run on mobile screen widths
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => { attachAutosave(); restoreFormData(); });
+} else {
+  setTimeout(() => { attachAutosave(); restoreFormData(); }, 0);
+}
+
+// ===== VOICE ENTRY (talk to the whole page) =====
+(function() {
+  const statusEl = document.createElement('div');
+  statusEl.id = 'voice-status';
+  document.body.appendChild(statusEl);
+
+  let statusTimer = null;
+  function showStatus(msg, cls, holdMs) {
+    statusEl.textContent = msg;
+    statusEl.className = 'show' + (cls ? ' ' + cls : '');
+    clearTimeout(statusTimer);
+    if (holdMs) statusTimer = setTimeout(() => { statusEl.className = ''; }, holdMs);
+  }
+
+  // ---------- text helpers ----------
+  const NUM_WORDS = {
+    'zero':0,'oh':0,'one':1,'two':2,'to':2,'too':2,'three':3,'four':4,'for':4,'five':5,'six':6,
+    'seven':7,'eight':8,'nine':9,'ten':10,'eleven':11,'twelve':12,'thirteen':13,
+    'fourteen':14,'fifteen':15,'sixteen':16,'seventeen':17,'eighteen':18,'nineteen':19,
+    'twenty':20,'thirty':30,'forty':40,'fifty':50,'sixty':60,'seventy':70,'eighty':80,'ninety':90,'hundred':100
+  };
+  // Spanish -> English so Spanish-speaking crew fill the same English form
+  const SPANISH = [
+    // long phrases first (before single words inside them get translated)
+    [/\btodo recogido y limpio\b/g,'everything picked up and clean'],
+    [/\bnombre del? cliente\b/g,'customer name'],
+    [/\binterruptor de transferencia\b/g,'transfer switch'],
+    [/\btamano del? generador\b/g,'generator size'],
+    [/\bgenerador montado\b/g,'generator set and mounted'],
+    [/\bbateria conectada\b/g,'battery connected'],
+    [/\bcodos? de noventa\b|\bcodos? 90\b/g,'90s'],
+    [/\bcodos? de cuarenta y cinco\b|\bcodos? de 45\b/g,'45s'],
+    [/\badaptadores? macho\b/g,'male adapters'],
+    [/\badaptadores? hembra\b/g,'female adapters'],
+    [/\badaptadores? de caja\b/g,'box adapters'],
+    [/\bcaja de paso\b/g,'jbox'],
+    [/\bdejar de escuchar\b|\bapagar voz\b/g,'stop listening'],
+    // fractions & sizes BEFORE numbers, so "tres cuartos" doesn't become "3 cuartos"
+    [/\btres cuartos?\b/g,'three quarter'],
+    [/\bpulgada y media\b/g,'one and a half inch'],
+    [/\bpulgada y cuarto\b/g,'one and a quarter inch'],
+    [/\b(uno|una|dos|tres|cuatro|cinco|\d) y media\b/g,'$1 and a half'],
+    [/\b(uno|una|dos|tres|cuatro|cinco|\d) y cuarto\b/g,'$1 and a quarter'],
+    [/\bmedia pulgada\b/g,'half inch'],
+    [/\bpulgadas?\b/g,'inch'],[/\bpies\b|\bpie\b/g,'foot'],
+    // compound numbers
+    [/\b(treinta|cuarenta|cincuenta|sesenta|setenta|ochenta|noventa) y (uno|dos|tres|cuatro|cinco|seis|siete|ocho|nueve)\b/g,
+      function(m,t,o){var T={treinta:30,cuarenta:40,cincuenta:50,sesenta:60,setenta:70,ochenta:80,noventa:90};
+        var O={uno:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9};return String(T[t]+O[o]);}],
+    [/\bveinticinco\b/g,'25'],[/\bveinticuatro\b/g,'24'],[/\bveintitres\b/g,'23'],
+    [/\bveintidos\b/g,'22'],[/\bveintiuno\b|\bveintiun\b/g,'21'],
+    [/\bcien\b|\bciento\b/g,'100'],[/\bnoventa\b/g,'90'],[/\bochenta\b/g,'80'],[/\bsetenta\b/g,'70'],
+    [/\bsesenta\b/g,'60'],[/\bcincuenta\b/g,'50'],[/\bcuarenta\b/g,'40'],[/\btreinta\b/g,'30'],
+    [/\bveinte\b/g,'20'],[/\bquince\b/g,'15'],[/\bcatorce\b/g,'14'],[/\btrece\b/g,'13'],
+    [/\bdoce\b/g,'12'],[/\bonce\b/g,'11'],[/\bdiez\b/g,'10'],[/\bnueve\b/g,'9'],[/\bocho\b/g,'8'],
+    [/\bsiete\b/g,'7'],[/\bseis\b/g,'6'],[/\bcinco\b/g,'5'],[/\bcuatro\b/g,'4'],[/\btres\b/g,'3'],
+    [/\bdos\b/g,'2'],[/\buno\b|\buna\b|\bun\b/g,'1'],
+    // yes/no/options
+    [/\bsi\b/g,'yes'],[/\bexistente\b/g,'existing'],[/\batico\b/g,'attic'],
+    [/\bsubterraneo\b/g,'ug'],[/\bdesmarcar?\b|\bquitar\b|\bborrar\b/g,'uncheck'],
+    // materials
+    [/\btubo\b|\btuberia\b/g,'pipe'],[/\bcoples?\b|\bacoplamientos?\b|\bcoplas?\b/g,'couplings'],
+    [/\bcobre\b/g,'copper'],[/\baluminio\b/g,'aluminum'],
+    [/\bcalibre\b/g,'awg'],[/\balambre\b|\bcable\b/g,'wire'],[/\bverde\b/g,'green'],
+    [/\bcaja\b/g,'jbox'],[/\bconcreto\b|\bcemento\b/g,'concrete'],
+    // fields & sections
+    [/\bcliente\b/g,'customer name'],[/\bdireccion\b/g,'address'],
+    [/\bfecha\b/g,'date'],[/\bhoy\b/g,'today'],[/\btrabajo\b/g,'job'],
+    [/\bcamion\b|\btroca\b/g,'install truck'],
+    [/\bbateria\b/g,'battery connected'],
+    [/\btransferencia\b/g,'transfer switch'],
+    [/\binspeccionado\b/g,'inspected'],[/\binspeccion\b/g,'inspection'],
+    [/\bcondado\b/g,'county'],[/\bzapata\b/g,'footing'],
+    [/\bagregar?\b|\banadir\b/g,'add']
+  ];
+  const HOMOPHONES = [
+    [/\bmail\b/g, 'male'], [/\bmails\b/g, 'male'], [/\bfemail\b/g, 'female'],
+    [/\bgage\b/g, 'gauge'], [/\bamerican wire gauge\b/g, 'awg'], [/\bamerican wire gage\b/g, 'awg'],
+    [/\bwire way\b/g, 'wireway'], [/\bgutter\b/g, 'wireway'], [/\bsealtight\b/g, 'seal tight'], [/\bseal type\b/g, 'seal tight'],
+    [/\bmyer'?s\b/g, 'myers'], [/\bmeyer'?s\b/g, 'myers'],
+    // numeric "4/0", "4-0", "4 0" -> "four aught" (do this BEFORE word->digit conversion)
+    [/\b([1-4])\s*[\/\-]\s*0\b/g, (m, d) => ({1:'one',2:'two',3:'three',4:'four'}[d]) + ' aught'],
+    // misheard "aught" — only when it follows a number word, so real words (art, odd, auto) elsewhere are safe
+    [/\b(one|two|three|four|1|2|3|4)\s+(ought|naught|aught|art|arts|yacht|yaught|yachts|ot|odd|auto|otto|ah|aw|out)\b/g,
+      (m, num) => num + ' aught'],
+    [/\bj box\b/g, 'jbox'], [/\bjay box\b/g, 'jbox'], [/\bjunction box\b/g, 'jbox'], [/\bjunction boxes\b/g, 'jbox'],
+    [/\bcustomer'?s name\b/g, 'customer name'],
+    // "ATS" (automatic transfer switch) in its various misheard forms -> transfer switch
+    [/\bautomatic transfer switch\b/g, 'transfer switch'],
+    [/\ba ?t ?s\b|\ba\.t\.s\b|\bat and s\b|\bat s\b/g, 'transfer switch'],
+    // bare "switch" -> "transfer switch", but NOT when "transfer" already precedes it
+    // (avoids "transfer transfer switch"). Also leaves "load shed"/"disconnect" etc. alone.
+    [/\b(?<!transfer )switch\b/g, 'transfer switch'],
+    // "service changed" -> "service change" (tense), and inspection/walkthrough section cues
+    [/\bservice changed\b/g, 'service change'],
+    [/\binspections?\b|\binspect\b/g, 'inspected'],
+    [/\bwalkthrough\b|\bwalk thru\b|\bwalk threw\b/g, 'walk through'],
+    // Gen-Pro wire mishears -> genpro
+    [/\bgen pro\b|\bgenpro\b|\bjin pro\b|\bjen pro\b|\bgym pro\b|\bgen pros\b|\bjenpro\b|\bgin pro\b|\bgen bro\b|\bjean pro\b|\bgenero\b/g, 'genpro'],
+    // kilowatt spellings -> kw, and glue number to kw ("22 kw" / "22 kilowatt" -> "22kw")
+    [/(\d+)\s*(kilowatts?|kilo watts?|kw|k w|k\.w\.)\b/g, '$1kw'],
+    [/\bkilowatts?\b|\bkilo watts?\b/g, 'kw'],
+    // "grounds and neutrals separated" in ANY order/filler:
+    // "neutral and grounds are separated", "grounds separated and neutrals separated", etc.
+    [/\b(ground|grounds|neutral|neutrals)\b(?:\s+(?:and|are|is|the|both)\b|\s+(?:ground|grounds|neutral|neutrals)\b|\s+separated\b)+/g,
+      (m) => /separat/.test(m) ? 'grounds and neutrals separated' : m]
+  ];
+  // ---------- AUGHT LISTENER ----------
+  // The word "aught" (0-gauge wire) is the single hardest token for phone speech
+  // engines. They render it as: ought, naught, not, odd, art, auto, otto, ot,
+  // yacht, oughta, ah, aw, out, oh, etc. We canonicalize these to "aught" — but
+  // ONLY in clear wire context, and the riskier homophones ("not", "all", "art",
+  // "odd", "auto") are converted ONLY when sitting right next to a 1-4 size word,
+  // so ordinary words elsewhere on the form are never touched.
+  function aughtListener(t) {
+    const wireContext = / copper | cu | cooper | coper | aluminum | aluminium | al | alum | awg /.test(t);
+
+    // (a) number + aught-ish word (any homophone) -> "N aught"  [always safe: number-anchored]
+    t = t.replace(/\b(one|two|three|four|1|2|3|4)\s+(aught|ought|oughta|naught|nought|not|odd|art|arts|auto|otto|ot|oot|yacht|yaught|yachts|aut|all|oh|aw|ah|out|o)\b/g,
+      (m, num) => num + ' aught');
+
+    if (!wireContext) return t;
+
+    // (b) in wire context only, a SAFE-set standalone aught word -> "aught"
+    //     (these are not common English words that appear elsewhere on this form)
+    t = t.replace(/\b(aught|ought|oughta|naught|nought|yacht|yaught)\b/g, 'aught');
+
+    // (b2) metal directly followed by a riskier aught-homophone -> that means a
+    //      single-aught (1/0) size, e.g. "copper auto 50", "copper odd 50".
+    //      Safe because it's pinned between the metal word and the rest.
+    t = t.replace(/\b(copper|cu|cooper|coper|aluminum|aluminium|al|alum)\s+(odd|art|arts|auto|otto|ot|oot|out|all|oh|o|aut)\b/g,
+      '$1 aught');
+
+    // (c) collapse "aught oh/zero/o" and accidental "aught aught"
+    t = t.replace(/\baught\s+(aught|oh|zero|o)\b/g, 'aught');
+
+    // (d) join a size word to a nearby standalone "aught" with filler between
+    t = t.replace(/\b(one|two|three|four|1|2|3|4)\b[^0-9a-z]+\baught\b/g, '$1 aught');
+
+    return t;
+  }
+  function normalize(t) {
+    t = ' ' + t.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')  // strip accents: si, garcia, direccion
+      // split hyphens that join words ("three-aught", "one-aught", "made-up", "walk-through")
+      // but KEEP number-hyphen-zero ("4-0", "1-0") so the aught rule can see it
+      .replace(/([a-z])-(?=[a-z])/g, '$1 ')          // letter-letter:  three-aught -> three aught
+      .replace(/(\d)-(?=[a-z])/g, '$1 ')             // digit-letter:   3-aught -> 3 aught
+      .replace(/([a-z])-(?=\d)/g, '$1 ')             // letter-digit:   aught-1 -> aught 1
+      .replace(/(\d)\s*["\u201d\u2033]?\s*[xX]\s*(?=\d)/g, '$1 by ')  // 4x4, 4 x 4, 4"x4" -> 4 by 4 (dimensions)
+      .replace(/(\d)\s*['\u2019\u2032]/g, '$1 foot ')
+      .replace(/(\d)\s*["\u201d\u2033]/g, '$1 inch ')
+      .replace(/(\d)\s*in\b/g, '$1 inch')
+      .replace(/(\d)\s*ft\b/g, '$1 foot')
+      .replace(/[.,!?:;]/g, ' ')
+      .replace(/&/g, ' and ')
+      .replace(/\s+/g, ' ').trim() + ' ';
+    SPANISH.forEach(h => { t = t.replace(h[0], h[1]); });
+    HOMOPHONES.forEach(h => { t = t.replace(h[0], h[1]); });
+    t = aughtListener(t);
+    return t.replace(/\s+/g, ' ');
+  }
+  function wordsToDigits(t) {
+    t = t.replace(/\b(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)[ -](one|two|three|four|five|six|seven|eight|nine)\b/g,
+      (m, a, b) => String(NUM_WORDS[a] + NUM_WORDS[b]));
+    t = t.replace(/\b(one|two|three|four|five|six|seven|eight|nine)[ -]hundred\b/g,
+      (m, a) => String(NUM_WORDS[a] * 100));
+    return t.replace(/\b(zero|oh|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred)\b/g,
+      m => String(NUM_WORDS[m]));
+  }
+  function titleCase(s) {
+    return s.replace(/\b\w/g, c => c.toUpperCase());
+  }
+  // normalize a DOM label into a speakable phrase
+  function labelPhrase(s) {
+    return normalize(
+      s.replace(/\(qty\)|\(length\)/gi, ' ')
+       .replace(/(\d)\s*["\u201d]?\s*[xX]\s*(?=\d)/g, '$1 by ')  // 12"x12"x4" -> 12 by 12 by 4
+       .replace(/"/g, ' ')
+       .replace(/[\/\-()]/g, ' ')
+    ).trim();
+  }
+
+  // ---------- MATERIAL TABLE CATALOGS (page 2 grids) ----------
+  const FITTING_COLS = [
+    { idx:0,  label:'5"',     phrases:['five inch','5 inch','five foot','5 foot','five feet','5 feet'] },
+    { idx:1,  label:'4"',     phrases:['four inch','4 inch','four foot','4 foot','four feet','4 feet'] },
+    { idx:2,  label:'3-1/2"', phrases:['three and a half','3 and a half','three and one half','3 1/2'] },
+    { idx:3,  label:'3"',     phrases:['three inch','3 inch','three foot','3 foot','three feet','3 feet'] },
+    { idx:4,  label:'2-1/2"', phrases:['two and a half','2 and a half','two and one half','2 1/2'] },
+    { idx:5,  label:'2"',     phrases:['two inch','2 inch','two foot','2 foot','two feet','2 feet'] },
+    { idx:6,  label:'1-1/2"', phrases:['one and a half','1 and a half','inch and a half','1 1/2'] },
+    { idx:7,  label:'1-1/4"', phrases:['one and a quarter','1 and a quarter','inch and a quarter','1 1/4'] },
+    { idx:8,  label:'1"',     phrases:['one inch','1 inch','one foot','1 foot','one feet','1 feet'] },
+    { idx:9,  label:'¾"',     phrases:['three quarter','three quarters','3 quarter','3/4'] },
+    { idx:10, label:'½"',     phrases:['half inch','one half','a half','1/2'] }
+  ];
+  const WIREWAY_COLS = [
+    { idx:0, label:"2'", phrases:['two foot','two feet','2 foot','2 feet'] },
+    { idx:1, label:"3'", phrases:['three foot','three feet','3 foot','3 feet'] },
+    { idx:2, label:"4'", phrases:['four foot','four feet','4 foot','4 feet'] },
+    { idx:3, label:"5'", phrases:['five foot','five feet','5 foot','5 feet'] },
+    { idx:4, label:"6'", phrases:['six foot','six feet','6 foot','6 feet'] }
+  ];
+  const POLARIS_COLS = [
+    { idx:0, label:'Straights', phrases:['straight','straights'] },
+    { idx:1, label:'2-Port',    phrases:['two port','2 port','two ports'] },
+    { idx:2, label:'3-Port',    phrases:['three port','3 port','three ports'] },
+    { idx:3, label:'4-Port',    phrases:['four port','4 port','four ports'] },
+    { idx:4, label:'5-Port',    phrases:['five port','5 port','five ports'] }
+  ];
+  const FITTING_ROWS = [
+    { label:'PVC Pipe',                phrases:['pvc pipe','pipe','pvc'] },
+    { label:'Weatherproof Seals',      phrases:['weatherproof seal','weatherproof seals','weather proof seal','weather proof seals','weatherproof'] },
+    { label:'Weatherproof Lock Rings', phrases:['weatherproof lock ring','weatherproof lock rings','weather proof lock ring','weather proof lock rings'] },
+    { label:'Fiber Bushings',          phrases:['fiber bushing','fiber bushings','fibre bushing','bushings','bushing'] },
+    { label:'Lock Rings',              phrases:['lock ring','lock rings'] },
+    { label:'Male Adapters',           phrases:['male adapter','male adapters','male','males'] },
+    { label:'Female Adapters',         phrases:['female adapter','female adapters','female','females'] },
+    { label:'Couplings',               phrases:['coupling','couplings'] },
+    { label:'Box Adapters',            phrases:['box adapter','box adapters'] },
+    { label:'LB PVC',                  phrases:['lb pvc','lb','l b'] },
+    { label:'LL PVC',                  phrases:['ll pvc','ll','l l'] },
+    { label:'LR PVC',                  phrases:['lr pvc','lr','l r'] },
+    { label:'Sch40 90s',               phrases:['schedule 40 90','schedule forty 90','90s','nineties','90 degree','ninety degree','sweep 90'] },
+    { label:'Sch40 45s',               phrases:['schedule 40 45','45s','45 degree','forty fives'] },
+    { label:'Seal Tight Straights',    phrases:['seal tight straight','seal tight straights','sealtight straight','sealtight straights','straights'] },
+    { label:'Seal Tight 90s',          phrases:['seal tight 90','seal tight 90s','seal tight ninety','sealtight 90','sealtight 90s'] },
+    { label:'Seal Tight Car-Flex Hose',phrases:['car flex','carflex','seal tight hose','flex hose'] },
+    { label:'Myers Hubs',              phrases:['myers hub','myers hubs','meyers hub','meyers hubs','myers','hubs','hub'] },
+    { label:'PVC Offset',              phrases:['pvc offset','offset','offsets'] },
+    { label:"Mini's",                  phrases:['mini','minis',"mini's",'minnies'] },
+    { label:'Strut Clamps',            phrases:['strut clamp','strut clamps','clamps','clamp'] },
+    { label:'Two Hole Straps PVC',     phrases:['two hole strap','two hole straps','2 hole strap','2 hole straps','straps','strap','two hole'] },
+    { label:'K.O. Seals',              phrases:['ko seal','ko seals','knockout seal','knockout seals','knock out seal','knock out seals','k o seal','k o seals'] }
+  ];
+  const WIREWAY_ROWS = [
+    { label:'4" x 4"',   phrases:['four by four','4 by 4','4x4'] },
+    { label:'6" x 6"',   phrases:['six by six','6 by 6','6x6'] },
+    { label:'8" x 8"',   phrases:['eight by eight','8 by 8','8x8'] },
+    { label:'10" x 10"', phrases:['ten by ten','10 by 10','10x10'] },
+    { label:'12" x 12"', phrases:['twelve by twelve','12 by 12','12x12'] }
+  ];
+  const POLARIS_ROWS = [
+    { label:'4 AWG',   phrases:['four gauge','4 gauge','number four','number 4','4 awg','four awg'] },
+    { label:'1/0',     phrases:['one aught','one ought','one not','one naught','one oh','one zero','one over zero','1 aught','1/0'] },
+    { label:'3/0',     phrases:['three aught','three ought','three not','three naught','three oh','three zero','three over zero','3 aught','3/0','triple aught'] },
+    { label:'250 MCM', phrases:['two fifty','250 mcm','two hundred fifty'] },
+    { label:'350 MCM', phrases:['three fifty','350 mcm','three hundred fifty'] },
+    { label:'500 MCM', phrases:['five hundred mcm','500 mcm','five hundred polaris'] }
+  ];
+  const TABLES = [
+    { id:'fittings-body', name:'Fittings', rows:FITTING_ROWS, cols:FITTING_COLS },
+    { id:'wireway-body',  name:'Wireway',  rows:WIREWAY_ROWS, cols:WIREWAY_COLS, keyword:'wireway' },
+    { id:'polaris-body',  name:'Polaris',  rows:POLARIS_ROWS, cols:POLARIS_COLS, keyword:'polaris' }
+  ];
+
+  // ---------- WIRE LENGTH TABLES (CU / AL) ----------
+  function gaugePhrases(g) {
+    const map = {
+      '500':['five hundred','500'], '350':['three fifty','350'], '250':['two fifty','250'],
+      '4/0':['four aught','four ought','four naught','four not','four oh','four zero','four over zero','four slash zero','4 aught','4 ought','4 naught','4/0','quad aught','quadruple aught','quadruple ought'],
+      '3/0':['three aught','three ought','three naught','three not','three oh','three zero','three over zero','three slash zero','3 aught','3 ought','3 naught','3/0','triple aught','triple ought'],
+      '2/0':['two aught','two ought','two naught','two not','two oh','two zero','two over zero','two slash zero','2 aught','2 ought','2 naught','2/0','double aught','double ought','double oh'],
+      '1/0':['one aught','one ought','one naught','one not','one oh','one zero','one over zero','one slash zero','1 aught','1 ought','1 naught','1/0','single aught','aught one','aught'],
+      '#1':['number one','number 1','one awg','1 awg','one gauge'], '#2':['number two','number 2','two awg','2 awg','two gauge'],
+      '#3':['number three','number 3','three awg','3 awg','three gauge'], '#4':['number four','number 4','four awg','4 awg','four gauge'],
+      '#6':['number six','number 6','six awg','6 awg','six gauge'], '#6 GRN':['number six green','number 6 green','green ground','six green','6 awg green']
+    };
+    return map[g] || [g.toLowerCase()];
+  }
+  const CU_GAUGES = ['500','350','250','4/0','3/0','2/0','1/0','#1','#2','#3','#4','#6','#6 GRN'];
+  const AL_GAUGES = ['500','350','250','4/0','3/0','2/0','1/0','#1','#2','#3','#4','#6'];
+
+  function parseWire(t) {
+    if (t.includes(' polaris')) return null;
+    const isCU = / copper | cu | cooper | coper /.test(t);
+    const isAL = / aluminum | aluminium | al | alum | aluminm /.test(t);
+    if (!isCU && !isAL) {
+      // A gauge/aught was clearly spoken but the metal wasn't — both CU and AL
+      // tables exist, so we must know which. Give a concrete prompt.
+      const saidGauge = / aught | ought | awg /.test(t) || /\b\d\/0\b/.test(t) ||
+        /\b(one|two|three|four) (aught|ought)\b/.test(t);
+      if (saidGauge) {
+        return { err: 'Say copper or aluminum first — e.g. "copper one aught 50"' };
+      }
+      if (/ awg /.test(t) && !t.includes(' polaris') && !/ port | straight/.test(t)) {
+        return { err: 'Which wire — copper or aluminum? e.g. "copper 2 AWG 60"' };
+      }
+      return null;
+    }
+    const gauges = isCU ? CU_GAUGES : AL_GAUGES;
+    let best = null;
+    gauges.forEach((g, idx) => {
+      gaugePhrases(g).forEach(p => {
+        if (t.indexOf(' ' + p + ' ') !== -1 || t.indexOf(' ' + p) !== -1) {
+          if (!best || p.length > best.p.length) best = { g, idx, p };
+        }
+      });
+    });
+    if (!best) return { err: 'Heard wire but no gauge — say e.g. "copper four aught 60"' };
+    let rem = t.replace(best.p, ' ').replace(/\bcopper\b|\bcu\b|\baluminum\b|\baluminium\b|\bal\b|\bwire\b|\bfeet\b|\bfoot\b|\bgreen\b/g, ' ');
+    rem = wordsToDigits(rem);
+    const nums = rem.match(/\b\d+\b/g);
+    if (!nums) return { err: (isCU?'CU ':'AL ') + best.g + ' — say a length' };
+    return { wire: isCU ? 'CU' : 'AL', gauge: best.g, idx: best.idx, qty: parseInt(nums[nums.length-1],10) };
+  }
+  function applyWire(cmd) {
+    const tables = document.querySelectorAll('#page2 table.mat-table, .form-page table.mat-table');
+    let target = null;
+    tables.forEach(tb => {
+      const firstTh = tb.querySelector('thead th');
+      if (!firstTh) return;
+      const head = firstTh.textContent.toUpperCase();
+      if (cmd.wire === 'CU' && head.indexOf('CU WIRE') !== -1) target = tb;
+      if (cmd.wire === 'AL' && head.indexOf('AL WIRE') !== -1) target = tb;
+    });
+    if (!target) return false;
+    const inputs = target.querySelectorAll('tbody input[type="text"]');
+    const inp = inputs[cmd.idx];
+    if (!inp) return false;
+    setInputValue(inp, cmd.qty);
+    return true;
+  }
+
+  // ---------- THHN / Gen-Pro / kw TABLE (single row, 9 columns) ----------
+  // Columns, in DOM order:
+  // 0:14 AWG  1:12 AWG  2:10 AWG  3:Gen-Pro  4:22-24kw Al  5:22-24kw Cu
+  // 6:26kw Cu  7:26kw Al  8:28kw Al
+  const THHN_COLS = [
+    { idx:0, label:'14 AWG', metal:null, phrases:['14 awg','14 gauge','fourteen gauge','fourteen awg','number 14','number fourteen','#14','14 thhn','fourteen thhn'] },
+    { idx:1, label:'12 AWG', metal:null, phrases:['12 awg','12 gauge','twelve gauge','twelve awg','number 12','number twelve','#12','12 thhn','twelve thhn'] },
+    { idx:2, label:'10 AWG', metal:null, phrases:['10 awg','10 gauge','ten gauge','ten awg','number 10','number ten','#10','10 thhn','ten thhn'] },
+    { idx:3, label:'Gen-Pro Wire', metal:null, phrases:['genpro','genpro wire','gen pro wire'] },
+    { idx:4, label:'22-24kw Al', metal:'al', phrases:['22kw','24kw','22 24kw','22 to 24kw','2224kw','twenty two kw','twenty four kw'] },
+    { idx:5, label:'22-24kw Cu', metal:'cu', phrases:['22kw','24kw','22 24kw','22 to 24kw','2224kw','twenty two kw','twenty four kw'] },
+    { idx:6, label:'26kw Cu', metal:'cu', phrases:['26kw','twenty six kw'] },
+    { idx:7, label:'26kw Al', metal:'al', phrases:['26kw','twenty six kw'] },
+    { idx:8, label:'28kw Al', metal:'al', phrases:['28kw','twenty eight kw'] }
+  ];
+  function parseThhn(t) {
+    if (t.includes(' polaris') || t.includes(' wireway')) return null;
+    const td = ' ' + wordsToDigits(t).trim() + ' ';
+    const isCU = / copper | cu | cooper | coper /.test(t);
+    const isAL = / aluminum | aluminium | al | alum | aluminm /.test(t);
+
+    // find every column whose phrase appears
+    let hits = [];
+    THHN_COLS.forEach(col => {
+      col.phrases.forEach(p => {
+        const probe = ' ' + p + ' ';
+        if ((' '+t+' ').indexOf(probe) !== -1 || td.indexOf(probe) !== -1
+            || (' '+t+' ').indexOf(' '+p) !== -1 || td.indexOf(' '+p) !== -1) {
+          hits.push({ col, p });
+        }
+      });
+    });
+    if (!hits.length) return null;
+
+    // longest phrase wins as the primary size cue
+    hits.sort((a,b) => b.p.length - a.p.length);
+    const sizeTok = hits[0].p;
+    const sizeLabel = hits[0].col.label.replace(/\d+kw.*/,'').trim();
+
+    // candidate columns that matched this size token
+    let cands = hits.filter(h => h.p === sizeTok).map(h => h.col);
+
+    // kw rows need a metal to disambiguate Al vs Cu
+    const needsMetal = cands.some(c => c.metal);
+    let chosen = cands[0];
+    if (needsMetal) {
+      const want = isCU ? 'cu' : isAL ? 'al' : null;
+      if (!want) {
+        // 22-24kw exists in both; 26kw both; 28kw is Al-only
+        const onlyAl = cands.every(c => c.metal === 'al');
+        if (onlyAl) chosen = cands.find(c => c.metal === 'al');
+        else return { err: 'Which metal — copper or aluminum? e.g. "26kw copper 100"' };
+      } else {
+        const m = cands.find(c => c.metal === want);
+        if (!m) return { err: sizeTok.toUpperCase() + ' has no ' + want.toUpperCase() + ' column' };
+        chosen = m;
+      }
+    }
+
+    // quantity = a number that isn't part of the size token
+    let rem = td;
+    sizeTok.split(/\s+/).forEach(w => { rem = rem.replace(new RegExp('\\b'+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b'), ' '); });
+    rem = rem.replace(/\bawg\b|\bgauge\b|\bthhn\b|\bkw\b|\bcopper\b|\bcu\b|\baluminum\b|\baluminium\b|\bal\b|\bwire\b|\bfeet\b|\bfoot\b|\bgenpro\b|\bnumber\b/g, ' ');
+    const nums = rem.match(/\b\d+\b/g);
+    if (!nums) return { err: chosen.label + ' — say a length' };
+    return { table: 'thhn', col: chosen, qty: parseInt(nums[nums.length-1], 10) };
+  }
+  function applyThhn(cmd) {
+    const tables = document.querySelectorAll('#page2 table.mat-table, .form-page table.mat-table');
+    let target = null;
+    tables.forEach(tb => {
+      const th = tb.querySelector('thead th');
+      if (th && th.textContent.toUpperCase().indexOf('THHN') !== -1) target = tb;
+    });
+    if (!target) return false;
+    const inputs = target.querySelectorAll('tbody input[type="text"]');
+    const inp = inputs[cmd.col.idx];
+    if (!inp) return false;
+    setInputValue(inp, cmd.qty);
+    return true;
+  }
+
+  // ---------- generic phrase matcher ----------
+  function bestMatch(text, items) {
+    let best = null;
+    items.forEach(item => {
+      item.phrases.forEach(p => {
+        const i = text.indexOf(' ' + p + ' ') !== -1 ? text.indexOf(' ' + p + ' ')
+                : text.indexOf(' ' + p);
+        if (i !== -1) {
+          if (!best || p.length > best.phrase.length) best = { item, phrase: p, index: i };
+        }
+      });
+    });
+    return best;
+  }
+
+  function parseTableCmd(t) {
+    let candidates = TABLES;
+    if (t.includes(' wireway')) candidates = [TABLES[1]];
+    else if (t.includes(' polaris')) candidates = [TABLES[2]];
+    let chosen = null, rowMatch = null;
+    candidates.forEach(tab => {
+      const m = bestMatch(t, tab.rows);
+      if (m && (!rowMatch || m.phrase.length > rowMatch.phrase.length)) { rowMatch = m; chosen = tab; }
+    });
+    if (!chosen) return null;
+    let t2 = t.replace(rowMatch.phrase, ' ');
+    let colMatch = bestMatch(t2, chosen.cols);
+    let mergedQty = null;
+    if (!colMatch) {
+      // STT sometimes merges quantity+size: "one 3 foot" -> "13 foot". Split it:
+      // leading digit(s) = quantity, last digit = size, if that size is a real column.
+      const td = wordsToDigits(t2);
+      const mm = td.match(/\b(\d+)(\d)\s*(inch|inches|foot|feet)\b/);
+      if (mm) {
+        const trial = td.replace(mm[0], ' ' + mm[2] + ' ' + mm[3] + ' ');
+        const cm = bestMatch(trial, chosen.cols);
+        if (cm) { colMatch = cm; t2 = trial; mergedQty = parseInt(mm[1], 10); }
+      }
+    }
+    if (!colMatch) return { err: 'Got "' + rowMatch.item.label + '" but no size — say the size too' };
+    let t3 = t2.replace(colMatch.phrase, ' ');
+    t3 = wordsToDigits(t3).replace(/\binch(es)?\b|\bfoot\b|\bfeet\b|\bquantity\b|\bcount\b|\bqty\b/g, ' ');
+    const nums = t3.match(/\b\d+\b/g);
+    let qty = nums ? parseInt(nums[nums.length-1],10) : mergedQty;
+    if (qty === null || isNaN(qty)) return { err: rowMatch.item.label + ' ' + colMatch.item.label + ' — say a quantity' };
+    return { table: chosen, row: rowMatch.item, col: colMatch.item, qty };
+  }
+  function applyTableCmd(cmd) {
+    const body = document.getElementById(cmd.table.id);
+    let targetInput = null;
+    body.querySelectorAll('tr').forEach(tr => {
+      const lbl = tr.querySelector('td.row-label');
+      if (lbl && lbl.textContent.trim() === cmd.row.label && !targetInput) {
+        const inputs = tr.querySelectorAll('input[type="text"]');
+        if (inputs[cmd.col.idx]) targetInput = inputs[cmd.col.idx];
+      }
+    });
+    if (!targetInput) return false;
+    setInputValue(targetInput, cmd.qty);
+    return true;
+  }
+
+  // ---------- FORM FIELD INDEX (checkboxes + text fields, built from the live DOM) ----------
+  // Manual aliases keyed by normalized label text
+  const ALIASES = {
+    'customer name': ['customer'],
+    'install truck': ['truck'],
+    'team member names': ['team members','crew names','crew'],
+    'generator size': ['gen size'],
+    'pad or stand installed': ['pad or stand','stand installed','pad installed','pad stand'],
+    'generator set and mounted': ['set and mounted','generator mounted'],
+    'connected to mobile link': ['mobile link'],
+    'battery connected': ['battery'],
+    'generator electrical made up': ['electrical made up'],
+    'generator set to ng or lq in controller and in generator': ['ng or lq','set to ng','set to lq','fuel set'],
+    'generator manual': ['manual'],
+    'harness plugged in transfer switch es': ['harness plugged in','harness'],
+    'grounding updated': ['grounding'],
+    'grounds and neutrals separated': ['grounds and neutrals','neutrals separated','grounds separated','neutral and grounds','neutrals and grounds','ground and neutral','neutral and ground','grounds and neutral','neutral and grounds separated','neutrals and grounds separated','grounds neutrals separated','neutrals grounds separated','separated grounds and neutrals','separated neutrals and grounds','grounds and neutrals are separated','neutrals and grounds are separated'],
+    'transfer switch es made up': ['transfer switch made up','transfer switches made up'],
+    'generator electrical run': ['electrical run'],
+    '60a load shed installed and programmed': ['60 amp load shed','60a load shed','sixty amp load shed'],
+    '100a load shed installed and programmed': ['100 amp load shed','100a load shed','hundred amp load shed'],
+    'electrical rough': ['rough inspection','rough'],
+    'electrical final': ['final inspection','final'],
+    'electrical underground': ['underground inspection','underground'],
+    'all pics for inspected': ['all pics','all pictures','pictures'],
+    'everything picked up and clean': ['picked up and clean','everything clean','cleaned up','clean up done'],
+    'ready for h o training': ['ready for training','ho training','homeowner training','ready for homeowner training'],
+    'transfer switch type': ['switch type'],
+    'transfer switch location': ['switch location'],
+    'transfer switch mounted': ['switch mounted'],
+    'surge protector s': ['surge protector','surge protectors'],
+    'panel lugs torqued to spec': ['panel lugs torqued','panel lugs','lugs torqued','panel torqued','panel torque','lugs torque','lug torque','panel lug torque'],
+    'generator electrical run torqued to spec in generator and ts': ['generator run torqued','generator run torque','generator torqued','generator torque','generator electrical torqued','generator electrical run torqued','generator electrical run','run torqued to spec','run torqued','run torque','electrical run torqued','electrical run torque','gen run torqued','gen torque','generator run','torqued in generator','torqued to spec in generator'],
+    'double checked by': ['double checked','checked by'],
+    '60lb bags of sakrete concrete': ['sakrete','bags of concrete','concrete bags','concrete'],
+    '100a disconnects': ['100 amp disconnect','100 amp disconnects','hundred amp disconnect'],
+    '60a disconnects': ['60 amp disconnect','60 amp disconnects','sixty amp disconnect'],
+    'surge protectors': ['surge protector'],
+    'psp load shed modules 60a': ['psp 60','psp load shed 60','load shed module 60'],
+    'psp load shed modules 100a': ['psp 100','psp load shed 100','load shed module 100'],
+    '12 by 12 by 4 jbox pvc': ['12 by 12 by 4 jbox','12 12 4 jbox'],
+    '14 by 16 by 4 jbox pvc': ['14 by 16 by 4 jbox','14 16 4 jbox'],
+    '12 by 12 by 6 jbox pvc': ['12 by 12 by 6 jbox','12 12 6 jbox'],
+    '14 by 16 by 6 jbox pvc': ['14 by 16 by 6 jbox','14 16 6 jbox'],
+    'shallow strut': ['shallow strut length'],
+    'deep strut': ['deep strut length'],
+    'why not': ['reason why not'],
+    'other': ['other materials','other notes']
+  };
+  // checkbox option aliases
+  const OPT_ALIASES = {
+    'yes': ['yes','yep','yeah','check yes','correct','done','complete','completed'],
+    'no': ['no','nope','not done','incomplete'],
+    'existing': ['existing'],
+    'u g': ['ug','u g','underground run'],
+    'surface mount': ['surface mount','surface'],
+    'attic': ['attic'],
+    'transfer switch': ['transfer switch'],
+    'homeowner': ['homeowner','home owner'],
+    'ase': ['ase','a s e'],
+    'nse': ['nse','n s e'],
+    'inside': ['inside'],
+    'outside': ['outside'],
+    '16space': ['16 space','sixteen space'],
+    '20space': ['20 space','twenty space'],
+    '100a': ['100 amp','100a','hundred amp'],
+    '200a': ['200 amp','200a','two hundred amp'],
+    '300a': ['300 amp','300a','three hundred amp'],
+    '400a': ['400 amp','400a','four hundred amp'],
+    '600a': ['600 amp','600a','six hundred amp']
+  };
+  // options too generic to match without their row label
+  const GENERIC_OPTS = ['yes','no','existing','transfer switch'];
+
+  function sectionNameFor(el) {
+    const ts = el.closest('.ts-block');
+    if (ts) return 'transfer switch ' + (ts.dataset.tsNum || '1');
+    const sec = el.closest('.section');
+    if (sec) {
+      const title = sec.querySelector('.section-title');
+      if (title) {
+        let s = labelPhrase(title.textContent).replace(/ s$/, '');
+        // align section name with how it's spoken (normalize() turns these the same way)
+        if (s === 'inspection' || s === 'inspections') s = 'inspected';
+        return s;
+      }
+    }
+    return '';
+  }
+
+  function buildFieldIndex() {
+    const entries = [];
+    // text-ish fields with a preceding <label>
+    document.querySelectorAll('.field-row, .section-row, .footer-field, .footer-other-row').forEach(row => {
+      const children = Array.from(row.childNodes);
+      let currentLabel = null;
+      children.forEach(node => {
+        if (node.nodeType === 1 && (node.tagName === 'LABEL' || node.tagName === 'B')) {
+          currentLabel = node.textContent.trim().replace(/:$/,'');
+        } else if (node.nodeType === 1 && node.tagName === 'INPUT' && (node.type === 'text' || node.type === 'date')) {
+          if (currentLabel) {
+            const base = labelPhrase(currentLabel);
+            const phrases = [base].concat(ALIASES[base] || []);
+            entries.push({ kind:'text', el: node, label: currentLabel, section: sectionNameFor(row), phrases });
+            currentLabel = null;
+          }
+        }
+      });
+      // checkbox rows
+      const cbs = row.querySelectorAll('input[type="checkbox"]');
+      if (cbs.length) {
+        const lblEl = row.querySelector('label, b');
+        const rowLabelRaw = lblEl ? lblEl.textContent.trim().replace(/:$/,'') : '';
+        const base = rowLabelRaw ? labelPhrase(rowLabelRaw) : '';
+        const rowPhrases = base ? [base].concat(ALIASES[base] || []) : [];
+        const options = [];
+        cbs.forEach(cb => {
+          // option text: applyYNColors wraps "cb + label" in a span — use it if present
+          let txt = '';
+          if (cb.parentElement && cb.parentElement.classList.contains('yn-checkbox-wrap')) {
+            txt = cb.parentElement.textContent;
+          } else {
+            let n = cb.nextSibling;
+            while (n && !(n.nodeType === 1 && (n.tagName === 'INPUT' || n.tagName === 'LABEL' || n.tagName === 'SPAN'))) {
+              txt += n.textContent || '';
+              n = n.nextSibling;
+              if (txt.trim()) break;
+            }
+          }
+          const optBase = labelPhrase(txt.trim());
+          if (!optBase) return;
+          options.push({ cb, label: txt.trim(), base: optBase, phrases: OPT_ALIASES[optBase] || [optBase] });
+        });
+        if (options.length) {
+          entries.push({ kind:'checkrow', label: rowLabelRaw || options.map(o=>o.label).join('/'), section: sectionNameFor(row), phrases: rowPhrases, options });
+        }
+      }
+    });
+    // miscues textarea
+    const ta = document.querySelector('textarea.textarea-field');
+    if (ta) entries.push({ kind:'text', el: ta, label: 'Miscues or Delays', section: '', phrases: ['miscues or delays','miscues','delays','any miscues'] });
+    return entries;
+  }
+
+  function matchField(t, entries) {
+    let best = null;
+
+    // Which non-generic option words did the speaker actually say? (existing, ase,
+    // nse, ug, attic, surface mount, etc.) Knowing this lets us prefer the field
+    // that CAN accept that option, and avoid a shorter label that can't.
+    const spokenOpts = [];
+    entries.forEach(e => {
+      if (e.kind !== 'checkrow') return;
+      e.options.forEach(o => {
+        o.phrases.forEach(p => {
+          if ((t.indexOf(' ' + p + ' ') !== -1 || t.indexOf(' ' + p) !== -1) && spokenOpts.indexOf(o.base) === -1) {
+            spokenOpts.push(o.base);
+          }
+        });
+      });
+    });
+    // restrict to distinctive option words — yes/no are too common to use as a router
+    const routingOpts = spokenOpts.filter(b => b !== 'yes' && b !== 'no');
+    const rowHasOpt = (e, base) => e.kind === 'checkrow' && e.options.some(o => o.base === base);
+
+    entries.forEach(e => {
+      const sectionPresent = e.section && t.indexOf(' ' + e.section) !== -1;
+      // does this row support every distinctive option the speaker named?
+      const optCompatible = routingOpts.length ? routingOpts.every(b => rowHasOpt(e, b)) : true;
+      const optBonus = (routingOpts.length && optCompatible) ? 60 : 0;
+      // a label match on a row that can't accept the spoken option is almost surely
+      // the wrong field (e.g. "pad existing" hitting the yes/no-only "Pad" row)
+      const optPenalty = (routingOpts.length && !optCompatible) ? 1000 : 0;
+
+      // label phrases
+      e.phrases.forEach(p => {
+        if (!p) return;
+        const i = t.indexOf(' ' + p + ' ') !== -1 ? t.indexOf(' ' + p + ' ') : t.indexOf(' ' + p);
+        if (i !== -1) {
+          let score = p.length;
+          if (sectionPresent) score += 100;
+          score += optBonus - optPenalty;
+          if (!best || score > best.score) best = { entry: e, phrase: p, index: i, score, via: 'label' };
+        }
+      });
+      // distinctive checkbox option phrases (match without label).
+      // Generic options (yes/no/existing) normally need their label, BUT if the
+      // section is named explicitly ("transfer switch 2 existing") it's unambiguous.
+      if (e.kind === 'checkrow') {
+        e.options.forEach(o => {
+          const isGeneric = GENERIC_OPTS.indexOf(o.base) !== -1;
+          // A generic option can match on its own when it's a distinctive routing
+          // option the speaker named AND this row can accept it. Among multiple
+          // owners, label/section bonuses and the -1000 incompatibility penalty
+          // settle which one wins.
+          const isRoutingOpt = routingOpts.indexOf(o.base) !== -1;
+          if (isGeneric && !sectionPresent && !isRoutingOpt) return;
+          o.phrases.forEach(p => {
+            const i = t.indexOf(' ' + p + ' ') !== -1 ? t.indexOf(' ' + p + ' ') : t.indexOf(' ' + p);
+            if (i !== -1) {
+              let score = p.length;
+              if (sectionPresent) score += 100;
+              score += optBonus;
+              // tie-breaker: if a distinctive word from THIS row's label/aliases is
+              // also spoken ("pad" in "pad existing"), nudge it ahead of other rows
+              // that share the same option.
+              const labelWords = (e.phrases.join(' ').match(/[a-z]{3,}/g) || [])
+                .filter(w => ['the','and','for','installed'].indexOf(w) === -1);
+              if (labelWords.some(w => t.indexOf(' ' + w) !== -1)) score += 15;
+              if (!best || score > best.score) best = { entry: e, phrase: p, index: i, score, via: 'option', option: o };
+            }
+          });
+        });
+      }
+    });
+    return best;
+  }
+
+  function setInputValue(inp, val) {
+    inp.value = val;
+    inp.dispatchEvent(new Event('input', { bubbles: true }));
+    inp.classList.add('voice-filled');
+    inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => inp.classList.remove('voice-filled'), 2500);
+  }
+  function setCheckbox(cb, on) {
+    cb.checked = on;
+    cb.dispatchEvent(new Event('change', { bubbles: true }));
+    const host = cb.parentElement || cb;
+    host.classList.add('voice-filled');
+    cb.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => host.classList.remove('voice-filled'), 2500);
+  }
+
+  function isoToday() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  // ---------- master command handler ----------
+  function handleTranscript(raw) {
+    const t = normalize(raw);
+
+    // full reset of voice settings (language + range filter)
+    if (/\breset voice\b|\bvoice reset\b/.test(t)) {
+      try { localStorage.removeItem('voiceLang'); localStorage.removeItem('voiceGate2'); } catch(e) {}
+      voiceLang = 'en-US'; gateLevel = 'off';
+      updateVoiceBtn();
+      stopProximityGate();
+      if (listening && rec) { rec.lang = voiceLang; try { rec.stop(); } catch(e) {} }
+      showStatus('\u2713 Voice settings reset \u2014 English, no range filter', 'ok', 4000);
+      return;
+    }
+
+    // proximity / sensitivity commands
+    const gm = t.match(/\b(range filter|sensitivity|voice range|proximity)\b.*\b(off|low|medium|high|up|down)\b/) ||
+               t.match(/\b(off|low|medium|high)\b\s*(range filter|sensitivity)\b/);
+    if (gm) {
+      let lv = gm[2] || gm[1];
+      if (lv === 'up')   lv = gateLevel === 'low' ? 'medium' : 'high';
+      if (lv === 'down') lv = gateLevel === 'high' ? 'medium' : 'low';
+      setGate(lv);
+      return;
+    }
+
+    // language switching
+    if (/\bespanol\b|\bespa\u00f1ol\b|\bspanish\b/.test(t)) { switchLang('es-US'); return; }
+    if (/\benglish\b|\bingles\b|\bingl\u00e9s\b/.test(t)) { switchLang('en-US'); return; }
+
+    // global commands
+    if (/\b(add|new|another|create|insert|extra) transfer switch\b/.test(t)) {
+      if (typeof addTransferSwitch === 'function') {
+        addTransferSwitch();
+        showStatus('✓ Transfer Switch added', 'ok', 3000);
+      }
+      return;
+    }
+    if (/\b(remove|delete|drop|erase|get rid of|take out|take off|cancel|scratch) transfer switch\b/.test(t)) {
+      const blocks = document.querySelectorAll('.ts-block');
+      if (blocks.length <= 1) {
+        showStatus('❌ Only one Transfer Switch — can\u2019t remove the last one', 'err', 4000);
+        return;
+      }
+      // "remove transfer switch 2" -> that one; otherwise remove the last
+      const nm = wordsToDigits(t).match(/transfer switch\s+(\d+)/);
+      let target;
+      if (nm) {
+        const idx = parseInt(nm[1], 10) - 1;
+        target = blocks[idx];
+        if (!target) { showStatus('❌ No Transfer Switch ' + nm[1] + ' to remove', 'err', 4000); return; }
+      } else {
+        target = blocks[blocks.length - 1];
+      }
+      const label = (target.querySelector('.ts-header-left')?.textContent || 'Transfer Switch').trim();
+      target.remove();
+      if (typeof renumberTS === 'function') renumberTS();
+      showStatus('✓ Removed ' + label, 'ok', 3000);
+      return;
+    }
+    if (/\bstop listening\b|\bvoice off\b|\bturn off voice\b/.test(t)) {
+      window.toggleVoiceEntry();
+      return;
+    }
+
+    // 0.5) THHN / Gen-Pro / kw table (14/12/10 AWG, genpro, 22-28kw columns)
+    const th = parseThhn(t);
+    if (th) {
+      if (th.err) { showStatus('❌ ' + th.err, 'err', 5000); return; }
+      if (applyThhn(th)) { showStatus('✓ ' + th.col.label + ' → ' + th.qty + ' ft', 'ok', 4000); }
+      else showStatus('❌ Could not find that THHN column', 'err', 4000);
+      return;
+    }
+
+    // 1) wire length tables
+    const w = parseWire(t);
+    if (w) {
+      if (w.err) { showStatus('❌ ' + w.err, 'err', 5000); return; }
+      if (applyWire(w)) { showStatus('✓ ' + w.gauge + ' ' + w.wire + ' → ' + w.qty + ' ft', 'ok', 4000); }
+      else showStatus('❌ Could not find that wire column', 'err', 4000);
+      return;
+    }
+
+    // 2) material grids (skip if it's a JBOX phrase — those are footer fields)
+    const tc = /\bjbox\b|\bj box\b/.test(t) ? null : parseTableCmd(t);
+    if (tc) {
+      if (tc.err) { showStatus('❌ ' + tc.err + '  ("' + raw + '")', 'err', 5000); return; }
+      if (applyTableCmd(tc)) showStatus('✓ ' + tc.row.label + ' → ' + tc.col.label + ' → ' + tc.qty, 'ok', 4000);
+      else showStatus('❌ Could not find that cell', 'err', 4000);
+      return;
+    }
+
+    // 3) form fields (checkboxes + text), index rebuilt live so new TS blocks are included
+    const entries = buildFieldIndex();
+    const tDigits = ' ' + wordsToDigits(t).trim() + ' ';
+
+    // If a specific transfer switch number is named ("transfer switch 2 ase"),
+    // the number can split the field phrase ("transfer switch type"). Build an
+    // extra variant with the number pulled out so the phrase reconnects, while
+    // remembering which TS the user meant so we can bias toward that section.
+    let tsWanted = 0;
+    const tsm = tDigits.match(/transfer switch\s+(\d+)/);
+    if (tsm) tsWanted = parseInt(tsm[1], 10);
+    const tCollapsed = tsWanted
+      ? ' ' + tDigits.replace(/transfer switch\s+\d+/g, 'transfer switch ' + tsWanted + ' ').replace(/\s+/g, ' ').trim() + ' '
+      : null;
+
+    const m1 = matchField(t, entries);
+    const m2 = tDigits !== t ? matchField(tDigits, entries) : null;
+    let m = m1, tUsed = t;
+    if (m2 && (!m1 || m2.score > m1.score)) { m = m2; tUsed = tDigits; }
+
+    // Extra pass: when a TS number was named, match against text with the number
+    // removed from the field phrase but keep section bias for the wanted TS.
+    if (tsWanted) {
+      const tNoNum = ' ' + tDigits.replace(/(transfer switch)\s+\d+/g, '$1').replace(/\s+/g, ' ').trim() + ' ';
+      const m3 = matchField(tNoNum, entries);
+      if (m3) {
+        // prefer the entry that actually belongs to the wanted TS section
+        const wantSec = 'transfer switch ' + tsWanted;
+        const m3InWanted = m3.entry.section === wantSec;
+        const mInWanted = m && m.entry.section === wantSec;
+        if (m3InWanted && !mInWanted) { m = m3; tUsed = tNoNum; }
+        else if (!m || m3.score > m.score) { m = m3; tUsed = tNoNum; }
+      }
+      // final safety: if best match is a TS row but wrong number, redirect to the
+      // same-labeled row in the wanted TS section
+      if (m && m.entry.section && /^transfer switch \d+$/.test(m.entry.section) && m.entry.section !== 'transfer switch ' + tsWanted) {
+        const want = entries.find(en => en.section === 'transfer switch ' + tsWanted
+          && en.kind === m.entry.kind
+          && en.label === m.entry.label);
+        if (want) {
+          let remappedOpt = m.option;
+          if (m.via === 'option' && m.option && want.options) {
+            remappedOpt = want.options.find(o => o.base === m.option.base) || m.option;
+          }
+          m = Object.assign({}, m, { entry: want, option: remappedOpt });
+        }
+      }
+    }
+
+    if (!m) { showStatus('❌ Didn\u2019t recognize that ("' + raw + '")', 'err', 5000); return; }
+    const e = m.entry;
+
+    if (e.kind === 'checkrow') {
+      let opt = m.via === 'option' ? m.option : null;
+      if (!opt) {
+        // look for an option word after the label
+        const after = ' ' + tUsed.slice(m.index + m.phrase.length + 1) + ' ';
+        let bestOpt = null;
+        e.options.forEach(o => {
+          o.phrases.forEach(p => {
+            const i = after.indexOf(' ' + p + ' ') !== -1 ? after.indexOf(' ' + p + ' ') : after.indexOf(' ' + p);
+            if (i !== -1 && (!bestOpt || p.length > bestOpt.p.length)) bestOpt = { o, p };
+          });
+        });
+        if (!bestOpt) {
+          // also search whole transcript (option said before label)
+          e.options.forEach(o => {
+            o.phrases.forEach(p => {
+              if (tUsed.indexOf(' ' + p) !== -1 && (!bestOpt || p.length > bestOpt.p.length)) bestOpt = { o, p };
+            });
+          });
+        }
+        if (!bestOpt) {
+          if (/\buncheck\b|\bclear\b|\bremove\b/.test(t)) {
+            e.options.forEach(o => { if (o.cb.checked) setCheckbox(o.cb, false); });
+            showStatus('✓ ' + e.label + ' → cleared', 'ok', 4000);
+            return;
+          }
+          // No yes/no spoken. For yes/no rows, infer it:
+          //   negation words ("not", "wasn't", "didn't", "never", "negative") -> NO
+          //   otherwise (bare field name) -> default YES
+          const yesOpt = e.options.find(o => o.base === 'yes');
+          const noOpt  = e.options.find(o => o.base === 'no');
+          if (yesOpt || noOpt) {
+            const negated = /\bnot\b|\bwas\s*n.?t\b|\bis\s*n.?t\b|\bdid\s*n.?t\b|\bdoes\s*n.?t\b|\bwere\s*n.?t\b|\bnever\b|\bnegative\b|\bincomplete\b|\bfailed\b|\bfail\b/.test(' ' + tUsed + ' ');
+            if (negated && noOpt) { opt = noOpt; }
+            else if (!negated && yesOpt) { opt = yesOpt; }
+            else { showStatus('❌ "' + e.label + '" — say yes or no', 'err', 5000); return; }
+          } else {
+            showStatus('❌ "' + e.label + '" — say an option', 'err', 5000); return;
+          }
+        } else {
+          opt = bestOpt.o;
+        }
+      }
+      const uncheck = /\buncheck\b|\bclear\b|\bremove\b/.test(t);
+      setCheckbox(opt.cb, !uncheck);
+      const sec = e.section ? ' (' + titleCase(e.section) + ')' : '';
+      showStatus('✓ ' + e.label + sec + ' → ' + (uncheck ? 'unchecked ' : '') + opt.label, 'ok', 4000);
+      return;
+    }
+
+    // text field
+    let value = tUsed.slice(m.index + m.phrase.length + 1).trim();
+    value = value.replace(/^(is|to|equals|equal|set to|of)\s+/, '');
+
+    const isNumericField = e.el.getAttribute('inputmode') === 'numeric';
+
+    // For numeric fields the count is often spoken BEFORE the field name
+    // ("40 bags of concrete", "one 12 by 12 by 4 junction box"). If nothing
+    // usable follows the field name, remove the matched phrase from the whole
+    // transcript and take the leftover number — this skips the dimension
+    // numbers because they're part of the matched phrase itself.
+    if (isNumericField && !/\d/.test(wordsToDigits(value))) {
+      const stripped = wordsToDigits(tUsed.replace(m.phrase, ' '))
+        .replace(/\bbags?\b|\bof\b|\bpieces?\b|\bpcs?\b|\bqty\b|\bquantity\b|\bcount\b/g, ' ');
+      const allNums = stripped.match(/\d+/g);
+      if (allNums) value = allNums[allNums.length - 1];
+    }
+
+    // For free-text/date fields, people don't all speak in the same order.
+    // If nothing followed the field name, take whatever was said BEFORE it
+    // (e.g. "John Smith customer name", "today date"). Strip connective filler.
+    if (!isNumericField && !value) {
+      const before = tUsed.slice(0, m.index).trim()
+        .replace(/\b(set|put|enter|the|for|is|to|equals?|of|name|field)\b/g, ' ')
+        .replace(/\s+/g, ' ').trim();
+      if (before) value = before;
+    }
+
+    if (!value) { showStatus('❌ "' + e.label + '" — say a value with the field name', 'err', 5000); return; }
+
+    if (e.el.type === 'date') {
+      if (/today/.test(value)) value = isoToday();
+      else {
+        const v = wordsToDigits(value).match(/\d+/g);
+        if (v && v.length >= 2) {
+          const yr = v[2] ? (v[2].length === 2 ? '20'+v[2] : v[2]) : String(new Date().getFullYear());
+          value = yr + '-' + String(v[0]).padStart(2,'0') + '-' + String(v[1]).padStart(2,'0');
+        } else { showStatus('❌ For the date say "date today" or "date 6 11 2026"', 'err', 5000); return; }
+      }
+    } else if (isNumericField) {
+      const nums = wordsToDigits(value).match(/\d+/g);
+      value = nums ? nums[nums.length-1] : value;
+    } else {
+      value = titleCase(wordsToDigits(value));
+    }
+    setInputValue(e.el, value);
+    const sec = e.section ? ' (' + titleCase(e.section) + ')' : '';
+    showStatus('✓ ' + e.label + sec + ' → ' + value, 'ok', 4000);
+  }
+
+  // ---------- proximity gate (loudness-based) ----------
+  // A mic can't measure distance, but close voices are much louder. We track the
+  // peak level during each utterance and discard commands that were too quiet
+  // (i.e. probably someone across the room, not the person holding the phone).
+  let gateLevel = 'off';   // OFF by default: the meter opens a 2nd mic stream, which
+                           // can conflict with speech recognition on some phones.
+  try { gateLevel = localStorage.getItem('voiceGate2') || 'off'; } catch(e) {}
+  const GATE_THRESHOLDS = { off: 0, low: 0.02, medium: 0.05, high: 0.10 }; // peak RMS 0..1
+  let audioCtx = null, analyser = null, gateData = null, gateTimer = null;
+  let utterPeak = 0;
+
+  function startProximityGate() {
+    if (GATE_THRESHOLDS[gateLevel] === 0) return;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.AudioContext && !window.webkitAudioContext) return;
+    navigator.mediaDevices.getUserMedia({ audio: { noiseSuppression: true, echoCancellation: true } })
+      .then(stream => {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AC();
+        const src = audioCtx.createMediaStreamSource(stream);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 512;
+        src.connect(analyser);
+        gateData = new Float32Array(analyser.fftSize);
+        gateTimer = setInterval(() => {
+          if (!analyser) return;
+          analyser.getFloatTimeDomainData(gateData);
+          let sum = 0;
+          for (let i = 0; i < gateData.length; i++) sum += gateData[i] * gateData[i];
+          const rms = Math.sqrt(sum / gateData.length);
+          if (rms > utterPeak) utterPeak = rms;
+        }, 60);
+        audioCtx.__stream = stream;
+        if (audioCtx.state === 'suspended') { try { audioCtx.resume(); } catch(e) {} }
+      })
+      .catch(() => { /* gate unavailable -> recognition still works, just ungated */ });
+  }
+  function stopProximityGate() {
+    clearInterval(gateTimer); gateTimer = null;
+    if (audioCtx) {
+      try { if (audioCtx.__stream) audioCtx.__stream.getTracks().forEach(tr => tr.stop()); } catch(e) {}
+      try { audioCtx.close(); } catch(e) {}
+    }
+    audioCtx = null; analyser = null; utterPeak = 0;
+  }
+  // returns true if the just-finished utterance was loud enough (close enough)
+  function passesGate() {
+    const th = GATE_THRESHOLDS[gateLevel];
+    if (th === 0 || !analyser) return true;   // gate off or unavailable
+    const peak = utterPeak;
+    utterPeak = 0;                            // reset for next utterance
+    if (peak === 0) return true;              // meter saw nothing at all = meter broken, not user too quiet -> fail open
+    return peak >= th;
+  }
+  function setGate(level) {
+    gateLevel = level;
+    try { localStorage.setItem('voiceGate2', level); } catch(e) {}
+    if (level === 'off') stopProximityGate();
+    else if (listening && !gateTimer) startProximityGate();
+    showStatus('\u2713 Voice range filter: ' + level.toUpperCase() +
+      (level === 'off' ? ' \u2014 hears everything' :
+       level === 'high' ? ' \u2014 must talk close to the phone' :
+       level === 'low'  ? ' \u2014 picks up across the room' :
+       ' \u2014 normal arm\u2019s length'), 'ok', 4500);
+  }
+
+  // ---------- speech recognition ----------
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let rec = null, listening = false, restartOnEnd = false;
+  let voiceLang = 'en-US';   // always starts in English; auto-detects Spanish below
+  try { localStorage.removeItem('voiceLang'); } catch(e) {}  // clear any stuck setting from older versions
+  function updateVoiceBtn() {
+    const btn = document.getElementById('btn-voice');
+    if (btn) btn.textContent = '\ud83c\udfa4 VOICE ' + (voiceLang === 'es-US' ? 'ES' : 'EN');
+  }
+  function switchLang(lang) {
+    voiceLang = lang;
+    updateVoiceBtn();
+    if (listening && rec) { rec.lang = lang; try { rec.stop(); } catch(e) {} } // onend restarts with new lang
+    showStatus(lang === 'es-US' ? '\ud83c\udfa4 Modo espa\u00f1ol \u2014 diga el campo y el valor' : '\ud83c\udfa4 English mode', 'ok', 3500);
+  }
+
+  // ---- automatic language detection ----
+  // The recognizer can only transcribe ONE language at a time. So: listen in the
+  // current language; when a phrase fails to parse, sniff it for the other
+  // language's words and auto-switch, asking the speaker to repeat once.
+  const ES_MARKERS = /\b(el|la|los|las|de|del|con|por|para|que|esta|esto|pero|tubo|tuberia|pulgada|pulgadas|coples?|cobre|aluminio|cliente|fecha|hoy|direccion|bateria|caja|codos?|cemento|concreto|listo|bueno|cuanto|donde|aqui|tambien|interruptor|generador|inspeccion|si)\b/g;
+  const EN_MARKERS = /\b(the|and|with|inch|inches|foot|feet|yes|no|pipe|copper|aluminum|wire|switch|battery|customer|name|date|today|connected|coupling|couplings|male|female|check|clean|ready|adapter|adapters)\b/g;
+  let langFailStreak = 0;
+  function sniffLanguage(rawText) {
+    const t = ' ' + rawText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'') + ' ';
+    const es = (t.match(ES_MARKERS) || []).length;
+    const en = (t.match(EN_MARKERS) || []).length;
+    if (es >= 2 && es > en) return 'es-US';
+    if (en >= 2 && en > es) return 'en-US';
+    return null;
+  }
+  function maybeAutoSwitch(rawText, anySuccess) {
+    if (anySuccess) { langFailStreak = 0; return; }
+    langFailStreak++;
+    const guess = sniffLanguage(rawText);
+    if (guess && guess !== voiceLang) {
+      langFailStreak = 0;
+      switchLang(guess);
+      showStatus(guess === 'es-US'
+        ? '\ud83d\udd04 Detect\u00e9 espa\u00f1ol \u2014 repita por favor'
+        : '\ud83d\udd04 Switched to English \u2014 please repeat that', 'ok', 4500);
+      return;
+    }
+    // stuck in Spanish hearing nothing useful? fall back to English after 3 misses
+    if (voiceLang === 'es-US' && langFailStreak >= 3) {
+      langFailStreak = 0;
+      switchLang('en-US');
+      showStatus('\ud83d\udd04 Back to English \u2014 please repeat', 'ok', 4500);
+    }
+  }
+
+  setTimeout(updateVoiceBtn, 0);
+
+  window.toggleVoiceEntry = function() {
+    const btn = document.getElementById('btn-voice');
+    if (!SR) { showStatus('Voice not supported in this browser — try Chrome or Safari', 'err', 5000); return; }
+
+    if (listening) {
+      restartOnEnd = false;
+      try { rec.stop(); } catch(e) {}
+      listening = false;
+      btn.classList.remove('listening');
+      stopProximityGate();
+      showStatus('Voice entry off', '', 2000);
+      return;
+    }
+
+    rec = new SR();
+    rec.lang = voiceLang;
+    rec.continuous = true;      // keep the mic hot — no pause needed between commands
+    rec.interimResults = true;  // live feedback while you talk
+    rec.maxAlternatives = 1;
+
+    rec.onresult = (e) => {
+      gotResultSinceStart = true;
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const res = e.results[i];
+        const text = res[0].transcript.trim();
+        if (!text) continue;
+        if (!res.isFinal) {
+          showStatus('\ud83c\udfa4 ' + text + '\u2026');
+          continue;
+        }
+        if (!passesGate()) {
+          showStatus('\ud83d\udd07 Too far/quiet \u2014 ignored ("' + text + '")', '', 3000);
+          continue;
+        }
+        // allow chaining several commands in one breath: "... next ... next ..."
+        let anySuccess = false;
+        text.split(/\bnext\b|\balso\b|\bthen\b/i).forEach(part => {
+          part = part.trim();
+          if (!part) return;
+          try {
+            handleTranscript(part);
+            if (statusEl.className.indexOf('ok') !== -1) anySuccess = true;
+          }
+          catch(err) { showStatus('\u26a0 Could not process: "' + part + '"', 'err', 4000); }
+        });
+        maybeAutoSwitch(text, anySuccess);
+      }
+    };
+    rec.onerror = (e) => {
+      if (e.error === 'audio-capture') {
+        stopProximityGate();
+        showStatus('Mic conflict \u2014 range filter disabled, voice still on', '', 4000);
+        return;
+      }
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        restartOnEnd = false; listening = false;
+        btn.classList.remove('listening');
+        showStatus('Mic blocked \u2014 allow microphone access in browser settings', 'err', 6000);
+        return;
+      }
+      if (e.error === 'network') {
+        showStatus('\u26a0 No connection to speech service \u2014 voice needs internet', 'err', 4000);
+        return;
+      }
+      if (e.error !== 'no-speech' && e.error !== 'aborted') {
+        showStatus('\u26a0 Voice error: ' + e.error, 'err', 4000);
+      }
+    };
+    let gotResultSinceStart = false;
+    let deadRestarts = 0;
+    rec.onstart = () => {
+      gotResultSinceStart = false;
+      showStatus('\ud83c\udfa4 Mic on (' + (voiceLang === 'es-US' ? 'Espa\u00f1ol' : 'English') + ') \u2014 talk anytime', '', 2500);
+    };
+    rec.onend = () => {
+      if (!restartOnEnd) return;
+      deadRestarts = gotResultSinceStart ? 0 : deadRestarts + 1;
+      if (deadRestarts >= 8) {
+        restartOnEnd = false; listening = false;
+        btn.classList.remove('listening');
+        stopProximityGate();
+        showStatus('\u26a0 Mic keeps cutting out \u2014 check: internet on? mic allowed? another app using mic? Then tap \ud83c\udfa4 again.', 'err', 9000);
+        return;
+      }
+      rec.lang = voiceLang;
+      setTimeout(() => { try { rec.start(); } catch(e) {} }, 250);
+    };
+
+    restartOnEnd = true;
+    listening = true;
+    btn.classList.add('listening');
+    startProximityGate();
+    showStatus('🎤 Listening — say a field and value, e.g. "battery connected yes" or "PVC pipe two inch 5"');
+    try { rec.start(); } catch(e) {}
+  };
+
+  // ---------- KEYBOARD-MIC COEXISTENCE ----------
+  // iPhone/Android let only ONE thing use the microphone at a time. While our
+  // continuous recognizer holds the mic, tapping the keyboard's own dictation mic
+  // captures nothing. So: the moment a text box is focused (the keyboard — and its
+  // mic — is coming up), we let go of the mic; when the box is blurred, we resume
+  // if the user had voice on.
+  let pausedForKeyboard = false;
+  function isTypableTextField(el) {
+    if (!el) return false;
+    if (el.tagName === 'TEXTAREA') return true;
+    if (el.tagName !== 'INPUT') return false;
+    const t = (el.getAttribute('type') || 'text').toLowerCase();
+    // number pads have no mic; only release for fields that show the full keyboard
+    if (el.getAttribute('inputmode') === 'numeric') return false;
+    return t === 'text' || t === 'email' || t === 'tel' || t === 'search' || t === 'url';
+  }
+  document.addEventListener('focusin', (e) => {
+    if (!isTypableTextField(e.target)) return;
+    // release the mic for the keyboard, remember to resume
+    if (listening) {
+      pausedForKeyboard = true;
+      restartOnEnd = false;
+      listening = false;
+      try { rec && rec.stop(); } catch(err) {}
+      try { stopProximityGate(); } catch(err) {}
+      const b = document.getElementById('btn-voice');
+      if (b) b.classList.remove('listening');
+      showStatus('\u2328\ufe0f Keyboard dictation ready \u2014 voice resumes when you tap out', '', 2500);
+    }
+  });
+  document.addEventListener('focusout', (e) => {
+    if (!isTypableTextField(e.target)) return;
+    if (!pausedForKeyboard) return;
+    pausedForKeyboard = false;
+    // give iOS a moment to release the mic before we re-grab it
+    setTimeout(() => {
+      // only resume if the user didn't move into another text field
+      if (isTypableTextField(document.activeElement)) { pausedForKeyboard = true; return; }
+      if (typeof window.toggleVoiceEntry === 'function' && !listening) {
+        window.toggleVoiceEntry(); // turn voice back on
+      }
+    }, 400);
+  });
+})();
+
 // ===== SERVICE WORKER =====
-// Registered last, after everything else is set up.
-// The SW should NOT cache-bust on every deploy — make sure your sw.js
-// uses a versioned cache name so old cached HTML gets replaced.
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('../sw.js', { scope: '../' })
@@ -1063,5 +3358,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
 </body>
 </html>
