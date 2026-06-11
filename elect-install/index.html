@@ -2271,6 +2271,16 @@ if (document.readyState === 'loading') {
 
     if (!wireContext) return t;
 
+    // (a2) CATCH-ALL: in wire context, "1/2/3/4 + <any short unknown word>" means
+    //      aught, no matter how the engine mangled it ("two ox", "three aud",
+    //      "one watt", "four hot"...). Only words that mean something else on the
+    //      form are protected by the stoplist below.
+    const AUGHT_STOP = /^(inch|inches|in|foot|feet|ft|gauge|gage|awg|mcm|kcmil|wire|wires|copper|cu|aluminum|aluminium|al|alum|kw|amp|amps|by|and|with|to|of|for|the|a|an|conductors?|runs?|sets?|pieces?|zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fourteen|hundred|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|yes|no|si|pvc|emt|pipe|tubo|ground|grounds|neutral|neutrals|black|white|red|green)$/;
+    t = t.replace(/\b(one|two|three|four|1|2|3|4)\s+([a-z]{1,6})\b/g, (m, num, w) => {
+      if (AUGHT_STOP.test(w)) return m;
+      return num + ' aught';
+    });
+
     // (b) in wire context only, a SAFE-set standalone aught word -> "aught"
     //     (these are not common English words that appear elsewhere on this form)
     t = t.replace(/\b(aught|ought|oughta|naught|nought|yacht|yaught)\b/g, 'aught');
