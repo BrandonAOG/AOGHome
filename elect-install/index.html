@@ -3304,6 +3304,34 @@ if (document.readyState === 'loading') {
   let rec = null, listening = false, restartOnEnd = false;
   let voiceLang = 'en-US';   // always starts in English; auto-detects Spanish below
   try { localStorage.removeItem('voiceLang'); } catch(e) {}  // clear any stuck setting from older versions
+
+  // ---------- IDLE AUTO-SHUTOFF (battery saver) ----------
+  // The mic shuts itself off after 60s of NO SUCCESSFUL FILLS — not 60s of silence.
+  // This is deliberate: a truck radio or background chatter is constant sound, so a
+  // silence timer would never fire. Tying it to actual form fills means the radio can
+  // play all day and the mic still naps, while a tech actively calling out commands
+  // keeps it awake (every box that fills resets the clock).
+  const IDLE_MS = 60000;
+  let idleTimer = null;
+  function turnVoiceOff(reason) {
+    restartOnEnd = false;
+    try { rec && rec.stop(); } catch(e) {}
+    listening = false;
+    const b = document.getElementById('btn-voice');
+    if (b) b.classList.remove('listening');
+    try { stopProximityGate(); } catch(e) {}
+    clearTimeout(idleTimer); idleTimer = null;
+    showStatus(reason || 'Voice off', '', 6000);
+  }
+  function armIdleTimer() {
+    clearTimeout(idleTimer);
+    if (!listening) return;
+    idleTimer = setTimeout(() => {
+      if (listening) turnVoiceOff('\ud83d\udca4 Mic napped after 60s idle \u2014 tap \ud83c\udfa4 to wake');
+    }, IDLE_MS);
+  }
+  function noteActivity() { if (listening) armIdleTimer(); } // call on every successful fill
+
   function updateVoiceBtn() {
     const btn = document.getElementById('btn-voice');
     if (btn) btn.textContent = '\ud83c\udfa4 VOICE ' + (voiceLang === 'es-US' ? 'ES' : 'EN');
@@ -3362,6 +3390,7 @@ if (document.readyState === 'loading') {
       listening = false;
       btn.classList.remove('listening');
       stopProximityGate();
+      clearTimeout(idleTimer); idleTimer = null;
       showStatus('Voice entry off', '', 2000);
       return;
     }
@@ -3402,6 +3431,7 @@ if (document.readyState === 'loading') {
           catch(err) { showStatus('\u26a0 Could not process: "' + segments[0] + '"', 'err', 4000); }
         }
         maybeAutoSwitch(text, anySuccess);
+        if (anySuccess) noteActivity();   // a real fill happened -> reset the 60s idle clock
       }
     };
     rec.onerror = (e) => {
@@ -3448,6 +3478,7 @@ if (document.readyState === 'loading') {
     listening = true;
     btn.classList.add('listening');
     startProximityGate();
+    armIdleTimer();   // start the 60s battery-saver clock
     showStatus('🎤 Listening — say a field and value, e.g. "battery connected yes" or "PVC pipe two inch 5"');
     try { rec.start(); } catch(e) {}
   };
