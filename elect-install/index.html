@@ -2265,6 +2265,20 @@ if (document.readyState === 'loading') {
   function aughtListener(t) {
     const wireContext = / copper | cu | cooper | coper | aluminum | aluminium | al | alum | awg /.test(t);
 
+    // (a0) MERGED-WORD mis-hearings: the engine often fuses "N aught" into ONE word.
+    //      "three aught"->thought, "four aught"->fraught, "two aught"->taut/tot,
+    //      "one aught"->wanna/juanot. Number is baked in, so these are safe anywhere.
+    t = t.replace(/\b(thought|throught|thaught)\b/g, 'three aught');
+    t = t.replace(/\b(fraught|frought|fored)\b/g, 'four aught');
+    t = t.replace(/\b(taut|taught|tot|tought|toot)\b/g, 'two aught');
+    t = t.replace(/\b(wanna|juanot|wonot)\b/g, 'one aught');
+
+    // (a0b) a BARE aught-homophone as the entire utterance is always "aught"
+    //       (you said just the word "aught" and the phone heard "art")
+    if (/^\s*(aught|ought|oughta|naught|nought|art|arts|ot|aut|otto|auto|odd|yacht|yaught|out|all)\s*$/.test(t)) {
+      return ' aught ';
+    }
+
     // (a) number + aught-ish word (any homophone) -> "N aught"  [always safe: number-anchored]
     t = t.replace(/\b(one|two|three|four|1|2|3|4)\s+(aught|ought|oughta|naught|nought|not|odd|art|arts|auto|otto|ot|oot|yacht|yaught|yachts|aut|all|oh|aw|ah|out|o)\b/g,
       (m, num) => num + ' aught');
@@ -2283,7 +2297,7 @@ if (document.readyState === 'loading') {
 
     // (b) in wire context only, a SAFE-set standalone aught word -> "aught"
     //     (these are not common English words that appear elsewhere on this form)
-    t = t.replace(/\b(aught|ought|oughta|naught|nought|yacht|yaught)\b/g, 'aught');
+    t = t.replace(/\b(aught|ought|oughta|naught|nought|yacht|yaught|art|arts|ot|aut|otto)\b/g, 'aught');
 
     // (b2) metal directly followed by a riskier aught-homophone -> that means a
     //      single-aught (1/0) size, e.g. "copper auto 50", "copper odd 50".
@@ -3454,6 +3468,17 @@ if (document.readyState === 'loading') {
             if (statusEl.className.indexOf('ok') !== -1) anySuccess = true;
           }
           catch(err) { showStatus('\u26a0 Could not process: "' + segments[0] + '"', 'err', 4000); }
+          // FRAGMENT STITCHING: if this utterance failed on its own, try gluing
+          // it to the previous failed utterance — handles pauses mid-command,
+          // e.g. "three" ... "aught copper" ... "fifty".
+          if (!anySuccess && lastFrag && (lastFrag.length + segments[0].length) < 80) {
+            try {
+              handleTranscript(lastFrag + ' ' + segments[0]);
+              if (statusEl.className.indexOf('ok') !== -1) anySuccess = true;
+            } catch(err) {}
+          }
+          lastFrag = anySuccess ? '' : (lastFrag && (lastFrag.length + segments[0].length) < 80
+            ? lastFrag + ' ' + segments[0] : segments[0]);
         }
         maybeAutoSwitch(text, anySuccess);
         if (anySuccess) noteActivity();   // a real fill happened -> reset the 60s idle clock
@@ -3481,6 +3506,7 @@ if (document.readyState === 'loading') {
     };
     let gotResultSinceStart = false;
     let deadRestarts = 0;
+    let lastFrag = '';
     rec.onstart = () => {
       gotResultSinceStart = false;
       showStatus('\ud83c\udfa4 Mic on (' + (voiceLang === 'es-US' ? 'Espa\u00f1ol' : 'English') + ') \u2014 talk anytime', '', 2500);
