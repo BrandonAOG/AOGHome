@@ -2620,7 +2620,7 @@ if (document.readyState === 'loading') {
     'battery connected': ['battery'],
     'generator electrical made up': ['electrical made up'],
     'generator set to ng or lq in controller and in generator': ['ng or lq','set to ng','set to lq','fuel set'],
-    'generator manual': ['manual'],
+    'generator manual': ['generator manual','manual left','manual on site','manual'],
     'harness plugged in transfer switch es': ['harness plugged in','harness'],
     'grounding updated': ['grounding'],
     'grounds and neutrals separated': ['grounds and neutrals','neutrals separated','grounds separated','neutral and grounds','neutrals and grounds','ground and neutral','neutral and ground','grounds and neutral','neutral and grounds separated','neutrals and grounds separated','grounds neutrals separated','neutrals grounds separated','separated grounds and neutrals','separated neutrals and grounds','grounds and neutrals are separated','neutrals and grounds are separated'],
@@ -2844,6 +2844,150 @@ if (document.readyState === 'loading') {
   function isoToday() {
     const d = new Date();
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  // ---------- RUN-ON SEGMENTER ----------
+  // Lets the crew rattle off many commands in one breath with no connector words:
+  //   "battery connected yes mobile link yes pad existing transfer switch mounted yes"
+  // We slice the run-on into the FEWEST valid commands by asking the existing pure
+  // parsers (no DOM writes) where each complete command ends. Single commands are
+  // never affected — if only one command is found, the caller uses the normal path.
+
+  // probeCommand: does this exact word-slice parse as a complete command? (pure)
+  function probeCommand(seg, cachedEntries) {
+    const t = ' ' + normalize(seg).trim() + ' ';
+    if (!t.trim()) return false;
+    try {
+      const th = parseThhn(t); if (th && !th.err) return true;
+      const w = parseWire(t); if (w && !w.err) return true;
+      const tc = (/\bjbox\b/.test(t) ? null : parseTableCmd(t)); if (tc && !tc.err) return true;
+    } catch (e) {}
+    // form field (checkbox/text): a match whose entry can actually take what's said
+    try {
+      const entries = cachedEntries || buildFieldIndex();
+      const tDigits = ' ' + wordsToDigits(t).trim() + ' ';
+      const m = matchField(t, entries) || (tDigits !== t ? matchField(tDigits, entries) : null);
+      if (m) {
+        if (m.entry.kind === 'checkrow') return true;
+        const after = (tDigits.split(m.phrase)[1] || '');
+        if (/[a-z0-9]/.test(after) || /\d/.test(wordsToDigits(tDigits))) return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  // segmentRunOn: returns an array of command strings, or [whole] if it isn't a run-on.
+  // Strategy: find where each FIELD NAME begins in the run-on (field labels/aliases,
+  // wire metals, THHN cues, table row cues). Those are the anchors. Each command runs
+  // from one anchor up to the next.
+  function fieldAnchors(t, entries) {
+    const anchors = [];
+    const seen = {};
+    const add = (idx, len, why) => { if (idx < 0) return; anchors.push({ idx, len, why }); };
+    // field label phrases + aliases
+    entries.forEach(e => {
+      e.phrases.forEach(p => {
+        if (!p || p.length < 3) return;
+        let from = 0, k;
+        while ((k = t.indexOf(' ' + p + ' ', from)) !== -1) { add(k + 1, p.length, 'field'); from = k + 1; }
+      });
+    });
+    // wire metals start a wire command
+    [' copper ', ' aluminum ', ' aluminium '].forEach(mw => {
+      let from = 0, k;
+      while ((k = t.indexOf(mw, from)) !== -1) { add(k + 1, mw.trim().length, 'metal'); from = k + 1; }
+    });
+    // THHN cues: NN awg / NNkw / genpro
+    let m, re = /\b(\d{1,2}\s*(?:awg|gauge)|\d{2}kw|genpro|number\s+\d{1,2})\b/g;
+    const td = wordsToDigits(t);
+    while ((m = re.exec(td)) !== null) add(m.index, m[0].length, 'thhn');
+    return anchors;
+  }
+
+  function segmentRunOn(raw) {
+    let t = normalize(raw).trim();
+    // explicit connectors are hard cuts and take priority
+    const hard = t.split(/\b(?:next|then|also|and then)\b/).map(s => s.trim()).filter(Boolean);
+    if (hard.length > 1) return hard;
+
+    const words = t.split(/\s+/);
+    if (words.length < 4) return [t];
+
+    const entries = buildFieldIndex();
+    const padded = ' ' + t + ' ';
+    let anchors = fieldAnchors(padded, entries);
+    if (!anchors.length) return [t];
+
+    // keep the EARLIEST anchor at each position; sort; drop anchors that fall
+    // inside an earlier anchor's phrase (overlaps belong to the same command)
+    anchors.sort((a, b) => a.idx - b.idx || b.len - a.len);
+    const starts = [];
+    let lastEnd = -1;
+    anchors.forEach(a => {
+      if (a.idx >= lastEnd) { starts.push(a.idx); lastEnd = a.idx + a.len; }
+    });
+    if (starts.length < 2) return [t];
+
+    // slice the padded string at each anchor start
+    const segs = [];
+    for (let s = 0; s < starts.length; s++) {
+      const from = starts[s];
+      const to = (s + 1 < starts.length) ? starts[s + 1] : padded.length;
+      const piece = padded.slice(from, to).trim();
+      if (piece) segs.push(piece);
+    }
+    // a segment that is ONLY a section word ("inspected", "walk through") is a
+    // modifier of the previous command (e.g. "service change" + "inspected"),
+    // so glue it back on rather than treating it as its own command.
+    const SECTION_ONLY = /^(inspected|inspection|walk through|walkthrough)$/;
+    const merged = [];
+    segs.forEach(p => {
+      if (SECTION_ONLY.test(p) && merged.length) merged[merged.length - 1] += ' ' + p;
+      else merged.push(p);
+    });
+    return merged.length ? merged : [t];
+  }
+
+  // runMulti: execute each segment via the normal handler, collect ✓/✗ for the panel
+  function runMulti(segments) {
+    const results = [];
+    segments.forEach(seg => {
+      const before = statusEl.textContent;
+      let okFlag = false, msg = '';
+      try {
+        handleTranscript(seg);
+        okFlag = statusEl.className.indexOf('ok') !== -1;
+        msg = statusEl.textContent;
+      } catch (e) { okFlag = false; msg = 'error'; }
+      results.push({ seg, ok: okFlag, msg });
+    });
+    showMultiResults(results);
+    return results;
+  }
+
+  // ---------- multi-result panel ----------
+  function showMultiResults(results) {
+    let panel = document.getElementById('multi-results');
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.id = 'multi-results';
+      panel.style.cssText = 'position:fixed;left:50%;bottom:84px;transform:translateX(-50%);z-index:9999;max-width:92vw;width:420px;max-height:46vh;overflow-y:auto;background:rgba(15,20,40,0.97);color:#E0F7FF;border:1px solid #00FFC8;border-radius:10px;padding:10px 12px;font:13px/1.4 Arial,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,0.5);';
+      document.body.appendChild(panel);
+    }
+    const okN = results.filter(r => r.ok).length;
+    const rows = results.map(r => {
+      const icon = r.ok ? '\u2705' : '\u274c';
+      const color = r.ok ? '#7CFFB2' : '#FF8A8A';
+      const detail = r.ok ? r.msg.replace(/^\u2713\s*/, '') : ('couldn\u2019t place \u201c' + r.seg + '\u201d');
+      return '<div style="padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08)"><span style="color:' + color + '">' + icon + '</span> ' + detail + '</div>';
+    }).join('');
+    panel.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+        '<b>' + okN + ' of ' + results.length + ' filled</b>' +
+        '<span onclick="this.closest(\'#multi-results\').remove()" style="cursor:pointer;padding:2px 8px;background:rgba(255,255,255,0.12);border-radius:6px">\u2715</span>' +
+      '</div>' + rows;
+    clearTimeout(panel._t);
+    panel._t = setTimeout(() => { if (panel) panel.remove(); }, 15000);
   }
 
   // ---------- master command handler ----------
@@ -3242,17 +3386,21 @@ if (document.readyState === 'loading') {
           showStatus('\ud83d\udd07 Too far/quiet \u2014 ignored ("' + text + '")', '', 3000);
           continue;
         }
-        // allow chaining several commands in one breath: "... next ... next ..."
+        // Run-on support: split one breath into many commands with no connector
+        // words needed. The segmenter returns 1 entry for a normal single command
+        // (which then takes the exact same path as before).
+        const segments = segmentRunOn(text);
         let anySuccess = false;
-        text.split(/\bnext\b|\balso\b|\bthen\b/i).forEach(part => {
-          part = part.trim();
-          if (!part) return;
+        if (segments.length > 1) {
+          const results = runMulti(segments);
+          anySuccess = results.some(r => r.ok);
+        } else {
           try {
-            handleTranscript(part);
+            handleTranscript(segments[0]);
             if (statusEl.className.indexOf('ok') !== -1) anySuccess = true;
           }
-          catch(err) { showStatus('\u26a0 Could not process: "' + part + '"', 'err', 4000); }
-        });
+          catch(err) { showStatus('\u26a0 Could not process: "' + segments[0] + '"', 'err', 4000); }
+        }
         maybeAutoSwitch(text, anySuccess);
       }
     };
