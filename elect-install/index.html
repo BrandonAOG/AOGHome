@@ -2234,6 +2234,8 @@ if (document.readyState === 'loading') {
     // "service changed" -> "service change" (tense), and inspection/walkthrough section cues
     [/\bservice changed\b/g, 'service change'],
     [/\binspections?\b|\binspect\b/g, 'inspected'],
+    // "pic" is often heard as pick/picks/pix/pegs near "upload"
+    [/\b(pick|picks|pix|pig|pigs)\s+(upload|uploads|uploaded)\b/g, 'pics uploaded'],
     [/\bwalkthrough\b|\bwalk thru\b|\bwalk threw\b/g, 'walk through'],
     // Gen-Pro wire mishears -> genpro
     [/\bgen pro\b|\bgenpro\b|\bjin pro\b|\bjen pro\b|\bgym pro\b|\bgen pros\b|\bjenpro\b|\bgin pro\b|\bgen bro\b|\bjean pro\b|\bgenero\b/g, 'genpro'],
@@ -2668,7 +2670,8 @@ if (document.readyState === 'loading') {
     'electrical rough': ['rough inspection','rough'],
     'electrical final': ['final inspection','final'],
     'electrical underground': ['underground inspection','underground'],
-    'all pics for inspected': ['all pics','all pictures','pictures'],
+    'all pics for inspected': ['all pics','all pictures','pictures','pics uploaded','pic uploaded','pics upload','pic upload','pictures uploaded','photos uploaded','all pics uploaded','all pictures uploaded'],
+    'pad or stand installed': ['pad installed','pad is installed','stand installed','pad or stand','pad','stand'],
     'everything picked up and clean': ['picked up and clean','everything clean','cleaned up','clean up done'],
     'ready for h o training': ['ready for training','ho training','homeowner training','ready for homeowner training'],
     'transfer switch type': ['switch type'],
@@ -2812,6 +2815,17 @@ if (document.readyState === 'loading') {
     const rowHasOpt = (e, base) => e.kind === 'checkrow' && e.options.some(o => o.base === base);
 
     entries.forEach(e => {
+      // INSPECTION GATE: rows in the Inspection(s) section only respond when the
+      // speaker actually says "inspected" (inspect/inspection normalize to it).
+      // Exception: the "All Pics for Inspected" row also fires on pic-upload
+      // phrasing ("pics uploaded", "pic upload", "pictures uploaded").
+      if (e.section === 'inspected') {
+        const saidInspected = t.indexOf(' inspected') !== -1;
+        const isPicsRow = /all pics/.test((e.label || '').toLowerCase());
+        const saidPicsUpload = /\b(pic|pics|picture|pictures|photo|photos)\b/.test(t)
+          && /\bupload(ed|s)?\b/.test(t);
+        if (!saidInspected && !(isPicsRow && saidPicsUpload)) return;
+      }
       const sectionPresent = e.section && t.indexOf(' ' + e.section) !== -1;
       // does this row support every distinctive option the speaker named?
       const optCompatible = routingOpts.length ? routingOpts.every(b => rowHasOpt(e, b)) : true;
