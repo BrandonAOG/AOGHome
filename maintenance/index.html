@@ -766,6 +766,13 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
 @media print {
   @page { size: 8.5in 11in; margin: 0.15in 0.15in 0.06in 0.15in !important; }
 
+  .leak-loc .check-group { flex-wrap: nowrap !important; white-space: nowrap !important; gap: 4px !important; }
+
+  /* Tighten the two TS Serial rows a hair in print */
+  .ts-row { margin-bottom: 2px !important; gap: 6px !important; }
+  .ts-row label { margin: 0 !important; }
+  .ts-row .check-group { gap: 1px !important; }
+
   html {
     height: auto !important; margin: 0 !important; padding: 0 !important;
     overflow: visible !important;
@@ -944,7 +951,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   #name-job-date-row #number { flex: 1 1 0 !important; width: auto !important; min-width: 0 !important; }
   #name-job-date-row #date   { flex: 0 0 100px !important; width: 100px !important; min-width: 100px !important; }
   /* Spread the grouped gas/oil rows a bit wider in print (not full-width) */
-  #gas-top-row, #oil-top-row { justify-content: flex-start !important; gap: 56px !important; flex-wrap: nowrap !important; }
+  #gas-top-row, #oil-top-row { justify-content: flex-start !important; gap: 20px !important; flex-wrap: nowrap !important; }
   label { color: #6B7280 !important; font-size: calc(0.626rem + 0.3px) !important; letter-spacing: 0.3px !important; }
 
   input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], textarea, select {
@@ -1419,7 +1426,7 @@ body.dark-mode .action-bar {
               <label class="yn-label yn-label-n" for="gl_n">N</label>
             </div>
           </span>
-          <span style="display:flex;flex-direction:column;gap:2px;">
+          <span class="leak-loc" style="display:flex;flex-direction:column;gap:2px;">
             <label>Location</label>
             <div class="check-group" style="flex-wrap:wrap;gap:2px;">
               <label class="check-item"><input type="radio" name="leakloc" value="front"><span>Front</span></label>
