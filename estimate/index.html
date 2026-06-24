@@ -1213,18 +1213,12 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
   html.print-truesize #page {
     transform: scale(0.6766) !important;
     transform-origin: top left !important;
-    width: 1050px !important;
+    width: auto !important;
+    min-width: 1050px !important;
     max-width: none !important;
-    /* Fixed pre-scale height: 1404px × 0.6766 ≈ 950px = 9.9in tall (fills to the
-       0.55in bottom margin). The page is flex-column with .content flex:1 and
-       justify-content:space-between, so sections stretch to fill this height —
-       matching the target PDF's full-page look. */
     height: 1450px !important;
     max-height: 1450px !important;
     min-height: 1404px !important;
-    /* CRITICAL: kill the on-screen action-bar clearance padding (50px) that the
-       mobile-safari/.page rules add — on a real iPad it was inflating the TOP
-       margin by ~0.5in and shrinking the fill. */
     padding: 0 !important;
     padding-top: 0 !important;
     margin: 0 !important;
@@ -1236,7 +1230,6 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
     right: 0px !important;
     overflow: hidden !important;
   }
-  /* content + sections must stretch (not collapse) so the page fills vertically */
   html.print-truesize #page .content {
     display: flex !important;
     flex-direction: column !important;
@@ -1246,15 +1239,12 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
     justify-content: space-between !important;
     overflow: hidden !important;
   }
-  /* Page is absolutely positioned + scaled, so it reserves NO height in flow.
-     Body height is pinned in JS to scaled height + margins → one centered sheet. */
   html.print-truesize, html.print-truesize body {
     overflow: hidden !important;
     position: relative !important;
     min-height: 0 !important;
   }
 }
-
 @media print {
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; animation-play-state: paused !important; transition: none !important; }
   .toolbar, .action-bar, #save-status, #chrome-print-tip, #theme-toggle-btn, #offline-banner, #address-suggestions, #gps-status, #gps-btn { display: none !important; }
