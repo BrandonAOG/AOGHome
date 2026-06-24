@@ -1219,8 +1219,8 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
        0.55in bottom margin). The page is flex-column with .content flex:1 and
        justify-content:space-between, so sections stretch to fill this height —
        matching the target PDF's full-page look. */
-    height: 1500px !important;
-    max-height: 1500px !important;
+    height: 1450px !important;
+    max-height: 1450px !important;
     min-height: 1404px !important;
     /* CRITICAL: kill the on-screen action-bar clearance padding (50px) that the
        mobile-safari/.page rules add — on a real iPad it was inflating the TOP
@@ -1233,6 +1233,7 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
     position: absolute !important;
     top: 0px !important;
     left: 22.8px !important;
+    right: 22.8px !important;
     overflow: hidden !important;
   }
   /* content + sections must stretch (not collapse) so the page fills vertically */
