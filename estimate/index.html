@@ -1215,13 +1215,19 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
     transform-origin: top left !important;
     width: 1050px !important;
     max-width: none !important;
-    /* Fixed pre-scale height: 1404px × 0.6766 ≈ 950px = 9.9in (fills to the
+    /* Fixed pre-scale height: 1404px × 0.6766 ≈ 950px = 9.9in tall (fills to the
        0.55in bottom margin). The page is flex-column with .content flex:1 and
        justify-content:space-between, so sections stretch to fill this height —
        matching the target PDF's full-page look. */
     height: 1404px !important;
     max-height: 1404px !important;
     min-height: 1404px !important;
+    /* CRITICAL: kill the on-screen action-bar clearance padding (50px) that the
+       mobile-safari/.page rules add — on a real iPad it was inflating the TOP
+       margin by ~0.5in and shrinking the fill. */
+    padding: 0 !important;
+    padding-top: 0 !important;
+    margin: 0 !important;
     display: flex !important;
     flex-direction: column !important;
     position: absolute !important;
