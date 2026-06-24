@@ -1247,6 +1247,10 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
   html.print-truesize .flood-bar {
     margin-bottom: 6px !important;
   }
+  /* Reduce the top margin above notes boxes (pad, gas) in print-truesize context */
+  html.print-truesize {
+    --mt-notes-box-phone: 4px;
+  }
   html.print-truesize, html.print-truesize body {
     overflow: hidden !important;
     position: relative !important;
