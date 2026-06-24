@@ -1194,89 +1194,60 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
   html { font-size: var(--fs-print-phone-base) !important; }
   @page { size: 8.5in 11in; margin: 0; }
 
-  /* ════════════ TRUE-SIZE PRINT LOCK ════════════
+  /* ════════════ TRUE-SIZE PRINT LOCK + CENTERED FILL ════════════
      ROOT FIX for "some iPads need 59% scaling": the layout is authored at
-     1050px wide, but the printable area of Letter paper is 816px (8.5in × 96dpi).
-     Previously we handed Safari a 1050px page and relied on its "Fit to Page"
-     to shrink it — and different iPadOS/Safari versions pick different scales,
-     so the same form printed at 100% on one iPad and needed 59% on another.
+     1050px wide. We scale the page OURSELVES so it arrives at the printer at a
+     fixed physical size — Safari has nothing left to "fit", so it prints 1:1
+     identically on every iPad.
 
-     Here we shrink the page OURSELVES by exactly 816/1050 = 0.77714 using a CSS
-     transform. The content then arrives at the printer already 8.5in wide, so
-     Safari has nothing left to fit — it prints 1:1, identically on every device.
-     transform-origin top-left anchors it to the page corner; the negative
-     bottom margin reclaims the blank space the un-scaled box height would leave. */
+     Tuned to match the target PDF: ~0.55in uniform margin all around.
+     At 96dpi, 0.55in = 52.8px. Usable width = 816 - 2*52.8 = 710.4px.
+     Scale = 710.4 / 1050 = 0.6766. The page is absolutely positioned and
+     offset by the margin; JS (_clampTrueSizeHeight) pins the body height to
+     scaled-content-height + top + bottom margin so it's one centered sheet. */
   html.print-truesize body,
   body.print-truesize {
-    width: 1050px !important;
+    width: 816px !important;
     margin: 0 !important;
   }
-  .print-truesize .page,
-  .print-truesize.page,
-  html.print-truesize .page {
-    transform: scale(0.77714) !important;
+  html.print-truesize #page {
+    transform: scale(0.6766) !important;
     transform-origin: top left !important;
     width: 1050px !important;
     max-width: none !important;
+    /* Fixed pre-scale height: 1404px × 0.6766 ≈ 950px = 9.9in (fills to the
+       0.55in bottom margin). The page is flex-column with .content flex:1 and
+       justify-content:space-between, so sections stretch to fill this height —
+       matching the target PDF's full-page look. */
+    height: 1404px !important;
+    max-height: 1404px !important;
+    min-height: 1404px !important;
+    display: flex !important;
+    flex-direction: column !important;
     position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
+    top: 52.8px !important;
+    left: 52.8px !important;
+    overflow: hidden !important;
+  }
+  /* content + sections must stretch (not collapse) so the page fills vertically */
+  html.print-truesize #page .content {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
   }
   /* Page is absolutely positioned + scaled, so it reserves NO height in flow.
-     Body height is pinned in JS (_clampTrueSizeHeight) to the scaled page height,
-     so exactly one 8.5x11 sheet is produced with no phantom 2nd page. */
+     Body height is pinned in JS to scaled height + margins → one centered sheet. */
   html.print-truesize, html.print-truesize body {
     overflow: hidden !important;
     position: relative !important;
     min-height: 0 !important;
   }
-
-  /* ════════════ mm RULERS (print only) ════════════
-     Physical-style mm rulers with numbers along the top and left edge.
-     The layout is 1050px wide, Fit-to-Page scaled onto 8.5x11in paper.
-     In this 1050px layout coordinate space, after scaling to paper:
-       1 mm = 1050 / 215.9mm = 4.8634 px   (same on both axes)
-     The ruler ticks/numbers are built in JS at print time using this scale,
-     so the printed numbers read as true millimeters on the sheet. */
-  #aog-ruler-h, #aog-ruler-v { display: block !important; }
 }
 
-/* Rulers hidden on screen, only shown in print via the rules above */
-#aog-ruler-h, #aog-ruler-v { display: none; }
-
-#aog-ruler-h {
-  position: absolute; top: 0; left: 0;
-  width: 1050px; height: 30px;
-  pointer-events: none; z-index: 99990;
-  border-bottom: 1px solid #000;
-  background: #fff;
-}
-#aog-ruler-v {
-  position: absolute; top: 0; left: 0;
-  width: 30px; height: 1358.82px;
-  pointer-events: none; z-index: 99990;
-  border-right: 1px solid #000;
-  background: #fff;
-}
-.aog-tick {
-  position: absolute; background: #000;
-}
-.aog-ruler-h .aog-tick { bottom: 0; width: 0.6px; }
-.aog-ruler-v .aog-tick { right: 0; height: 0.6px; }
-.aog-tick.mm  { /* 1mm minor */ }
-.aog-tick.cm  { /* 10mm major */ background:#000; }
-.aog-ruler-h .aog-tick.mm { height: 6px; }
-.aog-ruler-h .aog-tick.half { height: 9px; }
-.aog-ruler-h .aog-tick.cm { height: 16px; width: 0.9px; }
-.aog-ruler-v .aog-tick.mm { width: 6px; }
-.aog-ruler-v .aog-tick.half { width: 9px; }
-.aog-ruler-v .aog-tick.cm { width: 16px; height: 0.9px; }
-.aog-num {
-  position: absolute;
-  font: 700 9px/1 Arial, sans-serif; color: #000;
-}
-.aog-ruler-h .aog-num { top: 1px; transform: translateX(1.5px); }
-.aog-ruler-v .aog-num { left: 1px; transform: translateY(-4px); }
 @media print {
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; animation-play-state: paused !important; transition: none !important; }
   .toolbar, .action-bar, #save-status, #chrome-print-tip, #theme-toggle-btn, #offline-banner, #address-suggestions, #gps-status, #gps-btn { display: none !important; }
@@ -2155,9 +2126,6 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
 </div>
 <div id="save-status" style="position:fixed;top:44px;left:0;right:0;z-index:99998;text-align:center;font-size:10px;color:var(--text-muted);background:var(--panel);padding:2px 8px;display:none;font-family:Arial,sans-serif;" aria-live="polite"></div>
 <div class="page" id="page">
-
-  <div id="aog-ruler-h" class="aog-ruler-h"></div>
-  <div id="aog-ruler-v" class="aog-ruler-v"></div>
 
   <div class="header">
     <div class="header-logo">
@@ -3252,10 +3220,10 @@ function printForm() {
   // Pin <body> to the ACTUAL scaled height so the printable flow matches what's drawn.
   function _clampTrueSizeHeight() {
     try {
-      var pg = document.getElementById('page');
-      if (!pg) return;
-      var rect = pg.getBoundingClientRect();   // already reflects the CSS scale()
-      var h = Math.ceil(rect.height);
+      var MARGIN = 52.8;          // 0.55in at 96dpi
+      var SCALED_PAGE_H = 1404 * 0.6766;  // fixed page height × scale ≈ 950px
+      // total sheet height = top margin + scaled page + bottom margin = 11in (1056px)
+      var h = Math.ceil(SCALED_PAGE_H + MARGIN * 2);
       var hpx = h + 'px';
       document.body.style.setProperty('height', hpx, 'important');
       document.body.style.setProperty('min-height', '0', 'important');
@@ -3264,7 +3232,6 @@ function printForm() {
       document.documentElement.style.setProperty('height', hpx, 'important');
       document.documentElement.style.setProperty('max-height', hpx, 'important');
       document.documentElement.style.setProperty('overflow', 'hidden', 'important');
-      // force a reflow so iOS measures the clamped height before building the preview
       void document.body.offsetHeight;
     } catch (e) {}
   }
@@ -5710,45 +5677,6 @@ window.addEventListener('afterprint', function() {
   } catch (err) {
     try { alert('debug overlay error: ' + err.message); } catch (e) {}
   }
-})();
-</script>
-<script>
-/* ── Build physical mm rulers (numbers + ticks) for the PDF print ──
-   Scale: in the 1050px layout, after Fit-to-Page onto 8.5in paper,
-   1mm = 1050 / 215.9 = 4.86336 px. Same factor used vertically. */
-(function () {
-  function build() {
-    var H = document.getElementById('aog-ruler-h');
-    var V = document.getElementById('aog-ruler-v');
-    if (!H || !V || H.dataset.built) return;
-    var PXMM = 1050 / 215.9;          // px per mm in layout space
-    var maxH = Math.floor(1050 / PXMM);      // ~215 mm across
-    var maxV = Math.floor(1358.82 / PXMM);   // ~279 mm down
-    function ticks(el, max, horizontal) {
-      var frag = document.createDocumentFragment();
-      for (var mm = 0; mm <= max; mm++) {
-        var pos = mm * PXMM;
-        var t = document.createElement('div');
-        t.className = 'aog-tick ' + (mm % 10 === 0 ? 'cm' : (mm % 5 === 0 ? 'half' : 'mm'));
-        if (horizontal) t.style.left = pos + 'px'; else t.style.top = pos + 'px';
-        frag.appendChild(t);
-        if (mm % 10 === 0 && mm > 0) {
-          var n = document.createElement('div');
-          n.className = 'aog-num';
-          n.textContent = mm;            // label in mm (10,20,30…)
-          if (horizontal) n.style.left = pos + 'px'; else n.style.top = pos + 'px';
-          frag.appendChild(n);
-        }
-      }
-      el.appendChild(frag);
-    }
-    ticks(H, maxH, true);
-    ticks(V, maxV, false);
-    H.dataset.built = V.dataset.built = '1';
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', build);
-  } else { build(); }
 })();
 </script>
 </body>
