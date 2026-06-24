@@ -1200,9 +1200,9 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
      fixed physical size — Safari has nothing left to "fit", so it prints 1:1
      identically on every iPad.
 
-     Tuned to match the target PDF: ~0.55in uniform margin all around.
-     At 96dpi, 0.55in = 52.8px. Usable width = 816 - 2*52.8 = 710.4px.
-     Scale = 710.4 / 1050 = 0.6766. The page is absolutely positioned and
+     Tuned to match the target PDF: ~0.22in uniform margin all around.
+     At 96dpi, 0.22in = 21.12px. Usable width = 816 - 2*21.12 = 773.76px.
+     Scale = 773.76 / 1050 = 0.7369. The page is absolutely positioned and
      offset by the margin; JS (_clampTrueSizeHeight) pins the body height to
      scaled-content-height + top + bottom margin so it's one centered sheet. */
   html.print-truesize body,
@@ -1211,7 +1211,7 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
     margin: 0 !important;
   }
   html.print-truesize #page {
-    transform: scale(0.6766) !important;
+    transform: scale(0.7369) !important;
     transform-origin: top left !important;
     width: auto !important;
     min-width: 1050px !important;
@@ -3217,9 +3217,9 @@ function printForm() {
   // Pin <body> to the ACTUAL scaled height so the printable flow matches what's drawn.
   function _clampTrueSizeHeight() {
     try {
-      var MARGIN = 52.8;          // 0.55in at 96dpi
-      var SCALED_PAGE_H = 1404 * 0.6766;  // fixed page height × scale ≈ 950px
-      var SCALED_PAGE_W = 1050 * 0.77;  // fixed page width × scale ≈ 710px
+      var MARGIN = 21.12;         // 0.22in at 96dpi
+      var SCALED_PAGE_H = 1404 * 0.7369;  // fixed page height × scale ≈ 1034px
+      var SCALED_PAGE_W = 1050 * 0.7369;  // fixed page width × scale ≈ 774px
       // total sheet height = top margin + scaled page + bottom margin = 11in (1056px)
       var h = Math.ceil(SCALED_PAGE_H + MARGIN * 2);
       var hpx = h + 'px';
