@@ -1239,6 +1239,14 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
     justify-content: space-between !important;
     overflow: hidden !important;
   }
+  /* Tighten section gaps so content fits within 0.22in margins at scale 0.7369.
+     At this scale, 1404px pre-scale → ~1034px rendered, but usable height is
+     only ~1014px. Reducing gaps from 10px → 6px saves ~28px pre-scale. */
+  html.print-truesize .section,
+  html.print-truesize .top-grid,
+  html.print-truesize .flood-bar {
+    margin-bottom: 6px !important;
+  }
   html.print-truesize, html.print-truesize body {
     overflow: hidden !important;
     position: relative !important;
