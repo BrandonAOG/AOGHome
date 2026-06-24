@@ -1241,11 +1241,19 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
   }
   /* Tighten section gaps so content fits within 0.22in margins at scale 0.7369.
      At this scale, 1404px pre-scale → ~1034px rendered, but usable height is
-     only ~1014px. Reducing gaps from 10px → 6px saves ~28px pre-scale. */
+     only ~1014px. Reducing gaps from 10px → 2px saves ~56px pre-scale. */
   html.print-truesize .section,
   html.print-truesize .top-grid,
   html.print-truesize .flood-bar {
-    margin-bottom: 6px !important;
+    margin-bottom: 2px !important;
+  }
+  /* ready_notes has rows=2 and no print-truesize height pin — collapses it to
+     match the @media print value so it doesn't push Install Details onto page 2 */
+  html.print-truesize #ready_notes {
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    overflow: hidden !important;
   }
   /* Reduce the top margin above notes boxes (pad, gas) in print-truesize context */
   html.print-truesize {
