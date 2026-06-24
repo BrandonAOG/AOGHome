@@ -1251,6 +1251,10 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
   html.print-truesize {
     --mt-notes-box-phone: 4px;
   }
+  /* Reduce space between Coverage row and Transfer Switch section border */
+  html.print-truesize #transfer-switch-row .section-body {
+    padding-bottom: 2px !important;
+  }
   html.print-truesize, html.print-truesize body {
     overflow: hidden !important;
     position: relative !important;
