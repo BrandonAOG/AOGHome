@@ -1194,6 +1194,43 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
   html { font-size: var(--fs-print-phone-base) !important; }
   @page { size: 8.5in 11in; margin: 0; }
 
+  /* ════════════ TRUE-SIZE PRINT LOCK ════════════
+     ROOT FIX for "some iPads need 59% scaling": the layout is authored at
+     1050px wide, but the printable area of Letter paper is 816px (8.5in × 96dpi).
+     Previously we handed Safari a 1050px page and relied on its "Fit to Page"
+     to shrink it — and different iPadOS/Safari versions pick different scales,
+     so the same form printed at 100% on one iPad and needed 59% on another.
+
+     Here we shrink the page OURSELVES by exactly 816/1050 = 0.77714 using a CSS
+     transform. The content then arrives at the printer already 8.5in wide, so
+     Safari has nothing left to fit — it prints 1:1, identically on every device.
+     transform-origin top-left anchors it to the page corner; the negative
+     bottom margin reclaims the blank space the un-scaled box height would leave. */
+  html.print-truesize body,
+  body.print-truesize {
+    width: 1050px !important;
+    margin: 0 !important;
+  }
+  .print-truesize .page,
+  .print-truesize.page,
+  html.print-truesize .page {
+    transform: scale(0.77714) !important;
+    transform-origin: top left !important;
+    width: 1050px !important;
+    max-width: none !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+  /* Page is absolutely positioned + scaled, so it reserves NO height in flow.
+     Body height is pinned in JS (_clampTrueSizeHeight) to the scaled page height,
+     so exactly one 8.5x11 sheet is produced with no phantom 2nd page. */
+  html.print-truesize, html.print-truesize body {
+    overflow: hidden !important;
+    position: relative !important;
+    min-height: 0 !important;
+  }
+
   /* ════════════ mm RULERS (print only) ════════════
      Physical-style mm rulers with numbers along the top and left edge.
      The layout is 1050px wide, Fit-to-Page scaled onto 8.5x11in paper.
@@ -2117,40 +2154,6 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   </button>
 </div>
 <div id="save-status" style="position:fixed;top:44px;left:0;right:0;z-index:99998;text-align:center;font-size:10px;color:var(--text-muted);background:var(--panel);padding:2px 8px;display:none;font-family:Arial,sans-serif;" aria-live="polite"></div>
-
-<!-- Shown only in iPad/iPhone Safari: nudge to use Chrome for reliable print scaling -->
-<div id="chrome-print-tip" role="status" style="display:none;position:fixed;left:8px;right:8px;top:calc(50px + env(safe-area-inset-top,0px));z-index:99997;background:#FFF7ED;border:1px solid #FA6700;border-radius:8px;padding:8px 36px 8px 12px;font:600 12px/1.35 Arial,sans-serif;color:#92400E;box-shadow:0 2px 8px rgba(0,0,0,0.12);">
-  📄 For reliable printing, open this form in <b>Chrome</b>. Safari may shrink the PDF and require manual scaling.
-  <span id="chrome-print-tip-close" role="button" aria-label="Dismiss" style="position:absolute;top:4px;right:8px;font-size:18px;line-height:1;color:#92400E;cursor:pointer;padding:2px 4px;">&times;</span>
-</div>
-<script>
-(function () {
-  try {
-    var ua = navigator.userAgent;
-    // iOS / iPadOS (incl. iPadOS desktop-mode which reports as Macintosh + touch)
-    var isIOS = /iP(hone|od|ad)/.test(ua) ||
-                (/Macintosh/.test(ua) && typeof navigator.maxTouchPoints === 'number' && navigator.maxTouchPoints > 1);
-    // Real Safari only — exclude Chrome (CriOS), Firefox (FxiOS), Edge (EdgiOS) on iOS
-    var isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|Chrome|Chromium|Edg/.test(ua);
-    var dismissed = false;
-    try { dismissed = localStorage.getItem('aog_chrome_tip_dismissed') === '1'; } catch(e) {}
-    if (isIOS && isSafari && !dismissed) {
-      var show = function () {
-        var tip = document.getElementById('chrome-print-tip');
-        if (!tip) return;
-        tip.style.display = 'block';
-        var close = document.getElementById('chrome-print-tip-close');
-        if (close) close.addEventListener('click', function () {
-          tip.style.display = 'none';
-          try { localStorage.setItem('aog_chrome_tip_dismissed', '1'); } catch(e) {}
-        });
-      };
-      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', show);
-      else show();
-    }
-  } catch (e) {}
-})();
-</script>
 <div class="page" id="page">
 
   <div id="aog-ruler-h" class="aog-ruler-h"></div>
@@ -3110,6 +3113,15 @@ function printForm() {
     document.documentElement.classList.remove('desktop-print');
     document.documentElement.classList.remove('desktop-print-safari');
     document.documentElement.classList.remove('ipad-print');
+    document.documentElement.classList.remove('print-truesize');
+    document.body.classList.remove('print-truesize');
+    document.body.style.removeProperty('height');
+    document.body.style.removeProperty('min-height');
+    document.body.style.removeProperty('max-height');
+    document.body.style.removeProperty('overflow');
+    document.documentElement.style.removeProperty('height');
+    document.documentElement.style.removeProperty('max-height');
+    document.documentElement.style.removeProperty('overflow');
     document.documentElement.style.colorScheme = _prevColorScheme || '';
     if (wasMobileSafariClass) document.body.classList.add('mobile-safari');
     _printSeasonalClasses.forEach(function(c) { document.body.classList.add(c); });
@@ -3235,15 +3247,35 @@ function printForm() {
     if (window.__pageMetrics) window.__pageMetrics('  post-flush:');
   }
 
-  // ══════════════════════════════════════════
-  // ── iPHONE SAFARI — print path ──
-  // Runs BEFORE iPad detection. No class is added, so the static phone-print
-  // rules (html:not(.ipad-print):not(.desktop-print)) apply; only the checkbox
-  // span-replace is done here.
+  // After .print-truesize scales #page to true paper width, the un-scaled box still
+  // reserves its full (taller) height in flow, which can spill a phantom 2nd page.
+  // Pin <body> to the ACTUAL scaled height so the printable flow matches what's drawn.
+  function _clampTrueSizeHeight() {
+    try {
+      var pg = document.getElementById('page');
+      if (!pg) return;
+      var rect = pg.getBoundingClientRect();   // already reflects the CSS scale()
+      var h = Math.ceil(rect.height);
+      var hpx = h + 'px';
+      document.body.style.setProperty('height', hpx, 'important');
+      document.body.style.setProperty('min-height', '0', 'important');
+      document.body.style.setProperty('max-height', hpx, 'important');
+      document.body.style.setProperty('overflow', 'hidden', 'important');
+      document.documentElement.style.setProperty('height', hpx, 'important');
+      document.documentElement.style.setProperty('max-height', hpx, 'important');
+      document.documentElement.style.setProperty('overflow', 'hidden', 'important');
+      // force a reflow so iOS measures the clamped height before building the preview
+      void document.body.offsetHeight;
+    } catch (e) {}
+  }
+
   // ══════════════════════════════════════════
   if (isMobileSafari && !isIpadSafari) {
+    document.documentElement.classList.add('print-truesize');
+    document.body.classList.add('print-truesize');
     doSpanReplace();
     flushPrintLayout();
+    _clampTrueSizeHeight();
     armRestoreAndPrint(true);
     return;
   }
@@ -3261,8 +3293,11 @@ function printForm() {
   // stay on one page.)
   // ══════════════════════════════════════════
   if (isMobileSafari && isIpadSafari) {
+    document.documentElement.classList.add('print-truesize');
+    document.body.classList.add('print-truesize');
     doSpanReplace();
     flushPrintLayout();
+    _clampTrueSizeHeight();
     armRestoreAndPrint(true);
     return;
   }
