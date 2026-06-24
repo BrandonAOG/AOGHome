@@ -45,7 +45,7 @@ for willful infringement under 17 U.S.C. § 504, plus attorney's fees.
     }
   })();
 
-  var PRINT_CSS = '@media print { .toolbar, #pdfModal, #imageModal, #offline-banner, #theme-toggle-btn, .gps-btn, #gps-status, #gps-live, #address-suggestions { display: none !important; } }';
+  var PRINT_CSS = '@media print { .toolbar, #pdfModal, #imageModal, #offline-banner, #chrome-print-tip, #theme-toggle-btn, .gps-btn, #gps-status, #gps-live, #address-suggestions { display: none !important; } }';
   var styleEl = document.createElement('style');
   styleEl.setAttribute('id', 'print-optimization-styles');
   styleEl.textContent = PRINT_CSS;
@@ -1242,7 +1242,7 @@ body.mobile-safari { -webkit-print-color-adjust: exact; }
 .aog-ruler-v .aog-num { left: 1px; transform: translateY(-4px); }
 @media print {
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; animation: none !important; animation-play-state: paused !important; transition: none !important; }
-  .toolbar, .action-bar, #save-status, #theme-toggle-btn, #offline-banner, #address-suggestions, #gps-status, #gps-btn { display: none !important; }
+  .toolbar, .action-bar, #save-status, #chrome-print-tip, #theme-toggle-btn, #offline-banner, #address-suggestions, #gps-status, #gps-btn { display: none !important; }
   .header::after { display: none !important; }
   body::before, body::after, body[class*="seasonal-"]::before, body[class*="seasonal-"]::after { display: none !important; content: none !important; }
   /* Zoom removed — the print dialog's "Scale to Fit / Fit to Page" handles shrinking the
@@ -2097,7 +2097,7 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
 
 <div class="action-bar" id="action-bar">
   <a class="ab-btn" href="../">🏠 HOME</a>
-  <a class="ab-btn" onclick="printFormPDF()" style="cursor:pointer;">📄 PDF</a>
+  <a class="ab-btn" onclick="printForm()" style="cursor:pointer;">📄 PDF</a>
   <a class="ab-btn" id="btn-capture" onclick="saveSmart()" style="cursor:pointer;">📸 CAPTURE</a>
   <a class="ab-btn" onclick="sendEmail()" style="cursor:pointer;">✉ EMAIL</a>
   <a class="ab-btn" onclick="confirmClear()" style="cursor:pointer;">🗑 CLEAR</a>
@@ -2117,6 +2117,40 @@ body.dark-mode .action-bar .theme-toggle-btn { background: rgba(0,255,200,0.08);
   </button>
 </div>
 <div id="save-status" style="position:fixed;top:44px;left:0;right:0;z-index:99998;text-align:center;font-size:10px;color:var(--text-muted);background:var(--panel);padding:2px 8px;display:none;font-family:Arial,sans-serif;" aria-live="polite"></div>
+
+<!-- Shown only in iPad/iPhone Safari: nudge to use Chrome for reliable print scaling -->
+<div id="chrome-print-tip" role="status" style="display:none;position:fixed;left:8px;right:8px;top:calc(50px + env(safe-area-inset-top,0px));z-index:99997;background:#FFF7ED;border:1px solid #FA6700;border-radius:8px;padding:8px 36px 8px 12px;font:600 12px/1.35 Arial,sans-serif;color:#92400E;box-shadow:0 2px 8px rgba(0,0,0,0.12);">
+  📄 For reliable printing, open this form in <b>Chrome</b>. Safari may shrink the PDF and require manual scaling.
+  <span id="chrome-print-tip-close" role="button" aria-label="Dismiss" style="position:absolute;top:4px;right:8px;font-size:18px;line-height:1;color:#92400E;cursor:pointer;padding:2px 4px;">&times;</span>
+</div>
+<script>
+(function () {
+  try {
+    var ua = navigator.userAgent;
+    // iOS / iPadOS (incl. iPadOS desktop-mode which reports as Macintosh + touch)
+    var isIOS = /iP(hone|od|ad)/.test(ua) ||
+                (/Macintosh/.test(ua) && typeof navigator.maxTouchPoints === 'number' && navigator.maxTouchPoints > 1);
+    // Real Safari only — exclude Chrome (CriOS), Firefox (FxiOS), Edge (EdgiOS) on iOS
+    var isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|Chrome|Chromium|Edg/.test(ua);
+    var dismissed = false;
+    try { dismissed = localStorage.getItem('aog_chrome_tip_dismissed') === '1'; } catch(e) {}
+    if (isIOS && isSafari && !dismissed) {
+      var show = function () {
+        var tip = document.getElementById('chrome-print-tip');
+        if (!tip) return;
+        tip.style.display = 'block';
+        var close = document.getElementById('chrome-print-tip-close');
+        if (close) close.addEventListener('click', function () {
+          tip.style.display = 'none';
+          try { localStorage.setItem('aog_chrome_tip_dismissed', '1'); } catch(e) {}
+        });
+      };
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', show);
+      else show();
+    }
+  } catch (e) {}
+})();
+</script>
 <div class="page" id="page">
 
   <div id="aog-ruler-h" class="aog-ruler-h"></div>
