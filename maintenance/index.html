@@ -15,7 +15,7 @@ for willful infringement under 17 U.S.C. § 504, plus attorney's fees.
 <meta name="mobile-web-app-capable" content="yes">
 <title>Always On Generators - Maintenance Report</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 <link rel="manifest" href="../manifest.json">
 <meta name="theme-color" content="#FBBF24">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -23,40 +23,31 @@ for willful infringement under 17 U.S.C. § 504, plus attorney's fees.
 <style>
 :root {
   color-scheme: light;
-  --cyan: #D97706;
-  --cyan-dim: #B45309;
-  --cyan-dark: #92400E;
-  --amber: #D97706;
-  --amber-dim: #B45309;
-  --green: #059669;
-  --red: #DC2626;
+  --cyan: #D35E13;
+  --cyan-dim: #D35E13;
+  --amber: #D35E13;
   --bg: #FFFFFF;
-  --bg2: #FFFFFF;
   --bg3: #F8F8F8;
   --bg4: #F0F0F0;
   --panel: #FFFFFF;
-  --panel2: #FAFAFA;
-  --border: rgba(217,119,6,0.25);
-  --border-bright: rgba(217,119,6,0.5);
+  --border: rgba(211,94,19,0.25);
+  --border-bright: rgba(211,94,19,0.5);
   --text: #1F2937;
   --text-muted: #6B7280;
   --text-dim: #9CA3AF;
-  --glow: 0 0 8px rgba(217,119,6,0.3), 0 0 20px rgba(217,119,6,0.1);
+  --glow: 0 0 8px rgba(211,94,19,0.3), 0 0 20px rgba(211,94,19,0.1);
   --font-display: 'Orbitron', monospace;
   --font-mono: 'Share Tech Mono', monospace;
   --font-body: 'Exo 2', sans-serif;
-  --icon-color-primary: #D97706;
-  --icon-color-section: #D97706;
+  --icon-color-primary: #D35E13;
 }
 
 body.dark-mode {
   color-scheme: dark;
   --bg: #0A0E27;
-  --bg2: #0F1535;
   --bg3: #1A2847;
   --bg4: #243458;
   --panel: #0F1535;
-  --panel2: #1A2847;
   --border: rgba(0,255,200,0.08);
   --border-bright: rgba(0,255,200,0.25);
   --text: #E0F7FF;
@@ -64,13 +55,8 @@ body.dark-mode {
   --text-dim: #38BDF8;
   --cyan: #00FFC8;
   --cyan-dim: #06B6D4;
-  --cyan-dark: #0891B2;
-  --amber: #D97706;
-  --amber-dim: #B45309;
-  --green: #10B981;
-  --red: #F43F5E;
+  --amber: #D35E13;
   --icon-color-primary: #00FFC8;
-  --icon-color-section: #00FFC8;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -88,18 +74,54 @@ body {
   margin: 0 auto;
   padding: 0;
   padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
+  scroll-padding-top: calc(48px + env(safe-area-inset-top, 0px));
   -webkit-text-size-adjust: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
   transition: background-color 0.3s ease, color 0.3s ease;
   min-height: -webkit-fill-available;
   min-height: 100vh;
 }
 
+/* iPadOS Safari scroll fix (screen only): the body's -webkit-fill-available
+   min-height pins the body to the viewport, so with the fixed action bar the
+   page can't grow past the screen and won't scroll (it just rubber-bands).
+   Let the body take its natural content height so normal document scrolling
+   works. Scoped to screen via :not within @media print elsewhere — these are
+   base (non-print) rules, and the print block re-sets height anyway. */
+html.ipad, html.ipad body {
+  min-height: 0;
+  height: auto;
+  -webkit-overflow-scrolling: touch;
+}
+html.ipad .page {
+  min-height: 0;
+  height: auto;
+}
+/* iPadOS compositor stability: fast scrolling desyncs the fixed dark gradient
+   layer from the scrolling page, making borders appear to "stick" while the
+   page rubber-bands. Pin the gradient to its own GPU layer and keep the action
+   bar on one too so they don't fight the scroll layer. */
+/* iPadOS fix for "sticking" borders: a position:fixed full-viewport layer
+   (body.dark-mode::before) desyncs from the scrolling page during fast scroll,
+   so the page border appears to stick while content rubber-bands. On iPad,
+   kill that fixed layer and paint the gradient directly on the (scrolling)
+   body instead — one layer, nothing to desync. */
+html.ipad body.dark-mode::before { display: none !important; content: none !important; }
+html.ipad body.dark-mode {
+  background: linear-gradient(135deg,#0A0E27 0%,#0F1535 25%,#0A1628 50%,#0F1535 75%,#0A0E27 100%) !important;
+  background-attachment: scroll !important;
+}
+
+/* Gradient painted directly on the (scrolling) body — no fixed layer.
+   A position:fixed full-viewport background must be re-composited on every
+   scroll frame in WebKit (desktop app + iPad webview), which is the main
+   cause of the scroll freezing/stutter. Painting it on the body scrolls
+   with the content as one layer — nothing to desync or re-composite. */
 body.dark-mode {
   background: linear-gradient(135deg,#0A0E27 0%,#0F1535 25%,#0A1628 50%,#0F1535 75%,#0A0E27 100%);
-  background-attachment: fixed;
-  background-size: 400% 400%;
+  background-attachment: scroll;
 }
+body.dark-mode::before { content: none; display: none; }
 
 .page {
   width: 100%;
@@ -107,7 +129,7 @@ body.dark-mode {
   margin: 0 auto;
   background: var(--panel);
   border: 2px solid var(--cyan);
-  box-shadow: 0 0 0 1px rgba(217,119,6,0.1), 0 0 40px rgba(217,119,6,0.08), inset 0 0 60px rgba(255,255,255,0.8);
+  box-shadow: 0 0 0 1px rgba(211,94,19,0.15);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -117,13 +139,13 @@ body.dark-mode {
   box-sizing: border-box;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   flex-shrink: 0;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body.dark-mode .page {
   background: linear-gradient(135deg,rgba(15,21,53,0.95) 0%,rgba(10,14,39,0.98) 100%);
   border-color: #00FFC8;
-  box-shadow: 0 0 1px rgba(0,255,200,0.3), 0 0 20px rgba(0,255,200,0.15), 0 0 40px rgba(59,130,246,0.08), inset 0 0 60px rgba(0,255,200,0.02);
+  box-shadow: 0 0 0 1px rgba(0,255,200,0.35);
 }
 
 .page::before, .page::after {
@@ -203,15 +225,15 @@ body.dark-mode .header::after {
 .header-logo { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
 
 .logo-img {
-  width: 40px; height: 40px;
+  width: 42px; height: 42px;
   flex-shrink: 0;
   object-fit: contain;
-  filter: drop-shadow(0 0 12px rgba(217,119,6,0.6)) drop-shadow(0 0 24px rgba(217,119,6,0.4)) brightness(1.1);
+  filter: drop-shadow(0 0 12px rgba(211,94,19,0.6)) drop-shadow(0 0 24px rgba(211,94,19,0.4)) brightness(1.1);
   animation: logoPulse 3s ease-in-out infinite;
 }
 @keyframes logoPulse {
-  0%,100% { filter: drop-shadow(0 0 12px rgba(217,119,6,0.6)) drop-shadow(0 0 24px rgba(217,119,6,0.4)) brightness(1.1); }
-  50%     { filter: drop-shadow(0 0 18px rgba(217,119,6,0.8)) drop-shadow(0 0 36px rgba(217,119,6,0.6)) brightness(1.2); }
+  0%,100% { filter: drop-shadow(0 0 12px rgba(211,94,19,0.6)) drop-shadow(0 0 24px rgba(211,94,19,0.4)) brightness(1.1); }
+  50%     { filter: drop-shadow(0 0 18px rgba(211,94,19,0.8)) drop-shadow(0 0 36px rgba(211,94,19,0.6)) brightness(1.2); }
 }
 body.dark-mode .logo-img {
   filter: drop-shadow(0 0 12px rgba(0,255,200,0.6)) drop-shadow(0 0 24px rgba(0,255,200,0.4)) brightness(1.1);
@@ -228,7 +250,7 @@ body.dark-mode .logo-img {
   color: var(--cyan);
   letter-spacing: 2px;
   line-height: 1.1;
-  text-shadow: 0 0 12px rgba(217,119,6,0.2);
+  text-shadow: 0 0 12px rgba(211,94,19,0.2);
   font-weight: 700;
   transition: all 0.3s ease;
 }
@@ -243,7 +265,7 @@ body.dark-mode .company-name {
   font-size: 0.9rem;
   color: var(--amber);
   letter-spacing: 3px;
-  text-shadow: 0 0 12px rgba(217,119,6,0.2);
+  text-shadow: 0 0 12px rgba(211,94,19,0.2);
   font-weight: 500;
   white-space: nowrap;
   transition: all 0.3s ease;
@@ -259,8 +281,8 @@ body.dark-mode .doc-title {
   position: relative;
   width: 36px; height: 36px;
   padding: 5px;
-  border: 1px solid rgba(217,119,6,0.4);
-  background: rgba(217,119,6,0.05);
+  border: 1px solid rgba(211,94,19,0.4);
+  background: rgba(211,94,19,0.05);
   border-radius: 4px;
   cursor: pointer;
   display: flex;
@@ -274,7 +296,7 @@ body.dark-mode .doc-title {
   z-index: 100;
 }
 body.dark-mode .theme-toggle-btn { background: rgba(0,255,200,0.08); border-color: rgba(0,255,200,0.2); color: #00FFC8; }
-.theme-toggle-btn:hover { border-color: var(--cyan); background: rgba(217,119,6,0.1); box-shadow: var(--glow); transform: scale(1.08); }
+.theme-toggle-btn:hover { border-color: var(--cyan); background: rgba(211,94,19,0.1); box-shadow: var(--glow); transform: scale(1.08); }
 body.dark-mode .theme-toggle-btn:hover { background: rgba(0,255,200,0.12); border-color: #00FFC8; box-shadow: 0 0 12px rgba(0,255,200,0.3), inset 0 0 8px rgba(0,255,200,0.05); transform: scale(1.1); }
 .theme-toggle-btn:active { transform: scale(0.95); }
 
@@ -303,8 +325,8 @@ body.dark-mode .theme-icon.theme-icon-moon { opacity: 1; transform: rotate(0deg)
   justify-content: center;
   gap: 4px;
   padding: 5px 10px;
-  border: 1px solid rgba(217,119,6,0.4);
-  background: rgba(217,119,6,0.05);
+  border: 1px solid rgba(211,94,19,0.4);
+  background: rgba(211,94,19,0.05);
   font-family: var(--font-display);
   font-size: 0.63rem;
   font-weight: 500;
@@ -346,6 +368,11 @@ body.dark-mode .btn:hover { background: rgba(0,255,200,0.12); border-color: #00F
   .ts-row > input[id^="tsserial"] { width: 100% !important; max-width: 100% !important; flex: 1 1 100% !important; box-sizing: border-box !important; }
   .ts-row > div { width: 100% !important; }
   .ts-row .check-group { width: 100% !important; }
+  /* Collapsed "Was simulation power test performed?" — let the long label
+     wrap and keep the Y/N group fully on screen instead of overflowing. */
+  #sim-body-collapsed .test-item { flex-wrap: wrap !important; align-items: flex-start !important; }
+  #sim-body-collapsed .test-item > label { min-width: 0 !important; width: 100% !important; white-space: normal !important; }
+  #sim-body-collapsed .test-item .yn-group { margin-right: 0 !important; }
 }
 
 /* Mobile: Customer & Job Info — each label+input pair on its own line */
@@ -401,7 +428,7 @@ body.dark-mode .btn:hover { background: rgba(0,255,200,0.12); border-color: #00F
 body.dark-mode .section {
   background: linear-gradient(135deg,rgba(26,40,71,0.6) 0%,rgba(15,21,53,0.8) 100%);
   border-color: rgba(0,255,200,0.15);
-  box-shadow: 0 0 1px rgba(0,255,200,0.1), inset 0 0 20px rgba(0,255,200,0.02);
+  box-shadow: 0 0 1px rgba(0,255,200,0.1);
 }
 .section::before {
   content: '';
@@ -424,7 +451,7 @@ body.dark-mode .section::before {
   letter-spacing: 2.5px;
   padding: 3px 10px;
   border-bottom: 1px solid var(--border);
-  text-shadow: 0 0 6px rgba(217,119,6,0.15);
+  text-shadow: 0 0 6px rgba(211,94,19,0.15);
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -455,6 +482,26 @@ body.dark-mode .section-header::before { background: #00FFC8; box-shadow: 0 0 6p
 }
 
 .section-body { padding: 4px 8px; transition: all 0.3s ease; }
+.section-body.sim-hidden { display: none !important; }
+@media print { .section-body.sim-hidden { display: none !important; } }
+
+.section-header-toggle { cursor: pointer; user-select: none; -webkit-user-select: none; }
+.section-header-toggle .section-toggle-hint { margin-left: auto; }
+.section-header-toggle:hover { background: var(--bg4); }
+body.dark-mode .section-header-toggle:hover { background: linear-gradient(90deg,rgba(36,52,88,0.9) 0%,rgba(46,62,98,0.7) 100%); }
+.section-toggle-hint {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 1px;
+  padding: 1px 6px;
+  border: 1px solid var(--border-bright);
+  border-radius: 3px;
+  color: var(--text-muted);
+  text-shadow: none;
+  flex-shrink: 0;
+}
+body.dark-mode .section-toggle-hint { color: #7DD3FC; border-color: rgba(0,255,200,0.3); }
+@media print { .section-toggle-hint { display: none !important; } }
 
 /* ── TWO-COLUMN ── */
 .two-column {
@@ -465,8 +512,15 @@ body.dark-mode .section-header::before { background: #00FFC8; box-shadow: 0 0 6p
   margin-bottom: 4px;
 }
 .two-column .section { margin-bottom: 0; }
+/* Left column can stack two sections (Battery + Oil & Filters) beside the taller
+   Generator column, reclaiming the dead space under Battery. */
+.col-stack { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+@media print { .col-stack { gap: 2px !important; } }
 @media (max-width: 820px) {
   .two-column { grid-template-columns: 1fr; gap: 4px; margin-bottom: 4px; }
+  /* iPad (incl. 768px portrait) is wide enough for the two-up split — keep
+     Battery/Generator side-by-side instead of collapsing like a phone. */
+  html.ipad .two-column { grid-template-columns: 1fr 1fr !important; }
 }
 
 /* ── FIELD ROWS ── */
@@ -514,7 +568,7 @@ select {
   color: var(--text);
   background: var(--panel);
   border: none;
-  border-bottom: 1.5px solid rgba(217,119,6,0.25);
+  border-bottom: 1.5px solid rgba(211,94,19,0.25);
   padding: 2px 4px;
   outline: none;
   width: 100%;
@@ -552,8 +606,8 @@ input[type="number"]:focus,
 textarea:focus,
 select:focus {
   border-bottom-color: var(--cyan);
-  background: rgba(217,119,6,0.04);
-  box-shadow: 0 1px 0 0 rgba(217,119,6,0.3), 0 0 8px rgba(217,119,6,0.08);
+  background: rgba(211,94,19,0.04);
+  box-shadow: 0 1px 0 0 rgba(211,94,19,0.3), 0 0 8px rgba(211,94,19,0.08);
 }
 body.dark-mode input[type="text"]:focus,
 body.dark-mode input[type="email"]:focus,
@@ -586,7 +640,7 @@ input.long  { flex: 1; min-width: 70px; }
 textarea {
   width: 100%;
   resize: vertical;
-  border: 1px solid rgba(217,119,6,0.15);
+  border: 1px solid rgba(211,94,19,0.15);
   padding: 2px 3px;
   margin-top: 1px;
   min-height: auto !important;
@@ -598,7 +652,7 @@ textarea {
   line-height: 1.2;
 }
 body.dark-mode textarea { background: rgba(10,14,39,0.6); border-color: rgba(0,255,200,0.1); color: #E0F7FF; }
-textarea:focus { border-color: var(--cyan); box-shadow: 0 0 6px rgba(217,119,6,0.1); }
+textarea:focus { border-color: var(--cyan); box-shadow: 0 0 6px rgba(211,94,19,0.1); }
 body.dark-mode textarea:focus { border-color: #00FFC8; box-shadow: 0 0 6px rgba(0,255,200,0.15); }
 
 /* ── CHECK GROUPS ── */
@@ -620,23 +674,23 @@ body.dark-mode textarea:focus { border-color: #00FFC8; box-shadow: 0 0 6px rgba(
   padding: 1px 5px 1px 3px;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  border: 0.5px solid rgba(217,119,6,0.25);
-  background: rgba(217,119,6,0.02);
+  border: 0.5px solid rgba(211,94,19,0.25);
+  background: rgba(211,94,19,0.02);
   transition: all 0.15s;
   clip-path: polygon(3px 0%, 100% 0%, calc(100% - 3px) 100%, 0% 100%);
   font-size: 0.58rem;
 }
 body.dark-mode .check-item { background: rgba(26,40,71,0.3); border-color: rgba(0,255,200,0.1); }
-.check-item:hover { border-color: rgba(217,119,6,0.4); background: rgba(217,119,6,0.05); }
+.check-item:hover { border-color: rgba(211,94,19,0.4); background: rgba(211,94,19,0.05); }
 body.dark-mode .check-item:hover { background: rgba(36,52,88,0.4); border-color: rgba(0,255,200,0.2); box-shadow: 0 0 4px rgba(0,255,200,0.08); }
-.check-item:has(input:checked) { background: transparent; border-color: #D97706; outline: 1.5px solid #D97706; box-shadow: 0 0 4px rgba(217,119,6,0.3); }
+.check-item:has(input:checked) { background: transparent; border-color: #D35E13; outline: 1.5px solid #D35E13; box-shadow: 0 0 4px rgba(211,94,19,0.3); }
 body.dark-mode .check-item:has(input:checked) { background: transparent; border-color: #00FFC8; outline: 1.5px solid #00FFC8; box-shadow: 0 0 6px rgba(0,255,200,0.3); }
 
 .check-item input[type="checkbox"],
 .check-item input[type="radio"] {
   width: 11px !important; height: 11px !important;
   min-height: 11px !important; min-width: 11px !important;
-  accent-color: #D97706;
+  accent-color: #D35E13;
   cursor: pointer;
   flex-shrink: 0;
   border: none; border-bottom: none;
@@ -657,8 +711,8 @@ body.dark-mode .check-item input[type="radio"] { accent-color: #00FFC8; }
   transition: color 0.15s;
 }
 body.dark-mode .check-item span { color: #E0F7FF; }
-.check-item:has(input:checked) span { color: #D97706; font-weight: bold; text-shadow: none; }
-body.dark-mode .check-item:has(input:checked) span { color: #D97706; font-weight: bold; text-shadow: none; }
+.check-item:has(input:checked) span { color: #D35E13; font-weight: bold; text-shadow: none; }
+body.dark-mode .check-item:has(input:checked) span { color: #D35E13; font-weight: bold; text-shadow: none; }
 
 /* ── TEST GRID ── */
 .test-grid {
@@ -675,12 +729,20 @@ body.dark-mode .check-item:has(input:checked) span { color: #D97706; font-weight
 .test-item .yn-group { flex: 0 0 auto; width: auto; margin-right: auto; }
 /* Force the Y/N buttons here to the same compact size as other sections */
 .test-item .yn-group .yn-label { padding: 0 8px !important; min-width: 0 !important; width: auto !important; flex: 0 0 auto !important; }
-@media (max-width: 768px) { .test-grid { grid-template-columns: 1fr; gap: 10px; } }
+@media (max-width: 768px) { .test-grid { grid-template-columns: 1fr; gap: 10px; } html.ipad #sim-body-full .test-grid { grid-template-columns: 1fr 1fr !important; } }
+
+/* Mobile screen only: match check-item chip height to yn-group (26px) */
+@media screen and (max-width: 768px) {
+  .check-item {
+    height: 26px;
+    min-height: 26px;
+  }
+}
 
 /* ── Y/N TOGGLE ── */
 .yn-group {
   display: inline-flex;
-  border: 0.5px solid rgba(217,119,6,0.25);
+  border: 0.5px solid rgba(211,94,19,0.25);
   overflow: visible;
   flex-shrink: 0;
   background: var(--panel);
@@ -709,9 +771,9 @@ body.dark-mode .yn-group { background: rgba(15,21,53,0.7); border-color: rgba(0,
   transition: all 0.15s;
 }
 body.dark-mode .yn-group .yn-label { color: #7DD3FC; }
-.yn-group .yn-label:first-of-type { border-right: 0.5px solid rgba(217,119,6,0.15); }
+.yn-group .yn-label:first-of-type { border-right: 0.5px solid rgba(211,94,19,0.15); }
 body.dark-mode .yn-group .yn-label:first-of-type { border-right-color: rgba(0,255,200,0.08); }
-.yn-group .yn-label:hover { background: rgba(217,119,6,0.05); color: var(--text); }
+.yn-group .yn-label:hover { background: rgba(211,94,19,0.05); color: var(--text); }
 body.dark-mode .yn-group .yn-label:hover { background: rgba(0,255,200,0.04); color: #E0F7FF; }
 .yn-group .yn-y:checked + .yn-label-y { background: #059669; color: #fff; text-shadow: none; box-shadow: inset 0 0 6px rgba(0,0,0,0.15); }
 .yn-group .yn-n:checked + .yn-label-n { background: #DC2626; color: #fff; text-shadow: none; box-shadow: inset 0 0 6px rgba(0,0,0,0.15); }
@@ -753,7 +815,7 @@ body.dark-mode .footer-text { color: #7DD3FC; text-shadow: 0 0 4px rgba(0,255,20
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: rgba(217,119,6,0.3); border-radius: 0; }
+::-webkit-scrollbar-thumb { background: rgba(211,94,19,0.3); border-radius: 0; }
 ::-webkit-scrollbar-thumb:hover { background: var(--cyan-dim); }
 body.dark-mode::-webkit-scrollbar { width: 6px; }
 body.dark-mode::-webkit-scrollbar-track { background: rgba(10,14,39,0.5); border-radius: 3px; }
@@ -795,10 +857,18 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
     background: #ffffff !important; color: #1F2937 !important;
     color-scheme: light !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
   }
+  /* The dark theme paints a fixed full-viewport gradient via body.dark-mode::before.
+     A pseudo-element is NOT matched by the `body.dark-mode *` rule below, so without
+     this it survives into print and bleeds a dark background behind the page
+     (most visible on iPad). Neutralize it explicitly. */
+  body.dark-mode::before, body.dark-mode::after,
+  html.dark-mode-pending body::before, html.dark-mode-pending body::after {
+    display: none !important; background: #ffffff !important; content: none !important;
+  }
   body.dark-mode *, html.dark-mode-pending body * {
     background: #ffffff !important; background-color: #ffffff !important;
     color: #1F2937 !important; -webkit-text-fill-color: #1F2937 !important;
-    border-color: rgba(217,119,6,0.4) !important; box-shadow: none !important; text-shadow: none !important;
+    border-color: rgba(211,94,19,0.4) !important; box-shadow: none !important; text-shadow: none !important;
   }
   /* Preserve the amber/orange accents (match light mode) — the blanket rule
      above otherwise flattens them to dark gray. */
@@ -807,9 +877,9 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   body.dark-mode .company-name, html.dark-mode-pending .company-name,
   body.dark-mode .doc-title, html.dark-mode-pending .doc-title,
   body.dark-mode .bullet, html.dark-mode-pending .bullet {
-    color: #D97706 !important; -webkit-text-fill-color: #D97706 !important;
+    color: #D35E13 !important; -webkit-text-fill-color: #D35E13 !important;
   }
-  body.dark-mode .page, html.dark-mode-pending .page { border-color: #D97706 !important; }
+  body.dark-mode .page, html.dark-mode-pending .page { border-color: #D35E13 !important; }
   /* Kill dark header gradient, the glowing ::after line, and the logo's dark
      glow filter so no dark color bleeds behind the logo/header in print. */
   body.dark-mode .header, html.dark-mode-pending .header {
@@ -821,16 +891,16 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   body.dark-mode .logo-img, html.dark-mode-pending .logo-img {
     filter: none !important; animation: none !important; box-shadow: none !important; background: transparent !important;
   }
-  body.dark-mode .section-header::before, html.dark-mode-pending .section-header::before { background: #D97706 !important; }
+  body.dark-mode .section-header::before, html.dark-mode-pending .section-header::before { background: #D35E13 !important; }
   /* Field underlines / borders keep the amber tint instead of going gray */
   body.dark-mode input, body.dark-mode textarea, body.dark-mode select,
   html.dark-mode-pending input, html.dark-mode-pending textarea, html.dark-mode-pending select {
-    border-color: rgba(217,119,6,0.4) !important;
+    border-color: rgba(211,94,19,0.4) !important;
   }
-  body.dark-mode .page, html.dark-mode-pending .page { background: #ffffff !important; border: 1.5pt solid #D97706 !important; }
-  body.dark-mode .section-header, html.dark-mode-pending .section-header { background: #f5f5f5 !important; color: #D97706 !important; }
-  body.dark-mode .section-header::before, html.dark-mode-pending .section-header::before { background: #D97706 !important; }
-  body.dark-mode .company-name, html.dark-mode-pending .company-name { color: #D97706 !important; }
+  body.dark-mode .page, html.dark-mode-pending .page { background: #ffffff !important; border: 1.5pt solid #D35E13 !important; }
+  body.dark-mode .section-header, html.dark-mode-pending .section-header { background: #f5f5f5 !important; color: #D35E13 !important; }
+  body.dark-mode .section-header::before, html.dark-mode-pending .section-header::before { background: #D35E13 !important; }
+  body.dark-mode .company-name, html.dark-mode-pending .company-name { color: #D35E13 !important; }
   body.dark-mode table th, html.dark-mode-pending table th { background: #4B5563 !important; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
   body.dark-mode table td.row-label, html.dark-mode-pending table td.row-label { background: #f0f0f0 !important; }
   body.dark-mode .action-bar, body.dark-mode .theme-toggle-btn,
@@ -844,7 +914,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   html.macos { font-size: 17.05px !important; }
   html.macos body { margin: 0 !important; width: auto !important; max-width: 100% !important; }
   html.macos .page {
-    border: 1.5px solid #D97706 !important;
+    border: 1.5px solid #D35E13 !important;
     width: 100% !important; max-width: 100% !important;
     padding: 4px 3px 2px 3px !important;
     margin: 0 auto !important;
@@ -866,7 +936,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   html.macos input[type="number"],
   html.macos textarea,
   html.macos select         { font-size: calc(0.626rem - 0.45px) !important; min-height: 16px !important; }
-  html.macos #batnotes,
+  html.macos #batnotes      { height: 40px !important; min-height: 40px !important; max-height: 40px !important; overflow: hidden !important; }
   html.macos #gennotes      { height: 60px !important; min-height: 60px !important; max-height: 60px !important; overflow: hidden !important; }
   html.macos #oilnotes,
   html.macos #gasnotes,
@@ -874,8 +944,8 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   html.macos .check-item span, html.macos .opt span { font-size: calc(0.66rem - 0.95px) !important; }
   html.macos .check-item input[type="checkbox"],
   html.macos .check-item input[type="radio"] { width: 12px !important; height: 12px !important; min-width: 12px !important; min-height: 12px !important; }
-  html.macos .yn-group      { height: 21px !important; }
-  html.macos .yn-group .yn-label { min-height: 21px !important; font-size: calc(0.72rem - 0.95px) !important; padding: 0 7px !important; }
+  html.macos .yn-group      { height: 19px !important; }
+  html.macos .yn-group .yn-label { min-height: 19px !important; font-size: calc(0.72rem - 1.95px) !important; padding: 0 7px !important; }
   html.macos #other-section label { font-size: calc(0.66rem - 1.45px) !important; }
   html.macos .footer        { margin-top: 0 !important; padding: 2px 26px 1px 26px !important; }
   html.macos .footer-text,
@@ -901,23 +971,23 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
     flex-direction: unset !important; flex-shrink: unset !important; flex: none !important;
     box-sizing: border-box !important;
     margin: 0 !important; padding: 4px 3px 0.5px 3px !important;
-    border: 1.5px solid #D97706 !important; box-shadow: none !important;
+    border: 1.5px solid #D35E13 !important; box-shadow: none !important;
   }
   .page * { flex-shrink: unset !important; }
   .content { display: block !important; flex: none !important; flex-grow: unset !important; }
   .footer { display: block !important; flex: none !important; margin-top: 0 !important; margin-bottom: 0 !important; }
   html, body { display: block !important; height: auto !important; min-height: 0 !important; max-height: none !important; overflow: visible !important; }
 
-  .page::before, .page::after, .page-corner-bl, .page-corner-br { display: block !important; border-color: #D97706 !important; }
+  .page::before, .page::after, .page-corner-bl, .page-corner-br { display: block !important; border-color: #D35E13 !important; }
 
-  .header { display: flex !important; margin-bottom: 4px !important; padding: 0 10px 5px 10px !important; border-bottom: 0.5px solid #D97706 !important; background: white !important; min-height: auto !important; }
+  .header { display: flex !important; margin-bottom: 4px !important; padding: 0 10px 5px 10px !important; border-bottom: 0.5px solid #D35E13 !important; background: white !important; min-height: auto !important; }
   .header::after { display: none !important; }
   .logo-img { width: 46px !important; height: 46px !important; filter: none !important; animation: none !important; }
   /* Hide the date field's calendar picker icon in print */
   input[type="date"]::-webkit-calendar-picker-indicator { display: none !important; opacity: 0 !important; -webkit-appearance: none !important; }
   input[type="date"] { -webkit-appearance: none !important; appearance: none !important; }
-  .company-name { color: #D97706 !important; text-shadow: none !important; font-size: calc(1.05rem + 0.3px) !important; letter-spacing: 1px !important; }
-  .doc-title { color: #D97706 !important; text-shadow: none !important; font-size: calc(1.05rem + 0.3px) !important; letter-spacing: 1.5px !important; }
+  .company-name { color: #D35E13 !important; text-shadow: none !important; font-size: calc(1.05rem + 0.3px) !important; letter-spacing: 1px !important; }
+  .doc-title { color: #D35E13 !important; text-shadow: none !important; font-size: calc(1.05rem + 0.3px) !important; letter-spacing: 1.5px !important; }
 
   .toolbar, .action-bar, #action-bar, #save-status, button, .theme-toggle-btn, .home-btn { display: none !important; }
   #save-status { position: static !important; height: 0 !important; padding: 0 !important; overflow: hidden !important; }
@@ -927,7 +997,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   .footer {
     display: flex !important; justify-content: space-between !important; align-items: center !important;
     margin-top: 6px !important; margin-bottom: 0 !important; padding: 4px 26px 1px 26px !important;
-    border-top: 1px solid #D97706 !important; background: white !important;
+    border-top: 1px solid #D35E13 !important; background: white !important;
     min-height: auto !important; height: auto !important;
     box-sizing: border-box !important; width: 100% !important; flex: none !important;
   }
@@ -937,10 +1007,10 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
 
   .two-column { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 2px !important; margin-bottom: 2px !important; }
 
-  .section { background: white !important; border: 0.5px solid #D97706 !important; margin-bottom: 2px !important; padding: 0 !important; page-break-inside: avoid !important; break-inside: avoid !important; box-shadow: none !important; display: block !important; }
+  .section { background: white !important; border: 0.5px solid #D35E13 !important; margin-bottom: 2px !important; padding: 0 !important; page-break-inside: avoid !important; break-inside: avoid !important; box-shadow: none !important; display: block !important; }
   .section::before { background: none !important; }
-  .section-header { background: #f5f5f5 !important; color: #D97706 !important; border-bottom: 0.5px solid #D97706 !important; text-shadow: none !important; padding: 3px 7px !important; font-size: calc(0.656rem + 0.3px) !important; min-height: auto !important; display: flex !important; }
-  .section-header::before { width: 3px !important; height: 3px !important; background: #D97706 !important; box-shadow: none !important; animation: none !important; }
+  .section-header { background: #f5f5f5 !important; color: #D35E13 !important; border-bottom: 0.5px solid #D35E13 !important; text-shadow: none !important; padding: 3px 7px !important; font-size: calc(0.656rem + 0.3px) !important; min-height: auto !important; display: flex !important; }
+  .section-header::before { width: 3px !important; height: 3px !important; background: #D35E13 !important; box-shadow: none !important; animation: none !important; }
   .section-body { padding: 2px 6px !important; background: white !important; display: block !important; }
 
   .field-row { display: flex !important; margin-bottom: 1px !important; gap: 3px !important; flex-wrap: wrap !important; }
@@ -951,22 +1021,39 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   #name-job-date-row #number { flex: 1 1 0 !important; width: auto !important; min-width: 0 !important; }
   #name-job-date-row #date   { flex: 0 0 100px !important; width: 100px !important; min-width: 100px !important; }
   /* Spread the grouped gas/oil rows a bit wider in print (not full-width) */
-  #gas-top-row, #oil-top-row { justify-content: flex-start !important; gap: 20px !important; flex-wrap: nowrap !important; }
+  #gas-top-row { justify-content: flex-start !important; gap: 20px !important; flex-wrap: nowrap !important; }
+  /* Oil row: keep Filter Changed? snug to the right of Full/Half on one line,
+     then let Part # take the remaining width. The 4px right pad reserves
+     clearance so the N chip never touches/clips the page edge. */
+  #oil-top-row { justify-content: flex-start !important; gap: 8px !important; flex-wrap: nowrap !important; padding-right: 4px !important; }
+  #oil-top-row > span:nth-child(1) { flex: 0 0 auto !important; }   /* Oil Change Type (Full/Half) */
+  #oil-top-row > span:nth-child(2) { flex: 0 0 auto !important; margin-right: 2px !important; }   /* Filter Changed? Y/N */
+  #oil-top-row > span:nth-child(3) { flex: 1 1 auto !important; min-width: 0 !important; }   /* Part # fills remainder */
+  #oil-top-row #filterpart { width: 100% !important; min-width: 60px !important; }
   label { color: #6B7280 !important; font-size: calc(0.626rem + 0.3px) !important; letter-spacing: 0.3px !important; }
 
   input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], textarea, select {
-    background: white !important; border-bottom: 0.5px solid #D97706 !important;
+    background: white !important; border-bottom: 0.5px solid #D35E13 !important;
     border-top: none !important; border-left: none !important; border-right: none !important;
     color: #1F2937 !important; min-height: 16px !important; padding: 0 2px !important;
     font-size: calc(0.756rem + 0.3px) !important; box-shadow: none !important;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
-  textarea { height: auto !important; min-height: 30px !important; background: white !important; border: 0.5px solid #D97706 !important; font-size: calc(0.706rem + 0.3px) !important; padding: 1px 3px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  textarea { height: auto !important; min-height: 30px !important; background: white !important; border: 0.5px solid #D35E13 !important; font-size: calc(0.706rem + 0.3px) !important; padding: 1px 3px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
-  #batnotes, #gennotes { height: 60px !important; min-height: 60px !important; max-height: 60px !important; overflow: hidden !important; }
+  #batnotes { height: 40px !important; min-height: 40px !important; max-height: 40px !important; overflow: hidden !important; }
+  #gennotes { height: 60px !important; min-height: 60px !important; max-height: 60px !important; overflow: hidden !important; }
   #oilnotes { height: 40px !important; min-height: 40px !important; max-height: 40px !important; overflow: hidden !important; }
+  #svcnotes { height: 40px !important; min-height: 40px !important; max-height: 40px !important; overflow: hidden !important; }
   #gasnotes { height: 40px !important; min-height: 40px !important; max-height: 40px !important; overflow: hidden !important; }
   #tsnotes  { height: 40px !important; min-height: 40px !important; max-height: 40px !important; overflow: hidden !important; }
+  /* Sim "Explain why" box: was missing a fixed height, so Safari printed it
+     short and clipped the top line. Give it a real height + top alignment. */
+  #simperfnotes { height: 34px !important; min-height: 34px !important; max-height: 34px !important; overflow: hidden !important; vertical-align: top !important; padding-top: 2px !important; line-height: 1.15 !important; box-sizing: border-box !important; }
+  body.mobile-safari #simperfnotes { height: 32px !important; min-height: 32px !important; max-height: 32px !important; }
+  body.mobile-chrome #simperfnotes { height: 32px !important; min-height: 32px !important; max-height: 32px !important; overflow: hidden !important; vertical-align: top !important; padding-top: 2px !important; line-height: 1.15 !important; box-sizing: border-box !important; }
+  html.ipad #simperfnotes { height: 32px !important; min-height: 32px !important; max-height: 32px !important; padding-top: 2px !important; }
+  #sim-body-collapsed .test-item { align-items: flex-start !important; }
 
   .check-group { display: flex !important; flex-wrap: wrap !important; gap: 2px !important; }
   .check-item { display: flex !important; min-height: auto !important; padding: 1px 5px 1px 3px !important; }
@@ -977,15 +1064,37 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   .test-item { display: flex !important; align-items: center !important; gap: 4px !important; }
   .test-item label { min-width: 52px !important; font-size: calc(0.606rem + 0.3px) !important; }
 
-  .yn-group { border: 0.5px solid #D97706 !important; background: white !important; height: 18px !important; display: inline-flex !important; }
-  .yn-group .yn-label { min-height: 18px !important; padding: 0 5px !important; color: #6B7280 !important; border-right: 0.5px solid #D97706 !important; font-size: calc(0.606rem + 0.3px) !important; background: white !important; display: flex !important; align-items: center !important; }
+  .yn-group { border: 0.5px solid #D35E13 !important; background: white !important; height: 17px !important; display: inline-flex !important; }
+  .yn-group .yn-label { min-height: 17px !important; padding: 0 5px !important; color: #6B7280 !important; border-right: 0.5px solid #D35E13 !important; font-size: calc(0.606rem - 0.7px) !important; background: white !important; display: flex !important; align-items: center !important; }
   .yn-group .yn-label:last-child { border-right: none !important; }
-  .yn-group .yn-y:checked + .yn-label-y { background: #059669 !important; color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  .yn-group .yn-n:checked + .yn-label-n { background: #DC2626 !important; color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  .check-item:has(input:checked) { background: transparent !important; border-color: #047857 !important; outline: 1.5px solid #D97706 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  .check-item:has(input:checked) span { color: #D97706 !important; font-weight: bold !important; }
+  .yn-group .yn-y:checked + .yn-label-y { background: #059669 !important; color: #fff !important; -webkit-text-fill-color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .yn-group .yn-n:checked + .yn-label-n { background: #DC2626 !important; color: #fff !important; -webkit-text-fill-color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  body.dark-mode .yn-group .yn-y:checked + .yn-label-y, html.dark-mode-pending .yn-group .yn-y:checked + .yn-label-y { background: #059669 !important; color: #fff !important; -webkit-text-fill-color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  body.dark-mode .yn-group .yn-n:checked + .yn-label-n, html.dark-mode-pending .yn-group .yn-n:checked + .yn-label-n { background: #DC2626 !important; color: #fff !important; -webkit-text-fill-color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .check-item:has(input:checked) { background: transparent !important; border-color: #047857 !important; outline: 1.5px solid #D35E13 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .check-item:has(input:checked) span { color: #D35E13 !important; -webkit-text-fill-color: #D35E13 !important; font-weight: bold !important; }
   .check-item:has(input:checked) input[type="radio"],
-  .check-item:has(input:checked) input[type="checkbox"] { accent-color: #D97706 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .check-item:has(input:checked) input[type="checkbox"] { accent-color: #D35E13 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  /* When printing FROM dark mode, the blanket `body.dark-mode *` rule above
+     forces every element to gray via color AND -webkit-text-fill-color, which
+     flattens the selected-item amber emphasis. Re-assert it, scoped to dark
+     mode and with text-fill-color, so selections stay bold amber (this is what
+     made iPhone prints show emphasis and iPad prints not). */
+  body.dark-mode .check-item:has(input:checked), html.dark-mode-pending .check-item:has(input:checked) {
+    background: transparent !important; border-color: #D35E13 !important;
+    outline: 1.5px solid #D35E13 !important;
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  body.dark-mode .check-item:has(input:checked) span, html.dark-mode-pending .check-item:has(input:checked) span {
+    color: #D35E13 !important; -webkit-text-fill-color: #D35E13 !important; font-weight: bold !important;
+  }
+  body.dark-mode .check-item:has(input:checked) input[type="radio"],
+  body.dark-mode .check-item:has(input:checked) input[type="checkbox"],
+  html.dark-mode-pending .check-item:has(input:checked) input[type="radio"],
+  html.dark-mode-pending .check-item:has(input:checked) input[type="checkbox"] {
+    accent-color: #D35E13 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
 
   /* Dark mode nuclear override for print */
   body.dark-mode, body.dark-mode .page, body.dark-mode .header, body.dark-mode .section,
@@ -995,17 +1104,17 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   body.dark-mode .yn-group, body.dark-mode .btn {
     background: white !important; background-image: none !important;
     color: #1F2937 !important; box-shadow: none !important;
-    text-shadow: none !important; border-color: rgba(217,119,6,0.35) !important;
+    text-shadow: none !important; border-color: rgba(211,94,19,0.35) !important;
   }
-  body.dark-mode .company-name, body.dark-mode .doc-title, body.dark-mode .section-header { color: #D97706 !important; text-shadow: none !important; }
+  body.dark-mode .company-name, body.dark-mode .doc-title, body.dark-mode .section-header { color: #D35E13 !important; text-shadow: none !important; }
   body.dark-mode .section-header { background: #f5f5f5 !important; }
   body.dark-mode label, body.dark-mode .footer-text, body.dark-mode .yn-group .yn-label, body.dark-mode .check-item span { color: #6B7280 !important; text-shadow: none !important; }
   body.dark-mode input[type="text"], body.dark-mode input[type="date"], body.dark-mode input[type="number"],
   body.dark-mode input[type="email"], body.dark-mode input[type="tel"], body.dark-mode textarea, body.dark-mode select {
-    background: white !important; color: #1F2937 !important; box-shadow: none !important; border-color: rgba(217,119,6,0.35) !important;
+    background: white !important; color: #1F2937 !important; box-shadow: none !important; border-color: rgba(211,94,19,0.35) !important;
   }
-  body.dark-mode .page { border: 1.5px solid #D97706 !important; }
-  body.dark-mode .yn-group { background: white !important; border-color: rgba(217,119,6,0.4) !important; }
+  body.dark-mode .page { border: 1.5px solid #D35E13 !important; }
+  body.dark-mode .yn-group { background: white !important; border-color: rgba(211,94,19,0.4) !important; }
   body.dark-mode .check-item { background: white !important; }
 }
 
@@ -1014,52 +1123,176 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
    layout, so the page must NOT be re-zoomed (that's what made the output
    change with screen scale). */
 @media print {
-  body.mobile-safari .page { padding: 4px 3px 0.5px 3px !important; min-height: 0 !important; height: auto !important; margin-top: 0 !important; }
+  body.mobile-safari .page { padding: 4px 3px 0 3px !important; min-height: 0 !important; height: auto !important; margin-top: 0 !important; margin-bottom: 0 !important; }
+  body.mobile-safari .footer { margin-top: 0 !important; margin-bottom: 0 !important; padding-bottom: 0 !important; }
   body.mobile-safari .two-column { grid-template-columns: 1fr 1fr !important; }
   body.mobile-safari .field-row-nowrap { flex-wrap: nowrap !important; }
   body.mobile-safari #name { flex: 0 1 50% !important; min-width: 0 !important; }
   body.mobile-safari #date, body.mobile-safari #number { min-width: 120px !important; flex-shrink: 0 !important; width: auto !important; }
-  body.mobile-safari #batnotes, body.mobile-safari #gennotes { height: 60px !important; min-height: 60px !important; max-height: 60px !important; overflow: hidden !important; }
-  body.mobile-safari #oilnotes, body.mobile-safari #gasnotes, body.mobile-safari #tsnotes { height: 40px !important; min-height: 40px !important; max-height: 40px !important; overflow: hidden !important; }
+  /* Tightened from 60/40px to recover the ~25px lost to the new 0.25in @page bottom margin */
+  body.mobile-safari #batnotes { height: 32px !important; min-height: 32px !important; max-height: 32px !important; overflow: hidden !important; }
+  body.mobile-safari #gennotes { height: 54px !important; min-height: 54px !important; max-height: 54px !important; overflow: hidden !important; }
+  body.mobile-safari #oilnotes, body.mobile-safari #gasnotes, body.mobile-safari #tsnotes, body.mobile-safari #svcnotes { height: 32px !important; min-height: 32px !important; max-height: 32px !important; overflow: hidden !important; }
   /* Mobile prints the 820px layout scaled down to fit, shrinking controls.
      Bump them back up so they read the same size as desktop print. */
   body.mobile-safari .check-item input[type="checkbox"], body.mobile-safari .check-item input[type="radio"] { width: 12px !important; height: 12px !important; min-width: 12px !important; min-height: 12px !important; }
-  body.mobile-safari .yn-group { height: 21px !important; }
-  body.mobile-safari .yn-group .yn-label { min-height: 21px !important; font-size: calc(0.72rem + 0.3px) !important; padding: 0 7px !important; }
+  body.mobile-safari .yn-group { height: 19px !important; align-items: center !important; box-sizing: border-box !important; }
+  body.mobile-safari .yn-group .yn-label { height: 17px !important; min-height: 0 !important; max-height: 17px !important; font-size: calc(0.72rem - 0.7px) !important; padding: 0 7px !important; }
   body.mobile-safari .check-item span, body.mobile-safari .opt span { font-size: calc(0.66rem + 0.3px) !important; }
   body.mobile-safari label { font-size: calc(0.66rem + 0.3px) !important; }
   /* Trim vertical spacing on mobile so everything + footer fits one page */
-  body.mobile-safari .section { margin-bottom: 1.5px !important; }
-  body.mobile-safari .two-column { margin-bottom: 1.5px !important; gap: 2px !important; }
-  body.mobile-safari .field-row { margin-bottom: 1px !important; }
-  body.mobile-safari .section-body { padding: 2px 6px !important; }
+  body.mobile-safari .section { margin-bottom: 0 !important; }
+  body.mobile-safari .two-column { margin-bottom: 0 !important; gap: 2px !important; }
+  body.mobile-safari .two-column + .section { margin-top: 0 !important; }
+  body.mobile-safari .field-row { margin-bottom: 2.5px !important; }
+  /* +6mm total spread evenly across the 18 rows from Battery to the top of
+     Transfer Switch: each in-range row gets ~1.25px extra (3.75px total). */
+  body.mobile-safari .vrows-print .field-row { margin-bottom: 3.75px !important; }
+  body.mobile-safari .section-body { padding: 1.5px 6px !important; }
+  body.mobile-safari #gas-section .section-body, body.mobile-safari #ts-section .section-body { padding-bottom: 0.75px !important; }
+  body.mobile-safari .leak-loc .check-group { flex-wrap: nowrap !important; white-space: nowrap !important; gap: 3px !important; }
+  body.mobile-safari #gas-top-row { gap: 16px !important; }
+  body.mobile-safari #oil-top-row { gap: 10px !important; }
+  /* Transfer Switch: prevent Condition group from wrapping to a second line */
+  body.mobile-safari .ts-row { flex-wrap: nowrap !important; align-items: flex-start !important; gap: 6px !important; }
+  body.mobile-safari .ts-row > div { flex-shrink: 1 !important; min-width: 0 !important; }
+  body.mobile-safari .ts-row .check-group { flex-wrap: nowrap !important; gap: 2px !important; }
+  body.mobile-safari .ts-row input[id^="tsserial"] { width: 110px !important; min-width: 0 !important; flex-shrink: 0 !important; }
 }
 
 /* ── Mobile Chrome print fix (Android Chrome + Chrome on iOS) ── */
 @media print {
-  body.mobile-chrome .page { padding: 4px 3px 0.5px 3px !important; min-height: 0 !important; height: auto !important; margin-top: 0 !important; }
+  /* Android base font lowered to 18px to match the iPhone's apparent text size.
+     Needs the .mobile-chrome class for specificity so it beats the generic
+     `@media print and (min-width:768px) html { font-size:18.3px }` rule, which
+     otherwise wins on Android (its forced 820px print viewport matches 768px). */
+  html.mobile-chrome { font-size: 18px !important; }
+  body.mobile-chrome .page { padding: 4px 2px 0 2px !important; min-height: 0 !important; height: auto !important; margin-top: 0 !important; }
   body.mobile-chrome .two-column { grid-template-columns: 1fr 1fr !important; }
+  body.mobile-chrome #gas-top-row, body.mobile-chrome #oil-top-row { gap: 10px !important; }
   body.mobile-chrome .field-row-nowrap { flex-wrap: nowrap !important; }
   body.mobile-chrome #name { flex: 0 1 50% !important; min-width: 0 !important; }
   body.mobile-chrome #date, body.mobile-chrome #number { min-width: 120px !important; flex-shrink: 0 !important; width: auto !important; }
-  body.mobile-chrome #batnotes, body.mobile-chrome #gennotes { height: 60px !important; min-height: 60px !important; max-height: 60px !important; overflow: hidden !important; }
-  body.mobile-chrome #oilnotes, body.mobile-chrome #gasnotes, body.mobile-chrome #tsnotes { height: 40px !important; min-height: 40px !important; max-height: 40px !important; overflow: hidden !important; }
+  body.mobile-chrome #batnotes { height: 32px !important; min-height: 32px !important; max-height: 32px !important; overflow: hidden !important; }
+  body.mobile-chrome #gennotes { height: 54px !important; min-height: 54px !important; max-height: 54px !important; overflow: hidden !important; }
+  body.mobile-chrome #oilnotes, body.mobile-chrome #gasnotes, body.mobile-chrome #tsnotes, body.mobile-chrome #svcnotes { height: 32px !important; min-height: 32px !important; max-height: 32px !important; overflow: hidden !important; }
   /* Match desktop apparent control size on mobile Chrome too */
   body.mobile-chrome .check-item input[type="checkbox"], body.mobile-chrome .check-item input[type="radio"] { width: 12px !important; height: 12px !important; min-width: 12px !important; min-height: 12px !important; }
-  body.mobile-chrome .yn-group { height: 21px !important; }
-  body.mobile-chrome .yn-group .yn-label { min-height: 21px !important; font-size: calc(0.72rem + 0.3px) !important; padding: 0 7px !important; }
+  body.mobile-chrome .yn-group { height: 19px !important; align-items: center !important; box-sizing: border-box !important; }
+  body.mobile-chrome .yn-group .yn-label { height: 17px !important; min-height: 0 !important; max-height: 17px !important; line-height: 1 !important; font-size: calc(0.72rem - 0.7px) !important; padding: 0 7px !important; }
   body.mobile-chrome .check-item span, body.mobile-chrome .opt span { font-size: calc(0.66rem + 0.3px) !important; }
   body.mobile-chrome label { font-size: calc(0.66rem + 0.3px) !important; }
-  /* Trim vertical spacing on mobile so everything + footer fits one page */
-  body.mobile-chrome .section { margin-bottom: 1.5px !important; }
-  body.mobile-chrome .two-column { margin-bottom: 1.5px !important; gap: 2px !important; }
-  body.mobile-chrome .field-row { margin-bottom: 1px !important; }
-  body.mobile-chrome .section-body { padding: 2px 6px !important; }
+  /* Trim vertical spacing on mobile so everything + footer fits one page —
+     matched to the iPad print values so Android Chrome also lands on one page. */
+  body.mobile-chrome .section { margin-bottom: 0 !important; }
+  body.mobile-chrome .section-header { padding: 2px 7px !important; }
+  body.mobile-chrome .two-column { margin-bottom: 1px !important; gap: 2px !important; }
+  body.mobile-chrome .two-column + .section { margin-top: 0 !important; }
+  body.mobile-chrome .field-row { margin-bottom: 0.5px !important; }
+  body.mobile-chrome .section-body { padding: 1px 6px !important; }
+  body.mobile-chrome #gas-section .section-body, body.mobile-chrome #ts-section .section-body { padding-bottom: 0.5px !important; }
+  body.mobile-chrome .footer { margin-top: 4px !important; margin-bottom: 0 !important; padding-bottom: 1px !important; }
 }
 @media print and (min-width: 768px) {
   html { font-size: 18.3px !important; }
   html, body { width: auto !important; max-width: 100% !important; }
   .form-page, .page { width: 100% !important; max-width: 100% !important; margin: 0 auto !important; padding: 3px !important; box-sizing: border-box !important; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   iPad print tuning
+   Modern iPadOS Safari masquerades as desktop Safari, so without the .ipad
+   class it would print with the desktop-Mac rules. This block is scoped to
+   html.ipad and is placed AFTER every other print block so it wins the
+   cascade at equal specificity. It starts from the iPhone (mobile-safari)
+   1-page tuning — iPad is WebKit too.
+   ════════════════════════════════════════════════════════════════════════ */
+@media print {
+  html.ipad { font-size: 18.3px !important; }
+  html.ipad, html.ipad body { width: auto !important; max-width: 100% !important; display: block !important; height: auto !important; min-height: 0 !important; overflow: visible !important; }
+
+  html.ipad .page {
+    width: 100% !important; max-width: 100% !important;
+    /* ~8px each side (was ~0.13in/12.5px): nudges the content ~8px wider still,
+       even padding, to wrap long rows even less. */
+    padding: 4px 8px 0 8px !important;
+    margin: 0 auto !important;
+    min-height: 0 !important; height: auto !important;
+    border: 1.5px solid #D35E13 !important;
+  }
+  html.ipad .footer { margin-top: 4px !important; margin-bottom: 0 !important; padding-bottom: 1px !important; }
+
+  /* Two-column layout + non-wrapping field rows (same intent as iPhone) */
+  html.ipad .two-column { grid-template-columns: 1fr 1fr !important; margin-bottom: 1px !important; gap: 2px !important; }
+  html.ipad .field-row-nowrap { flex-wrap: nowrap !important; }
+  html.ipad #name { flex: 0 1 50% !important; min-width: 0 !important; }
+  html.ipad #date, html.ipad #number { min-width: 120px !important; flex-shrink: 0 !important; width: auto !important; }
+  /* DATE fixed at 120px (two-ID selector to beat the shared 100px rule) so the
+     date value fits and the row stops stacking on smaller iPads. */
+  html.ipad #name-job-date-row #date { flex: 0 0 120px !important; width: 120px !important; min-width: 120px !important; }
+
+  /* Notes boxes — kept at the same heights as iPhone (54 / 34). */
+  html.ipad #batnotes { height: 32px !important; min-height: 32px !important; max-height: 32px !important; overflow: hidden !important; }
+  html.ipad #gennotes { height: 54px !important; min-height: 54px !important; max-height: 54px !important; overflow: hidden !important; }
+  html.ipad #oilnotes, html.ipad #gasnotes, html.ipad #tsnotes, html.ipad #svcnotes { height: 32px !important; min-height: 32px !important; max-height: 32px !important; overflow: hidden !important; }
+
+  /* Keep control + label sizes readable (match desktop apparent size) */
+  html.ipad .check-item input[type="checkbox"], html.ipad .check-item input[type="radio"] { width: 12px !important; height: 12px !important; min-width: 12px !important; min-height: 12px !important; }
+  html.ipad .yn-group { height: 19px !important; min-height: 19px !important; max-height: 19px !important; align-items: center !important; box-sizing: border-box !important; }
+  html.ipad .yn-group .yn-label { height: 17px !important; min-height: 0 !important; max-height: 17px !important; line-height: 1 !important; font-size: calc(0.72rem - 0.7px) !important; padding: 0 7px !important; }
+  html.ipad .check-item span, html.ipad .opt span { font-size: calc(0.66rem + 0.3px) !important; }
+  html.ipad label { font-size: calc(0.66rem + 0.3px) !important; }
+
+  /* Vertical spacing — recover ~0.3in here (not from the notes) so the footer
+     clears Safari's larger bottom print margin and stays on page 1. Notes,
+     text, inputs, radios and Y/N sizes are all left at iPhone sizes. */
+  html.ipad .section { margin-bottom: 0 !important; }
+  html.ipad .two-column + .section { margin-top: 0 !important; }
+  html.ipad .field-row { margin-bottom: 0.5px !important; }
+  html.ipad .section-header { padding: 2px 7px !important; }
+  html.ipad .section-body { padding: 1px 6px !important; }
+  html.ipad #gas-section .section-body, html.ipad #ts-section .section-body { padding-bottom: 0.5px !important; }
+
+  /* Keep tight groups on one line, like the iPhone build */
+  html.ipad .leak-loc .check-group { flex-wrap: nowrap !important; white-space: nowrap !important; gap: 3px !important; }
+  html.ipad #gas-top-row { gap: 16px !important; }
+  html.ipad #oil-top-row { gap: 10px !important; }
+  html.ipad .ts-row { flex-wrap: nowrap !important; align-items: flex-start !important; gap: 6px !important; }
+  html.ipad .ts-row > div { flex-shrink: 1 !important; min-width: 0 !important; }
+  html.ipad .ts-row .check-group { flex-wrap: nowrap !important; gap: 2px !important; }
+  html.ipad .ts-row input[id^="tsserial"] { width: 110px !important; min-width: 0 !important; flex-shrink: 0 !important; }
+}
+
+/* ── Screen only, all devices: make all option chips (checkbox + radio) match
+   the Y/N toggle's height and label text. Print/capture rules above are
+   untouched. ── */
+@media screen {
+  .check-item {
+    height: 26px !important;
+    min-height: 26px !important;
+  }
+  .check-item span {
+    font-size: 0.63rem !important;
+    letter-spacing: 1.2px !important;
+    font-weight: 500 !important;
+  }
+  /* Selected chips: bold */
+  .check-item:has(input:checked) span {
+    font-weight: 700 !important;
+  }
+  /* macOS screen: its Y/N toggle is 21px tall with smaller label text */
+  html.macos .check-item {
+    height: 21px !important;
+    min-height: 21px !important;
+  }
+  html.macos .check-item span {
+    font-size: calc(0.72rem - 0.95px) !important;
+    letter-spacing: 1.2px !important;
+    font-weight: 500 !important;
+  }
+  html.macos .check-item:has(input:checked) span {
+    font-weight: 700 !important;
+  }
 }
 
 /* ── ACTION BAR ── */
@@ -1070,6 +1303,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover { background: linear-gradient(180d
   width: 100%;
   background: var(--panel);
   padding: 4px 8px;
+  padding-top: calc(4px + env(safe-area-inset-top, 0px));
   display: flex; justify-content: center; gap: 4px; flex-wrap: nowrap; align-items: center;
   box-shadow: 0 4px 18px rgba(0,0,0,0.3);
   border-bottom: 1px solid var(--border);
@@ -1092,8 +1326,7 @@ body.dark-mode .action-bar {
 <div class="action-bar" id="action-bar">
   <a class="btn" href="../" style="text-decoration:none;">🏠 HOME</a>
   <button class="btn" onclick="openPrintPreview()">📄 PDF</button>
-  <button class="btn" id="btn-iphone" onclick="saveForIPhone()">📱 iPHONE</button>
-  <button class="btn" id="btn-android" onclick="saveForAndroid()">🤖 ANDROID</button>
+  <button class="btn" id="btn-capture" onclick="saveSmart()">📸 CAPTURE</button>
   <button class="btn" onclick="clearForm()">🗑 CLEAR</button>
   <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle dark mode" aria-label="Toggle dark mode">
     <svg class="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1124,11 +1357,31 @@ body.dark-mode .action-bar {
   var isAndroidChrome = isAndroid && /Chrome/.test(ua) && !/Edg/.test(ua);
   var isMobileChrome = isAndroidChrome;
 
+  // ── iPad detection ──────────────────────────────────────────────────────
+  // Modern iPadOS Safari lies and reports a desktop "Macintosh" UA, so it would
+  // otherwise be mis-tagged as macOS and inherit the desktop-Mac print rules.
+  // We catch it three ways: (1) classic "iPad" UA, (2) the MacIntel + touch
+  // tell of iPadOS in desktop mode, (3) any Macintosh UA that also reports
+  // touch points (real Macs report 0).
+  var mtp = navigator.maxTouchPoints || 0;
+  var isIPad = /iPad/.test(ua)
+    || (navigator.platform === 'MacIntel' && mtp > 1)
+    || (/Macintosh/.test(ua) && mtp > 1);
+
   if (isIOS)          html.classList.add('ios', 'mobile-safari');
   if (isMacOS)        html.classList.add('macos');
   if (isWindows)      html.classList.add('windows');
   if (isAndroid)      html.classList.add('android');
   if (isMobileChrome) html.classList.add('mobile-chrome');
+  if (isIPad) {
+    html.classList.add('ipad');
+    html.classList.remove('macos');   // iPad is NOT a desktop Mac for print
+    // A classic-UA iPad also matched isIOS above and got 'mobile-safari'/'ios',
+    // which made it inherit the iPHONE layout, scroll, and print rules — the
+    // cause of the iPad "displaying what the iPhone sees" + sticking. Strip
+    // them so the iPad is treated purely as an iPad.
+    html.classList.remove('mobile-safari', 'ios');
+  }
 
   function applyToBody() {
     if (isIOS)          document.body.classList.add('ios', 'mobile-safari');
@@ -1136,6 +1389,11 @@ body.dark-mode .action-bar {
     if (isWindows)      document.body.classList.add('windows');
     if (isAndroid)      document.body.classList.add('android');
     if (isMobileChrome) document.body.classList.add('mobile-chrome');
+    if (isIPad) {
+      document.body.classList.add('ipad');
+      document.body.classList.remove('macos');
+      document.body.classList.remove('mobile-safari', 'ios');
+    }
   }
   if (document.body) applyToBody();
   else document.addEventListener('DOMContentLoaded', applyToBody);
@@ -1153,8 +1411,7 @@ body.dark-mode .action-bar {
 
   <div class="toolbar">
     <button class="btn" onclick="openPrintPreview()">📄 PDF</button>
-    <button class="btn" onclick="saveForIPhone()">📱 iPhone</button>
-    <button class="btn" onclick="saveForAndroid()">🤖 Android</button>
+    <button class="btn" onclick="saveSmart()">📸 CAPTURE</button>
     <button class="btn" onclick="clearForm()">🗑 CLEAR</button>
   </div>
 
@@ -1197,7 +1454,8 @@ body.dark-mode .action-bar {
 
     <!-- Battery & Generator -->
     <div class="two-column">
-      <div class="section">
+      <div class="col-stack">
+      <div class="section vrows-print">
         <div class="section-header">Battery</div>
         <div class="section-body">
           <div class="field-row">
@@ -1248,11 +1506,42 @@ body.dark-mode .action-bar {
               <label class="check-item"><input type="radio" name="water" value="add"><span>Add</span></label>
             </div>
           </div>
-          <textarea id="batnotes" placeholder="Battery notes..." style="height:60px;"></textarea>
+          <textarea id="batnotes" placeholder="Battery notes..." style="min-height:50px;"></textarea>
         </div>
       </div>
 
-      <div class="section">
+      <!-- Oil & Filters (moved into left column under Battery) -->
+      <div class="section vrows-print">
+        <div class="section-header">Oil &amp; Filters</div>
+        <div class="section-body">
+          <div class="field-row" id="oil-top-row" style="justify-content:flex-start;gap:14px;flex-wrap:wrap;">
+            <span style="display:flex;align-items:center;gap:4px;">
+              <label>Oil Change Type</label>
+              <div class="check-group" style="width:auto;flex:0 0 auto;flex-direction:column;align-items:flex-start;flex-wrap:nowrap;gap:1px;">
+                <label class="check-item"><input type="radio" name="oiltype" value="full"><span>Full</span></label>
+                <label class="check-item"><input type="radio" name="oiltype" value="half"><span>Half</span></label>
+              </div>
+            </span>
+            <span style="display:flex;align-items:center;gap:4px;">
+              <label>Filter Changed?</label>
+              <div class="yn-group">
+                <input type="radio" name="oilfilter" id="of_y" value="Y" class="yn-y">
+                <label class="yn-label yn-label-y" for="of_y">Y</label>
+                <input type="radio" name="oilfilter" id="of_n" value="N" class="yn-n">
+                <label class="yn-label yn-label-n" for="of_n">N</label>
+              </div>
+            </span>
+            <span style="display:flex;align-items:center;gap:4px;">
+              <label for="filterpart">Part #</label>
+              <input type="text" id="filterpart" class="med" placeholder="Part #" style="width:180px;">
+            </span>
+          </div>
+          <textarea id="oilnotes" placeholder="Oil &amp; filter notes..." style="min-height:50px;"></textarea>
+        </div>
+      </div>
+      </div><!-- /.col-stack -->
+
+      <div class="section vrows-print">
         <div class="section-header">Generator</div>
         <div class="section-body">
           <div class="field-row">
@@ -1322,40 +1611,34 @@ body.dark-mode .action-bar {
       </div>
     </div>
 
-    <!-- Oil & Filters -->
-    <div class="section">
-      <div class="section-header">Oil & Filters</div>
-      <div class="section-body">
-        <div class="field-row" id="oil-top-row" style="justify-content:flex-start;gap:36px;flex-wrap:wrap;">
-          <span style="display:flex;align-items:center;gap:4px;">
-            <label>Oil Change Type</label>
-            <div class="check-group" style="width:auto;flex:0 0 auto;">
-              <label class="check-item"><input type="radio" name="oiltype" value="full"><span>Full</span></label>
-              <label class="check-item"><input type="radio" name="oiltype" value="half"><span>Half</span></label>
-            </div>
-          </span>
-          <span style="display:flex;align-items:center;gap:4px;">
-            <label>Filter Changed?</label>
-            <div class="yn-group">
-              <input type="radio" name="oilfilter" id="of_y" value="Y" class="yn-y">
-              <label class="yn-label yn-label-y" for="of_y">Y</label>
-              <input type="radio" name="oilfilter" id="of_n" value="N" class="yn-n">
-              <label class="yn-label yn-label-n" for="of_n">N</label>
-            </div>
-          </span>
-          <span style="display:flex;align-items:center;gap:4px;">
-            <label for="filterpart">Part #</label>
-            <input type="text" id="filterpart" class="med" placeholder="Part #" style="width:180px;">
-          </span>
-        </div>
-        <textarea id="oilnotes" placeholder="Oil & filter notes..." style="min-height:50px;"></textarea>
-      </div>
-    </div>
-
     <!-- Simulated Outage Test -->
-    <div class="section">
-      <div class="section-header">Simulated Outage Test</div>
-      <div class="section-body">
+    <div class="section vrows-print" id="sim-section">
+      <div class="section-header section-header-toggle" id="sim-header" role="button" tabindex="0" title="Tap to switch view">
+        <span id="sim-header-text">Simulated Power Test</span>
+        <span class="section-toggle-hint" aria-hidden="true">tap</span>
+      </div>
+
+      <!-- Collapsed view: was the test performed? -->
+      <div class="section-body sim-hidden" id="sim-body-collapsed">
+        <div class="test-grid" style="grid-template-columns:1fr;">
+          <div class="test-item">
+            <label>Was simulation power test performed?</label>
+            <div class="yn-group">
+              <input type="radio" name="simperf" id="simperf_y" value="Y" class="yn-y">
+              <label class="yn-label yn-label-y" for="simperf_y">Y</label>
+              <input type="radio" name="simperf" id="simperf_n" value="N" class="yn-n">
+              <label class="yn-label yn-label-n" for="simperf_n">N</label>
+            </div>
+          </div>
+          <div class="test-item" style="grid-column:1/-1;align-items:flex-start;">
+            <label for="simperfnotes" style="min-width:75px;">Notes</label>
+            <textarea id="simperfnotes" placeholder="Explain why..." rows="2" style="min-height:46px;flex:1;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full view: detailed test grid -->
+      <div class="section-body" id="sim-body-full">
         <div class="test-grid">
           <div class="test-item">
             <label>Generator Started Up?</label>
@@ -1402,7 +1685,7 @@ body.dark-mode .action-bar {
     </div>
 
     <!-- Gas System -->
-    <div class="section">
+    <div class="section vrows-print" id="gas-section">
       <div class="section-header">Gas System</div>
       <div class="section-body">
         <div class="field-row" id="gas-top-row" style="justify-content:flex-start;gap:36px;flex-wrap:wrap;">
@@ -1458,7 +1741,7 @@ body.dark-mode .action-bar {
     </div>
 
     <!-- Transfer Switch -->
-    <div class="section">
+    <div class="section" id="ts-section">
       <div class="section-header">Transfer Switch</div>
       <div class="section-body">
         <div class="field-row ts-row" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
@@ -1554,6 +1837,14 @@ body.dark-mode .action-bar {
       </div>
     </div>
 
+    <!-- Service Notes -->
+    <div class="section" id="service-section">
+      <div class="section-header">Service Notes</div>
+      <div class="section-body">
+        <textarea id="svcnotes" placeholder="Work performed / recommendations..." style="height:50px;"></textarea>
+      </div>
+    </div>
+
   </div><!-- /.content -->
 
   <div class="footer">
@@ -1636,6 +1927,7 @@ function clearForm() {
 function openPrintPreview() {
   var isMobileSafari = document.body.classList.contains('mobile-safari');
   var isMobileChrome = document.body.classList.contains('mobile-chrome');
+  var isIPad         = document.body.classList.contains('ipad');
   var isNarrowMobile = isMobileSafari || isMobileChrome;
   var wasDark        = document.body.classList.contains('dark-mode');
 
@@ -1651,117 +1943,491 @@ function openPrintPreview() {
   document.documentElement.classList.remove('dark-mode-pending');
   document.documentElement.style.colorScheme = 'light';
   document.body.style.colorScheme = 'light';
-  var _darkStyleEl = document.getElementById('dark-mode-style');
-  if (_darkStyleEl) _darkStyleEl.disabled = true;
 
-  // ── Inline-style key elements ──
-  var compName  = document.querySelector('.company-name');
-  var docTitle  = document.querySelector('.doc-title');
-  var footerEls = document.querySelectorAll('.footer-text, .footer span');
-  if (compName) compName.setAttribute('style', 'color:#D97706!important;text-shadow:none!important;');
-  if (docTitle) docTitle.setAttribute('style', 'color:#D97706!important;text-shadow:none!important;');
-  footerEls.forEach(function(el){ el.setAttribute('style','color:#9CA3AF!important;text-shadow:none!important;'); });
+  var vp = document.querySelector('meta[name="viewport"]');
+  var origVP = vp ? vp.getAttribute('content') : null;
 
-  // ── Inject force-print-light (only needed in dark mode) ──
+  // ── Snapshot store — every element we touch gets its original style saved ──
+  var _snapshots = [];
+  function _snap(el, prop, val) {
+    _snapshots.push({ el: el, prop: prop, was: el.style[prop] });
+    el.style[prop] = val;
+  }
+  function _snapAttr(el, attr, val) {
+    _snapshots.push({ el: el, attr: attr, was: el.getAttribute(attr) });
+    el.setAttribute(attr, val);
+  }
+
+  // ── RESTORE function ──
+  function restore() {
+    document.title = prevTitle;
+    if (vp && origVP != null) vp.setAttribute('content', origVP);
+    var pl = document.getElementById('force-print-light'); if(pl) pl.remove();
+    document.documentElement.style.colorScheme = '';
+    document.body.style.colorScheme = '';
+    // Restore all snapshotted styles/attrs in reverse order
+    for (var i = _snapshots.length - 1; i >= 0; i--) {
+      var s = _snapshots[i];
+      if (s.attr) {
+        if (s.was === null) s.el.removeAttribute(s.attr);
+        else s.el.setAttribute(s.attr, s.was);
+      } else {
+        s.el.style[s.prop] = s.was;
+      }
+    }
+    _snapshots = [];
+    if (wasDark) {
+      document.body.classList.add('dark-mode');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      if (isMobileSafari || isIPad) {
+        if (typeof saveDraft === 'function') saveDraft();
+        window.location.reload();
+        return;
+      }
+    } else {
+      document.body.classList.remove('dark-mode');
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // STAMP ALL MOBILE PRINT RULES AS INLINE STYLES — unconditionally.
+  // This makes printer-detected vs. no-printer identical because the
+  // layout is locked in the DOM before window.print() is ever called.
+  // @media print CSS is kept as a fallback but is no longer the source
+  // of truth for layout on mobile.
+  // ══════════════════════════════════════════════════════════════════
+  if (isNarrowMobile) {
+    var html = document.documentElement;
+    var body = document.body;
+    var page = document.getElementById('page');
+
+    // html / body sizing — locks the 820px print layout inline
+    _snap(html, 'fontSize',  (isMobileSafari ? '18.5' : '18') + 'px');
+    _snap(html, 'width',     '820px');
+    _snap(body, 'width',     '820px');
+    _snap(body, 'maxWidth',  '820px');
+    _snap(body, 'minWidth',  '0');
+    _snap(body, 'height',    'auto');
+    _snap(body, 'minHeight', '0');
+    _snap(body, 'margin',    '0');
+    _snap(body, 'padding',   '0');
+
+    // .page
+    if (page) {
+      _snap(page, 'display',   'block');
+      _snap(page, 'width',     '100%');
+      _snap(page, 'maxWidth',  '100%');
+      _snap(page, 'padding',   '4px 3px 2px 3px');
+      _snap(page, 'margin',    '0 auto');
+      _snap(page, 'height',    'auto');
+      _snap(page, 'minHeight', '0');
+      _snap(page, 'maxHeight', 'none');
+      _snap(page, 'position',  'static');
+      _snap(page, 'overflow',  'visible');
+      _snap(page, 'boxSizing', 'border-box');
+      _snap(page, 'border',    '1.5px solid #D35E13');
+      _snap(page, 'boxShadow', 'none');
+      _snap(page, 'marginTop', '0');
+    }
+
+    // .header
+    var header = document.querySelector('.header');
+    if (header) {
+      _snap(header, 'display',         'flex');
+      _snap(header, 'marginBottom',    '4px');
+      _snap(header, 'padding',         '0 10px 5px 10px');
+      _snap(header, 'background',      'white');
+      _snap(header, 'minHeight',       'auto');
+      _snap(header, 'boxShadow',       'none');
+    }
+
+    // .content
+    var content = document.querySelector('.content');
+    if (content) {
+      _snap(content, 'display',   'block');
+      _snap(content, 'overflow',  'visible');
+      _snap(content, 'padding',   '3px 0 0 0');
+      _snap(content, 'margin',    '0');
+    }
+
+    // .section — spacing
+    document.querySelectorAll('.section').forEach(function(el) {
+      _snap(el, 'marginBottom', '0');
+      _snap(el, 'background',  'white');
+      _snap(el, 'boxShadow',   'none');
+      _snap(el, 'display',     'block');
+      _snap(el, 'border',      '0.5px solid #D35E13');
+      _snap(el, 'padding',     '0');
+    });
+
+    // .section-body
+    document.querySelectorAll('.section-body').forEach(function(el) {
+      _snap(el, 'padding',    '1.5px 6px');
+      _snap(el, 'background', 'white');
+      _snap(el, 'display',    'block');
+    });
+
+    // .section-header
+    document.querySelectorAll('.section-header').forEach(function(el) {
+      _snap(el, 'background',   '#f5f5f5');
+      _snap(el, 'color',        '#D35E13');
+      _snap(el, 'borderBottom', '0.5px solid #D35E13');
+      _snap(el, 'textShadow',   'none');
+      _snap(el, 'padding',      '3px 7px');
+      _snap(el, 'display',      'flex');
+      _snap(el, 'minHeight',    'auto');
+    });
+
+    // .two-column
+    document.querySelectorAll('.two-column').forEach(function(el) {
+      _snap(el, 'display',       'grid');
+      _snap(el, 'gridTemplateColumns', '1fr 1fr');
+      _snap(el, 'gap',           '2px');
+      _snap(el, 'marginBottom',  '0');
+    });
+
+    // .field-row
+    document.querySelectorAll('.field-row').forEach(function(el) {
+      _snap(el, 'display',       'flex');
+      _snap(el, 'marginBottom',  (el.closest && el.closest('.vrows-print')) ? '3.75px' : '2.5px');
+      _snap(el, 'gap',           '3px');
+    });
+
+    // textareas — match mobile-safari print heights
+    var taNotes = {
+      'batnotes': '34px', 'gennotes': '54px',
+      'oilnotes': '34px', 'gasnotes': '34px', 'tsnotes': '34px', 'svcnotes': '34px'
+    };
+    Object.keys(taNotes).forEach(function(id) {
+      var ta = document.getElementById(id);
+      if (ta) {
+        _snap(ta, 'height',    taNotes[id]);
+        _snap(ta, 'minHeight', taNotes[id]);
+        _snap(ta, 'maxHeight', taNotes[id]);
+        _snap(ta, 'overflow',  'hidden');
+      }
+    });
+
+    // inputs / textareas / selects — general
+    document.querySelectorAll('input[type="text"], input[type="date"], input[type="number"], textarea, select').forEach(function(el) {
+      _snap(el, 'background',  'white');
+      _snap(el, 'color',       '#1F2937');
+      _snap(el, 'minHeight',   '16px');
+      _snap(el, 'fontSize',    'calc(0.756rem + 0.3px)');
+      _snap(el, 'boxShadow',   'none');
+      _snap(el, 'borderTop',   'none');
+      _snap(el, 'borderLeft',  'none');
+      _snap(el, 'borderRight', 'none');
+      _snap(el, 'borderBottom','0.5px solid #D35E13');
+      _snap(el, 'padding',     '0 2px');
+    });
+
+    // Power test notes: applied AFTER the general loop so these win.
+    // Give the box enough height to actually show its two lines — at the print
+    // font size a 34px box can't fit two lines, so WebKit scrolls the first
+    // line out of view (clipping the top). 46px fits both lines; top-anchored.
+    (function() {
+      var sp = document.getElementById('simperfnotes');
+      if (sp) {
+        _snap(sp, 'height',     '34px');
+        _snap(sp, 'minHeight',  '34px');
+        _snap(sp, 'maxHeight',  '34px');
+        _snap(sp, 'overflow',   'hidden');
+        _snap(sp, 'padding',    '2px 2px 0 2px');
+        _snap(sp, 'lineHeight', '1.15');
+        _snap(sp, 'boxSizing',  'border-box');
+        _snap(sp, 'verticalAlign', 'top');
+        // Belt-and-suspenders: also reset scroll to the top.
+        try { sp.scrollTop = 0; } catch (e) {}
+      }
+    })();
+
+    // .check-item controls sizing
+    document.querySelectorAll('.check-item input[type="checkbox"], .check-item input[type="radio"]').forEach(function(el) {
+      _snap(el, 'width',     '12px');
+      _snap(el, 'height',    '12px');
+      _snap(el, 'minWidth',  '12px');
+      _snap(el, 'minHeight', '12px');
+      if (el.checked) _snap(el, 'accentColor', '#D35E13');
+    });
+    document.querySelectorAll('.check-item span, .opt span').forEach(function(el) {
+      _snap(el, 'fontSize', 'calc(0.66rem + 0.3px)');
+      // If this span's check-item is selected, stamp the amber/bold emphasis
+      // inline so it survives the reflow (matches the @media print :checked rule).
+      var ci = el.closest && el.closest('.check-item');
+      if (ci && ci.querySelector('input:checked')) {
+        _snap(el, 'color', '#D35E13');
+        _snap(el, 'webkitTextFillColor', '#D35E13');
+        _snap(el, 'fontWeight', 'bold');
+      }
+    });
+    // Stamp the selected outline on checked check-items themselves.
+    document.querySelectorAll('.check-item').forEach(function(el) {
+      if (el.querySelector('input:checked')) {
+        _snap(el, 'outline',     '1.5px solid #D35E13');
+        _snap(el, 'borderColor',  '#D35E13');
+        _snap(el, 'background',    'transparent');
+      }
+    });
+
+    // .yn-group sizing — must match the per-device @media print CSS
+    // (mobile-safari / mobile-chrome both 19px). Inline stamps win over the
+    // stylesheet, so these values are the real source of truth on phones.
+    document.querySelectorAll('.yn-group').forEach(function(el) {
+      _snap(el, 'height',     '19px');
+      _snap(el, 'minHeight',  '19px');
+      _snap(el, 'maxHeight',  '19px');
+      _snap(el, 'background', 'white');
+      _snap(el, 'border',     '0.5px solid #D35E13');
+      _snap(el, 'display',    'inline-flex');
+      _snap(el, 'alignItems', 'center');
+      _snap(el, 'boxSizing',  'border-box');
+    });
+    document.querySelectorAll('.yn-group .yn-label').forEach(function(el) {
+      _snap(el, 'height',    '17px');
+      _snap(el, 'minHeight', '0');
+      _snap(el, 'maxHeight', '17px');
+      _snap(el, 'lineHeight','1');
+      _snap(el, 'fontSize',  'calc(0.72rem - 0.7px)');
+      _snap(el, 'padding',   '0 7px');
+      _snap(el, 'display',   'flex');
+      _snap(el, 'alignItems','center');
+      // The radio that controls this label sits immediately before it.
+      // Stamp the SELECTED colors inline so the green/red fill survives the
+      // reflow — otherwise the flat white/gray below would override the
+      // @media print :checked rule (inline always wins).
+      var radio = el.previousElementSibling;
+      var on = radio && radio.tagName === 'INPUT' && radio.checked;
+      if (on && el.classList.contains('yn-label-y')) {
+        _snap(el, 'background', '#059669');
+        _snap(el, 'color', '#fff');
+        _snap(el, 'webkitTextFillColor', '#fff');
+      } else if (on && el.classList.contains('yn-label-n')) {
+        _snap(el, 'background', '#DC2626');
+        _snap(el, 'color', '#fff');
+        _snap(el, 'webkitTextFillColor', '#fff');
+      } else {
+        _snap(el, 'background', 'white');
+        _snap(el, 'color',      '#6B7280');
+      }
+    });
+
+    // labels
+    document.querySelectorAll('label').forEach(function(el) {
+      // Skip Y/N pill labels (their selected colors were stamped above) and any
+      // label belonging to a checked .check-item — graying these would wipe the
+      // selected-state emphasis after the reflow.
+      if (el.classList.contains('yn-label')) return;
+      var ci = el.closest && el.closest('.check-item');
+      if (ci && ci.querySelector('input:checked')) return;
+      _snap(el, 'color',    '#6B7280');
+      _snap(el, 'fontSize', 'calc(0.66rem + 0.3px)');
+    });
+
+    // company name / doc title
+    var compName = document.querySelector('.company-name');
+    var docTitle = document.querySelector('.doc-title');
+    if (compName) { _snap(compName, 'color', '#D35E13'); _snap(compName, 'textShadow', 'none'); }
+    if (docTitle)  { _snap(docTitle,  'color', '#D35E13'); _snap(docTitle,  'textShadow', 'none'); }
+
+    // footer
+    var footer = document.querySelector('.footer');
+    if (footer) {
+      _snap(footer, 'display',      'flex');
+      _snap(footer, 'marginTop',    '0');
+      _snap(footer, 'marginBottom', '0');
+      _snap(footer, 'paddingBottom','0');
+    }
+    document.querySelectorAll('.footer-text, .footer span').forEach(function(el) {
+      _snap(el, 'color',      '#9CA3AF');
+      _snap(el, 'textShadow', 'none');
+      _snap(el, 'whiteSpace', 'nowrap');
+    });
+
+    // gas / oil top rows
+    var gasRow = document.getElementById('gas-top-row');
+    var oilRow = document.getElementById('oil-top-row');
+    if (gasRow) { _snap(gasRow, 'gap', '16px'); _snap(gasRow, 'flexWrap', 'nowrap'); }
+    if (oilRow) { _snap(oilRow, 'gap', '10px'); _snap(oilRow, 'flexWrap', 'wrap'); }
+
+    // leak-loc check-group
+    document.querySelectorAll('.leak-loc .check-group').forEach(function(el) {
+      _snap(el, 'flexWrap',  'nowrap');
+      _snap(el, 'whiteSpace','nowrap');
+      _snap(el, 'gap',       '3px');
+    });
+
+    // ── Transfer Switch rows — the key fix ──
+    document.querySelectorAll('.ts-row').forEach(function(row) {
+      _snap(row, 'flexWrap',   'nowrap');
+      _snap(row, 'gap',        '6px');
+      _snap(row, 'alignItems', 'flex-start');
+      row.querySelectorAll('div').forEach(function(d) {
+        _snap(d, 'flexShrink', '1');
+        _snap(d, 'minWidth',   '0');
+      });
+      row.querySelectorAll('.check-group').forEach(function(cg) {
+        _snap(cg, 'flexWrap', 'nowrap');
+        _snap(cg, 'gap',      '2px');
+      });
+      var serial = row.querySelector('input[id^="tsserial"]');
+      if (serial) { _snap(serial, 'width', '110px'); _snap(serial, 'minWidth', '0'); }
+    });
+
+    // name-job-date row
+    var njd = document.getElementById('name-job-date-row');
+    if (njd) {
+      _snap(njd, 'flexWrap', 'nowrap');
+      var nameEl = document.getElementById('name');
+      var numEl  = document.getElementById('number');
+      var dateEl = document.getElementById('date');
+      if (nameEl) { _snap(nameEl, 'flex', '1 1 0'); _snap(nameEl, 'width', 'auto'); _snap(nameEl, 'minWidth', '0'); }
+      if (numEl)  { _snap(numEl,  'flex', '1 1 0'); _snap(numEl,  'width', 'auto'); _snap(numEl,  'minWidth', '0'); }
+      if (dateEl) { _snap(dateEl, 'flex', '0 0 100px'); _snap(dateEl, 'width', '100px'); _snap(dateEl, 'minWidth', '100px'); }
+    }
+
+    // action-bar / save-status hidden
+    var ab = document.getElementById('action-bar');
+    var ss = document.getElementById('save-status');
+    if (ab) _snap(ab, 'display', 'none');
+    if (ss) _snap(ss, 'display', 'none');
+
+    // ── Android Chrome: apply the SAME tightened padding/spacing as iPad ──
+    // The shared narrow-mobile stamps above use the iPhone's looser vertical
+    // spacing, which tips the footer onto a 2nd page on Android Chrome. Re-stamp
+    // (mobile-chrome only) with iPad's values so the form fits one page. These
+    // run after the shared stamps so they win; iPhone (mobile-safari) is left
+    // untouched. Re-stamping the same prop is safe — restore() walks the
+    // snapshot stack in reverse and still lands back on the original value.
+    if (isMobileChrome) {
+      var _pageMC = document.getElementById('page');
+      // iPad uses 8px side padding, but Android Chrome scales the 820px layout
+      // into a slightly narrower printable area, so 8px sides clipped the
+      // right-hand pills (e.g. gas LOCATION "RIGHT"). Pull the sides in to ~2px
+      // to recover that width and let the no-wrap rows sit fully on the page.
+      if (_pageMC) _snap(_pageMC, 'padding', '4px 2px 0 2px');
+      // Trim the gas/oil top-row gap a touch so the LOCATION row clears the edge.
+      var _gasMC = document.getElementById('gas-top-row');
+      var _oilMC = document.getElementById('oil-top-row');
+      if (_gasMC) _snap(_gasMC, 'gap', '10px');
+      if (_oilMC) _snap(_oilMC, 'gap', '10px');
+
+      document.querySelectorAll('.section').forEach(function(el) {
+        _snap(el, 'marginBottom', '0');
+      });
+      document.querySelectorAll('.section-header').forEach(function(el) {
+        _snap(el, 'padding', '2px 7px');
+      });
+      document.querySelectorAll('.section-body').forEach(function(el) {
+        _snap(el, 'padding', '1px 6px');
+      });
+      document.querySelectorAll('.two-column').forEach(function(el) {
+        _snap(el, 'marginBottom', '1px');
+        _snap(el, 'gap', '2px');
+      });
+      document.querySelectorAll('.field-row').forEach(function(el) {
+        _snap(el, 'marginBottom', '0.5px');
+      });
+      var _footMC = document.querySelector('.footer');
+      if (_footMC) {
+        _snap(_footMC, 'marginTop',    '4px');
+        _snap(_footMC, 'marginBottom', '0');
+        _snap(_footMC, 'paddingBottom','1px');
+      }
+    }
+
+    // Force layout reflow before print
+    void document.getElementById('page').getBoundingClientRect();
+
+    // Mobile Chrome: also override viewport so it lays out at 820px for real
+    if (isMobileChrome && vp) {
+      vp.setAttribute('content', 'width=820, initial-scale=1');
+    }
+  } else {
+    // Desktop / iPad — stamp accent colors as before
+    var compName = document.querySelector('.company-name');
+    var docTitle = document.querySelector('.doc-title');
+    if (compName) _snapAttr(compName, 'style', 'color:#D35E13!important;text-shadow:none!important;');
+    if (docTitle)  _snapAttr(docTitle,  'style', 'color:#D35E13!important;text-shadow:none!important;');
+    document.querySelectorAll('.footer-text, .footer span').forEach(function(el) {
+      _snapAttr(el, 'style', 'color:#9CA3AF!important;text-shadow:none!important;');
+    });
+
+    // iPad: the dark theme's fixed full-viewport gradient (body.dark-mode::before)
+    // is painted by a pseudo-element the @media print `*` rules can't reach, so it
+    // bleeds a dark background behind the page and the late layout switch shows as
+    // a reflow. Stamp the body white inline and force a reflow so the print layout
+    // is locked before the dialog opens.
+    if (isIPad) {
+      _snap(document.body, 'background', '#ffffff');
+      _snap(document.documentElement, 'background', '#ffffff');
+      var _pg = document.getElementById('page');
+      if (_pg) void _pg.getBoundingClientRect();
+    }
+  }
+
+  // ── Inject force-print-light (dark mode only, colors only — layout already stamped) ──
   if (wasDark) {
     var printStyle = document.createElement('style');
     printStyle.id  = 'force-print-light';
     printStyle.textContent = [
       ':root, html, body { color-scheme: light !important; }',
-      'body { --cyan:#D97706!important; --bg:#FFFFFF!important; --panel:#FFFFFF!important; --text:#1F2937!important; --text-muted:#6B7280!important; --text-dim:#9CA3AF!important; }',
-      ':root { --cyan:#D97706!important; }',
+      'body { --cyan:#D35E13!important; --bg:#FFFFFF!important; --panel:#FFFFFF!important; --text:#1F2937!important; --text-muted:#6B7280!important; --text-dim:#9CA3AF!important; }',
+      ':root { --cyan:#D35E13!important; }',
       '*, *::before, *::after { animation:none!important; transition:none!important; }',
       '@media print {',
       '  *, *::before, *::after { background:white!important;color:#1F2937!important;box-shadow:none!important;text-shadow:none!important;animation:none!important;transition:none!important; }',
-      '  .section-header, .section-header * { color:#D97706!important; background:#f5f5f5!important; }',
-      '  .section-header::before { background:#D97706!important; }',
+      '  .section-header, .section-header * { color:#D35E13!important; background:#f5f5f5!important; }',
+      '  .section-header::before { background:#D35E13!important; }',
       '  html,body { background:white!important; }',
-      '  .page { border:1.5pt solid #D97706!important;background:white!important; }',
-      '  .company-name { color:#D97706!important; }',
-      '  .doc-title { color:#D97706!important; }',
+      '  body.dark-mode::before, body.dark-mode::after { display:none!important; content:none!important; background:white!important; }',
+      '  .page { border:1.5pt solid #D35E13!important;background:white!important; }',
+      '  .company-name { color:#D35E13!important; }',
+      '  .doc-title { color:#D35E13!important; }',
       '  input, textarea, select { background:white!important;color:#1F2937!important; }',
       '  .footer-text, .footer span { color:#9CA3AF!important; }',
-      '  .action-bar, #save-status, #offline-banner { display:none!important; }',
+      '  .action-bar, #save-status { display:none!important; }',
       '}'
     ].join('\n');
     document.head.appendChild(printStyle);
   }
 
-  var vp = document.querySelector('meta[name="viewport"]');
-  var origVP = vp ? vp.getAttribute('content') : null;
-
-  // ── RESTORE function (defined before use) ──
-  function restore() {
-    document.title = prevTitle;
-    if (vp && origVP != null) vp.setAttribute('content', origVP);
-    var f  = document.getElementById('safari-print-fix');  if(f)  f.remove();
-    var pl = document.getElementById('force-print-light'); if(pl) pl.remove();
-    document.documentElement.style.colorScheme = '';
-    document.body.style.colorScheme = '';
-    if (_darkStyleEl) _darkStyleEl.disabled = false;
-    if (wasDark) {
-      document.body.classList.add('dark-mode'); document.documentElement.setAttribute('data-theme','dark');
-      // iOS Safari sometimes won't repaint dark mode after the print sheet
-      // closes. Draft auto-saves, so a reload is safe. Chrome repaints fine.
-      if (isMobileSafari) {
-        if (typeof saveDraft === 'function') saveDraft();
-        window.location.reload();
-        return;
-      }
-    }
-    else { document.body.classList.remove('dark-mode'); document.documentElement.setAttribute('data-theme','light'); }
-    if (compName) compName.removeAttribute('style');
-    if (docTitle) docTitle.removeAttribute('style');
-    footerEls.forEach(function(el){ el.removeAttribute('style'); });
+  // Blur focused field — prevents iOS Safari print sheet from immediately closing
+  if (document.activeElement && document.activeElement.blur) {
+    document.activeElement.blur();
   }
 
-  if (isNarrowMobile && vp) {
-    // Build safari-print-fix: force desktop-width layout + apply mobile print sizing.
-    var fix = document.createElement('style');
-    fix.id = 'safari-print-fix';
-    fix.textContent = [
-      (isMobileSafari ? '@page { size: 8.5in 11in; margin: 0 !important; }' : ''),
-      '@media print {',
-      '  * { animation:none!important; transition:none!important; }',
-      '  html, body { height:auto!important; }',
-      '  html { width:820px!important; font-size:' + (isMobileSafari ? '18.5' : '18.3') + 'px!important; }',
-      '  body { width:820px!important; max-width:820px!important; min-width:0!important; transform-origin:top left!important; }',
-      '  .page, #page { display:block!important; width:100%!important; max-width:100%!important;',
-      '    padding:4px 3px 2px 3px!important; margin:0 auto!important; box-sizing:border-box!important;',
-      '    page-break-inside:avoid!important; break-inside:avoid!important;',
-      '    position:static!important; overflow:visible!important;',
-      '    min-height:0!important; height:auto!important; max-height:none!important; }',
-      '  .section { page-break-inside:avoid!important; break-inside:avoid!important; }',
-      '  .footer { page-break-inside:avoid!important; break-inside:avoid!important; margin-top:0!important; }',
-      '}'
-    ].join('\n');
-
-    void document.getElementById('page').getBoundingClientRect();
-
-    document.head.appendChild(fix);
-
-    // Mobile Chrome scales a forced-width layout DOWN to fit the paper, so
-    // html{width:820px} alone doesn't give a true desktop layout. Overriding
-    // the viewport meta to a fixed 820px makes Chrome lay the page out at
-    // desktop width for real. (Safari honors the width without this and is
-    // left alone to avoid disturbing its print-sheet behavior.)
-    if (isMobileChrome && vp) {
-      vp.setAttribute('content', 'width=820, initial-scale=1');
+  if (isNarrowMobile || isIPad) {
+    // Fire the print after layout settles. iPhone/Android stamp an 820px layout
+    // and need a short settle; iPad locks its own layout via double-rAF.
+    if (isNarrowMobile) {
+      // Double-rAF + timeout: lets the stamped styles reflow fully at 820px
+      // before the print dialog captures the layout.
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          setTimeout(function() {
+            window.print();
+          }, isMobileSafari ? 350 : 0);
+        });
+      });
+    } else {
+      // iPad: let the inline white-stamp + dark-class removal paint before the
+      // print dialog samples the layout, otherwise it captures mid-reflow.
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() { window.print(); });
+      });
     }
 
-    // Blur any focused field and dismiss the keyboard before printing — on iOS
-    // Safari, calling window.print() while a textarea is focused can cause the
-    // print sheet to immediately close.
-    if (document.activeElement && document.activeElement.blur) {
-      document.activeElement.blur();
-    }
+    // Devices that should hold the light/print layout until the user dismisses
+    // the print sheet AND touches the screen (prevents dark mode flashing back
+    // under the still-open preview AND prevents any un-stamp reflow / rescale of
+    // the locked layout while the preview is live). iPhone Safari and iPad both
+    // qualify, in BOTH light and dark mode — the layout stays frozen until a real
+    // tap or the 60s fallback, so the preview can never reflow underneath it.
+    var _deferRestore = (isMobileSafari || isIPad);
 
-    requestAnimationFrame(function() {
-      window.print();
-    });
-
-    // ── Restore strategy (matches QC) ──
-    var isMobile = isNarrowMobile;
+    // ── Restore strategy ──
     var _restored = false;
     var _printMql = window.matchMedia ? window.matchMedia('print') : null;
 
@@ -1777,23 +2443,24 @@ function openPrintPreview() {
       setTimeout(restore, delay || 0);
     }
 
-    // On mobile Safari in dark mode, defer the reload until the user interacts
-    // with the page. A real tap/touch is the ONLY signal that cannot fire while
-    // the print sheet covers the screen.
     function _armDeferredRestore() {
-      if (isMobileSafari && wasDark) {
+      if (_deferRestore) {
         clearTimeout(_safety);
         function _onInteract() {
           window.removeEventListener('pointerdown', _onInteract, true);
-          window.removeEventListener('touchstart', _onInteract, true);
-          window.removeEventListener('click', _onInteract, true);
+          window.removeEventListener('touchstart',  _onInteract, true);
+          window.removeEventListener('click',       _onInteract, true);
           _tryRestore(0);
         }
         window.addEventListener('pointerdown', _onInteract, true);
-        window.addEventListener('touchstart', _onInteract, true);
-        window.addEventListener('click', _onInteract, true);
+        window.addEventListener('touchstart',  _onInteract, true);
+        window.addEventListener('click',       _onInteract, true);
+        // Fallback so the form can never get stuck in the print/light state if
+        // no touch ever arrives. Touch still restores instantly if it comes
+        // first; otherwise this 60s timer restores for both iPhone and iPad.
+        _safety = setTimeout(function() { _tryRestore(0); }, 60000);
       } else {
-        _tryRestore(isMobile ? 300 : 0);
+        _tryRestore(300);
       }
     }
 
@@ -1807,15 +2474,17 @@ function openPrintPreview() {
       else if (_printMql.addListener) _printMql.addListener(_mqlHandler);
     }
 
-    function _apHandler() { if (!isMobile && !_sawPrint) _tryRestore(0); }
+    function _apHandler() { if (!_sawPrint) _tryRestore(0); }
     window.addEventListener('afterprint', _apHandler);
 
-    var _safety = (isMobileSafari && wasDark)
+    // Safety net before the print dialog is ever seen. Devices that defer the
+    // restore start with no pre-print timer (the deferred path arms its own).
+    var _safety = _deferRestore
       ? null
-      : setTimeout(function() { _tryRestore(0); }, 30000);
+      : setTimeout(function() { _tryRestore(0); }, 60000);
 
   } else {
-    // Desktop print.
+    // Desktop print
     window.addEventListener('afterprint', restore);
     window.print();
   }
@@ -1832,6 +2501,19 @@ function capturePageToCanvas() {
     const logoImg     = page.querySelector('.logo-img');
     const logoOrigSrc = logoImg ? logoImg.getAttribute('src') : null;
 
+    // Format an ISO date value (YYYY-MM-DD) the same way Safari shows it
+    // natively ("Jun 21, 2026"). Parsed manually (not via new Date) so the
+    // day never shifts due to UTC/timezone. Used by html2canvas onclone below,
+    // because html2canvas paints date-input segments year-first on Safari.
+    function _fmtCaptureDate(v) {
+      var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || '');
+      if (!m) return v || '';
+      var mons = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var mi = parseInt(m[2], 10) - 1, d = parseInt(m[3], 10), y = m[1];
+      if (mi < 0 || mi > 11 || !d) return v;
+      return mons[mi] + ' ' + d + ', ' + y;
+    }
+
     // Desktop captures at the original 820px layout width. Mobile stretches a
     // bit wider so the layout has room, and bumps the root font (below, in the
     // force-style) so the content isn't too small in the mobile image.
@@ -1847,6 +2529,7 @@ function capturePageToCanvas() {
       const prevHeight    = page.style.height;
       const prevMinHeight = page.style.minHeight;
       const prevMarginTop = page.style.marginTop;
+      const prevPaddingTop = page.style.paddingTop;
       const prevBodyPad   = document.body.style.padding;
 
       page.style.width     = CAPTURE_WIDTH + 'px';
@@ -1856,18 +2539,33 @@ function capturePageToCanvas() {
       page.style.height    = 'auto';
       page.style.minHeight = '0';
       page.style.marginTop = '0';
+      page.style.paddingTop = '0';
       document.body.style.padding = '0';
 
       const forceStyle = document.createElement('style');
       forceStyle.id = 'capture-force-style';
       forceStyle.textContent = [
         '.two-column { display: grid !important; grid-template-columns: 1fr 1fr !important; }',
+        // Keep Name / Job# / Date on one row in the capture. The mobile screen
+        // media query (max-width:600px) still matches the narrow device viewport
+        // during html2canvas cloning and would otherwise force each field to its
+        // own line, dropping the date below. These !important rules win in the clone.
+        '#name-job-date-row { flex-wrap: nowrap !important; column-gap: 6px !important; }',
+        '#name-job-date-row label { flex: 0 0 auto !important; width: auto !important; }',
+        '#name-job-date-row #name { flex: 2 1 0 !important; width: auto !important; max-width: none !important; min-width: 0 !important; }',
+        '#name-job-date-row #number { flex: 1 1 0 !important; width: auto !important; max-width: none !important; min-width: 0 !important; }',
+        '#name-job-date-row #date { flex: 0 0 100px !important; width: 100px !important; max-width: none !important; min-width: 100px !important; }',
         // Mobile renders the form smaller; bump the root font so the content
         // reads at a comfortable size. Desktop gets a slight +1.5px bump too.
         (_isMobileCap ? 'html { font-size: 29.3px !important; }' : 'html { font-size: 19.3px !important; }'),
         // Footer must follow content during capture, not pin/overlap it, and
         // stay visible (it was dropping out of the capture entirely).
-        '#page { display: block !important; overflow: visible !important; height: auto !important; min-height: 0 !important; max-height: none !important; }',
+        '#page { display: block !important; overflow: visible !important; height: auto !important; min-height: 0 !important; max-height: none !important; border: 1.5px solid #D35E13 !important; }',
+        // Keep the corner brackets (incl. the bottom edge) visible in the
+        // captured image even on mobile, where they're normally hidden — this
+        // prevents the missing bottom border on the short collapsed view.
+        '.page::before, .page::after { display: block !important; border-color: #D35E13 !important; }',
+        '.page-corner-bl, .page-corner-br { display: block !important; border-color: #D35E13 !important; }',
         '.content { display: block !important; overflow: visible !important; height: auto !important; }',
         '.footer { margin-top: 0 !important; position: static !important; display: flex !important; visibility: visible !important; opacity: 1 !important; padding: 8px 10px 4px 10px !important; }',
         '.footer-text, .footer span { color: #6B7280 !important; visibility: visible !important; opacity: 1 !important; }',
@@ -1877,6 +2575,15 @@ function capturePageToCanvas() {
         '}',
         '.theme-toggle-btn { display: none !important; }',
         '.logo-img { filter: none !important; animation: none !important; }',
+        // Hide the header bottom gradient line during capture — it crosses
+        // through the second line of the logo text ("Generators") on the
+        // short captured header, showing as a faint line through the word.
+        '.header::after { display: none !important; }',
+        // The header's own bottom border was also landing on the "Generators"
+        // line because the header renders short on capture. Give it enough
+        // bottom padding / height so the border sits clear below the text.
+        '.header { padding-bottom: 12px !important; min-height: 64px !important; align-items: center !important; }',
+        '.header-logo { align-items: center !important; }',
         // Hide placeholder hint text in the captured image.
         'input::placeholder, textarea::placeholder { color: transparent !important; opacity: 0 !important; }',
         'input::-webkit-input-placeholder, textarea::-webkit-input-placeholder { color: transparent !important; opacity: 0 !important; }',
@@ -1909,13 +2616,16 @@ function capturePageToCanvas() {
           var div = document.createElement('div');
           div.className = 'notes-proxy';
           div.textContent = el.value || '';
+          // Bump the notes text up a bit on capture so it reads larger.
+          var _baseFs = parseFloat(cs.fontSize) || 13;
+          var _capFs  = (_isMobileCap ? _baseFs * 1.18 : _baseFs * 1.12) + 'px';
           div.style.cssText =
-            'font-family:' + cs.fontFamily + ';font-size:' + cs.fontSize + ';' +
+            'font-family:' + cs.fontFamily + ';font-size:' + _capFs + ';' +
             'color:' + cs.color + ';line-height:1.4;' +
             'white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;' +
             'border:' + cs.borderTopWidth + ' solid ' + cs.borderTopColor + ';' +
             'background:#fff;box-sizing:border-box;padding:' + cs.padding + ';' +
-            'width:100%;min-height:' + cs.height + ';border-radius:' + cs.borderRadius + ';';
+            'width:100%;min-height:' + cs.height + ';height:auto;border-radius:' + cs.borderRadius + ';';
           el.style.display = 'none';
           el.parentNode.insertBefore(div, el.nextSibling);
           _noteProxies.push({ ta: el, div: div });
@@ -1985,6 +2695,7 @@ function capturePageToCanvas() {
         page.style.height    = prevHeight;
         page.style.minHeight = prevMinHeight;
         page.style.marginTop = prevMarginTop;
+        page.style.paddingTop = prevPaddingTop;
         document.body.style.padding = prevBodyPad;
         const fs = document.getElementById('capture-force-style');
         if (fs) fs.remove();
@@ -2012,7 +2723,16 @@ function capturePageToCanvas() {
           var _pr = page.getBoundingClientRect();
           var _ftEl = page.querySelector('.footer');
           var _ftBottom = _ftEl ? (_ftEl.getBoundingClientRect().bottom - _pr.top) : 0;
-          var _capH = Math.ceil(Math.max(page.scrollHeight, page.offsetHeight, _ftBottom)) + 24;
+          // Also account for the page element's own rendered bottom edge so the
+          // bottom border/corner brackets are never clipped — important for the
+          // short "power test performed" collapsed view where the page is small.
+          var _pageBottom = _pr.height;
+          // Measure the content height, then deliberately OVERSHOOT by 400px.
+          // The extra area renders as plain white (backgroundColor below), so the
+          // form bottom can never be clipped regardless of device/DPR rounding.
+          // The trailing white is measured away by the trim step after capture.
+          var _contentH = Math.ceil(Math.max(page.scrollHeight, page.offsetHeight, _ftBottom, _pageBottom)) + 48;
+          var _capH = _contentH + 400;
           html2canvas(page, {
             scale: 2,
             useCORS: true,
@@ -2022,41 +2742,135 @@ function capturePageToCanvas() {
             width:       CAPTURE_WIDTH,
             height:      _capH,
             windowWidth: CAPTURE_WIDTH,
+            // CRITICAL: without windowHeight, html2canvas clones into a window
+            // only as tall as the real device viewport. Content below that fold
+            // then fails to render and the bottom clips — and since viewport
+            // height differs per device, the clip differs per device. Match the
+            // window height to the full capture height so everything renders.
+            windowHeight: _capH,
             scrollX: 0,
             scrollY: 0,
             ignoreElements: el =>
               el.classList.contains('toolbar')         ||
               el.classList.contains('action-bar')      ||
+              el.classList.contains('section-toggle-hint') ||
               el.id === 'action-bar'                   ||
               el.id === 'save-status'                  ||
-              el.classList.contains('theme-toggle-btn')
+              el.classList.contains('theme-toggle-btn'),
+            onclone: function (clonedDoc) {
+              // html2canvas paints <input type="date"> segments year-first on
+              // Safari ("2026 06 21"). Replace it in the CLONE only with a span
+              // showing the nicely formatted value, styled to match the input.
+              try {
+                var _live = document.getElementById('date');
+                var _cd   = clonedDoc.getElementById('date');
+                if (_live && _cd && _live.value) {
+                  var _cs = window.getComputedStyle(_live);
+                  var _sp = clonedDoc.createElement('span');
+                  _sp.textContent = _fmtCaptureDate(_live.value);
+                  ['fontFamily','fontSize','fontWeight','fontStyle','letterSpacing',
+                   'color','lineHeight','textAlign','paddingTop','paddingRight',
+                   'paddingBottom','paddingLeft','borderBottomStyle','borderBottomWidth',
+                   'borderBottomColor','height','minHeight','width','minWidth',
+                   'boxSizing','flexGrow','flexShrink','flexBasis'
+                  ].forEach(function (p) { try { _sp.style[p] = _cs[p]; } catch (e) {} });
+                  _sp.style.display    = 'inline-flex';
+                  _sp.style.alignItems = 'center';
+                  _sp.style.whiteSpace = 'nowrap';
+                  _sp.style.overflow   = 'hidden';
+                  if (_cd.parentNode) _cd.parentNode.replaceChild(_sp, _cd);
+                }
+              } catch (e) {}
+            }
           }).then(srcCanvas => {
             restoreCapture();
+
+            // ── Trim trailing white from the BOTTOM of the capture. ──
+            // We intentionally captured ~400px too tall so the form can never
+            // clip; that surplus is plain white. Scan the canvas from the bottom
+            // up for the last row that contains real (non-white) content, then
+            // crop just below it. This works entirely in CANVAS pixels, so the
+            // device pixel ratio never enters the math — it's DPR-proof.
+            try {
+              var _tctx = srcCanvas.getContext('2d', { willReadFrequently: true });
+              var _W = srcCanvas.width, _H = srcCanvas.height;
+              // Treat near-white as white (JPEG/anti-alias specks aren't content).
+              var _WHITE = 250;
+              var _lastContentRow = -1;
+              // Coarse scan upward in 4px steps for speed on tall canvases…
+              outer:
+              for (var _y = _H - 1; _y >= 0; _y -= 4) {
+                var _row = _tctx.getImageData(0, _y, _W, 1).data;
+                // …sampling every 8th pixel across the row.
+                for (var _x = 0; _x < _W; _x += 8) {
+                  var _i = _x * 4;
+                  if (_row[_i] < _WHITE || _row[_i + 1] < _WHITE || _row[_i + 2] < _WHITE) {
+                    _lastContentRow = _y;
+                    break outer;
+                  }
+                }
+              }
+              if (_lastContentRow >= 0) {
+                // Refine within the 4px coarse band to land on the exact last row.
+                for (var _ry = Math.min(_H - 1, _lastContentRow + 4); _ry > _lastContentRow; _ry--) {
+                  var _rrow = _tctx.getImageData(0, _ry, _W, 1).data;
+                  var _hit = false;
+                  for (var _rx = 0; _rx < _W; _rx += 8) {
+                    var _ri = _rx * 4;
+                    if (_rrow[_ri] < _WHITE || _rrow[_ri + 1] < _WHITE || _rrow[_ri + 2] < _WHITE) { _hit = true; break; }
+                  }
+                  if (_hit) { _lastContentRow = _ry; break; }
+                }
+                // Keep a small white margin below the content (scaled to capture).
+                var _cropH = Math.min(_H, _lastContentRow + 1 + 24);
+                if (_cropH < _H) {
+                  var _trimmed = document.createElement('canvas');
+                  _trimmed.width  = _W;
+                  _trimmed.height = _cropH;
+                  var _trctx = _trimmed.getContext('2d');
+                  _trctx.fillStyle = '#ffffff';
+                  _trctx.fillRect(0, 0, _W, _cropH);
+                  _trctx.drawImage(srcCanvas, 0, 0, _W, _cropH, 0, 0, _W, _cropH);
+                  srcCanvas = _trimmed;
+                }
+              }
+            } catch (e) { /* if pixel read fails, fall back to the untrimmed canvas */ }
+
             // Pad to a TRUE 8.5x11 letter canvas so the image is always portrait
-            // and prints to the page with no fit-to-page over-scaling/clipping.
-            // Content is scaled to fit within the margins (by width, or by height
-            // if the form is taller than a page) and placed at the top; any
-            // leftover space is white at the bottom.
+            // and prints with no fit-to-page over-scaling/clipping. Content fills
+            // the full width within thin margins (edge-to-edge, no side gutters).
             const LETTER_W = 1632;
             const LETTER_H = Math.round(LETTER_W * 11 / 8.5); // 2112
-            const MARGIN_X = Math.round(LETTER_W * 0.1 / 8.5); // sides ~19px
-            const MARGIN_Y = Math.round(LETTER_W * 0.1 / 8.5); // top/bottom ~19px
+            const MARGIN_X = Math.round(LETTER_W * 0.15 / 8.5); // sides ~29px
+            const MARGIN_Y = Math.round(LETTER_W * 0.15 / 8.5); // top/bottom ~29px
             const availW   = LETTER_W - MARGIN_X * 2;
             const availH   = LETTER_H - MARGIN_Y * 2;
-            // Scale to fit width; if that makes it taller than the page, fit height.
-            let scale = availW / srcCanvas.width;
-            if (srcCanvas.height * scale > availH) scale = availH / srcCanvas.height;
-            const drawW = Math.round(srcCanvas.width  * scale);
-            const drawH = Math.round(srcCanvas.height * scale);
+            // Fill the FULL available width edge-to-edge (no side gutters). This
+            // is the actual fix — the old logic fit-by-height and left white
+            // gutters on the sides. For height, fill the sheet to match the
+            // target's edge-to-edge look, but cap how far we stretch beyond the
+            // content's natural (proportional) height so the short collapsed
+            // view never looks vertically warped.
+            const drawW = availW;
+            const propH = Math.round(srcCanvas.height * (availW / srcCanvas.width)); // proportional height at full width
+            // On mobile, fill the sheet vertically edge-to-edge (use the full
+            // available height) so the captured image isn't short with trailing
+            // white space. Desktop keeps the gentle +6% cap to avoid warping the
+            // short collapsed view.
+            // Draw proportionally on EVERY device — fill the full width, and let
+            // height follow naturally. Previously mobile stretched content to the
+            // full sheet height (availH), which (a) distorted the aspect ratio and
+            // (b) magnified any bottom clipping, making captures look different on
+            // every device. Proportional + top-aligned is consistent everywhere.
+            // Never exceed availH so tall forms can't overflow the sheet.
+            const drawH = Math.min(availH, propH);
             const letterCanvas = document.createElement('canvas');
             letterCanvas.width  = LETTER_W;
             letterCanvas.height = LETTER_H;
             const ctx = letterCanvas.getContext('2d');
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, LETTER_W, LETTER_H);
-            // Center horizontally within margins, anchor to top margin.
-            const dx = Math.round((LETTER_W - drawW) / 2);
-            ctx.drawImage(srcCanvas, 0, 0, srcCanvas.width, srcCanvas.height, dx, MARGIN_Y, drawW, drawH);
+            ctx.drawImage(srcCanvas, 0, 0, srcCanvas.width, srcCanvas.height, MARGIN_X, MARGIN_Y, drawW, drawH);
             resolve(letterCanvas);
           }).catch(err => {
             restoreCapture();
@@ -2090,6 +2904,80 @@ function capturePageToCanvas() {
       doCapture();
     }
   });
+}
+
+// ===== SMART CAPTURE =====
+// One button for all devices. Prefer the native Share Sheet (works on iOS and
+// modern Android Chrome) — it lets the user Save to Photos/Gallery, AirDrop,
+// email, message, Drive, etc. in one tap. If the browser can't share files, we
+// fall back to a direct download (Android/desktop) or the long-press overlay
+// (older iOS), reusing this form's existing capture pipeline.
+function isIOSDevice() {
+  var ua = navigator.userAgent || '';
+  var iOS = /iPad|iPhone|iPod/.test(ua);
+  // iPadOS 13+ reports as Mac; detect by touch points on a Mac-like UA.
+  var iPadOS = (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  return iOS || iPadOS;
+}
+// Can this browser share files at all?
+function canShareFiles() {
+  try {
+    if (!navigator.canShare) return false;
+    var probe = new File(['x'], 'probe.jpg', { type: 'image/jpeg' });
+    return navigator.canShare({ files: [probe] });
+  } catch (e) { return false; }
+}
+function buildReportFilename() {
+  var nm = (document.getElementById('name')    && document.getElementById('name').value    || '').trim();
+  var ad = (document.getElementById('address') && document.getElementById('address').value || '').trim();
+  var base = [nm, ad, 'Maintenance Report'].filter(Boolean).join(' ')
+               .replace(/[\/\\:*?"<>|]+/g, '').replace(/\s+/g, '_').slice(0, 120);
+  return (base || 'AOG_Maintenance_Report') + '.jpg';
+}
+function saveSmart() {
+  if (canShareFiles())      captureAndShare();   // native Share Sheet (iOS + modern Android)
+  else if (isIOSDevice())   saveForIPhone();     // older iOS → long-press overlay
+  else                      saveForAndroid();    // Android/desktop → download
+}
+
+function captureAndShare() {
+  setStatus('Rendering... please wait');
+  var wasDark = document.body.classList.contains('dark-mode');
+  if (wasDark) document.body.classList.remove('dark-mode');
+
+  setTimeout(function () {
+    capturePageToCanvas().then(function (canvas) {
+      var dataURL = canvas.toDataURL('image/jpeg', 0.92);
+      var fname   = buildReportFilename();
+      var file;
+      try {
+        var parts = dataURL.split(',');
+        var mime  = parts[0].match(/:(.*?);/)[1];
+        var bin   = atob(parts[1]);
+        var arr   = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+        file = new File([arr], fname, { type: mime });
+      } catch (e) { file = null; }
+      if (wasDark) document.body.classList.add('dark-mode');
+
+      // Share ONLY the file — no title/text. A title makes iOS write a stray
+      // .txt file when the user picks "Save to Files".
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file] }).then(function () {
+          setStatus('');
+        }).catch(function (err) {
+          if (err && err.name === 'AbortError') { setStatus(''); }      // user dismissed
+          else if (isIOSDevice()) { saveForIPhone(); }                  // fall back
+          else { saveForAndroid(); }
+        });
+      } else {
+        if (isIOSDevice()) saveForIPhone(); else saveForAndroid();
+      }
+    }).catch(function () {
+      if (wasDark) document.body.classList.add('dark-mode');
+      setStatus('Render failed. Try the PDF button instead.');
+    });
+  }, 250);
 }
 
 function saveForIPhone() {
@@ -2179,7 +3067,13 @@ function saveForAndroid() {
 
 setInterval(saveDraft, 30000);
 document.addEventListener('change', saveDraft);
-document.addEventListener('input', saveDraft);
+// Debounce the per-keystroke save: walking every field + writing storage on
+// every input event adds main-thread work that compounds scroll/typing jank.
+var _saveTimer;
+document.addEventListener('input', function () {
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(saveDraft, 600);
+});
 
 document.addEventListener('DOMContentLoaded', function () {
   const todayInput = document.getElementById('date');
@@ -2189,13 +3083,85 @@ document.addEventListener('DOMContentLoaded', function () {
   applyTheme(getInitialTheme());
   setupThemeToggle();
   restoreDraft();
+  setupSimToggle();
 });
 
+function setupSimToggle() {
+  var header    = document.getElementById('sim-header');
+  var hdrText   = document.getElementById('sim-header-text');
+  var full      = document.getElementById('sim-body-full');
+  var collapsed = document.getElementById('sim-body-collapsed');
+  if (!header || !full || !collapsed) return;
+  var KEY = 'aog_sim_view';
+
+  function apply(view) {
+    if (view === 'collapsed') {
+      full.classList.add('sim-hidden');
+      collapsed.classList.remove('sim-hidden');
+    } else {
+      full.classList.remove('sim-hidden');
+      collapsed.classList.add('sim-hidden');
+    }
+    hdrText.textContent = 'Simulated Power Test';
+    try { localStorage.setItem(KEY, view); } catch (e) {}
+  }
+
+  var saved = 'full';
+  try { saved = localStorage.getItem(KEY) || 'full'; } catch (e) {}
+  apply(saved);
+
+  function toggle() {
+    apply(collapsed.classList.contains('sim-hidden') ? 'collapsed' : 'full');
+  }
+  header.addEventListener('click', toggle);
+  header.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+  });
+
+  // If the user answers "Yes" to whether the test was performed, jump to the
+  // full form so they can fill it out.
+  var yesRadio = document.getElementById('simperf_y');
+  if (yesRadio) {
+    yesRadio.addEventListener('change', function () {
+      if (yesRadio.checked) {
+        apply('full');
+        yesRadio.checked = false;
+        if (typeof saveDraft === 'function') saveDraft();
+      }
+    });
+  }
+}
+
 if ('serviceWorker' in navigator) {
+  // Auto-reload once when a newly activated service worker takes control, so a
+  // freshly deployed version replaces a stale cached one without manual cache
+  // clearing. Guarded so it can only fire a single reload (no loops).
+  var _swRefreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', function () {
+    if (_swRefreshing) return;
+    _swRefreshing = true;
+    window.location.reload();
+  });
+
   window.addEventListener('load', function () {
     navigator.serviceWorker.register('../sw.js', { scope: '../' })
-      .then(reg => console.log('[SW] Registered, scope:', reg.scope))
-      .catch(err => console.warn('[SW] Registration failed:', err));
+      .then(function (reg) {
+        console.log('[SW] Registered, scope:', reg.scope);
+        // Check for a newer service worker on every load.
+        reg.update();
+        // If one is already waiting, ask it to activate immediately (works if
+        // sw.js calls self.skipWaiting() on the SKIP_WAITING message).
+        function _nudge(sw) { if (sw) { try { sw.postMessage({ type: 'SKIP_WAITING' }); } catch (e) {} } }
+        if (reg.waiting) _nudge(reg.waiting);
+        reg.addEventListener('updatefound', function () {
+          var nw = reg.installing;
+          if (!nw) return;
+          nw.addEventListener('statechange', function () {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) _nudge(reg.waiting);
+          });
+        });
+      })
+      .catch(function (err) { console.warn('[SW] Registration failed:', err); });
   });
 }
 </script>
@@ -2204,12 +3170,18 @@ function adjustTopPadding() {
   const bar    = document.getElementById('action-bar');
   const page   = document.getElementById('page');
   const status = document.getElementById('save-status');
-  if (bar && page)   page.style.marginTop = bar.offsetHeight + 'px';
-  if (bar && status) status.style.top     = bar.offsetHeight + 'px';
+  if (bar && page)   page.style.paddingTop = bar.offsetHeight + 'px';
+  if (bar && status) status.style.top      = bar.offsetHeight + 'px';
 }
 window.addEventListener('resize', adjustTopPadding);
+window.addEventListener('orientationchange', adjustTopPadding);
 window.addEventListener('load',   adjustTopPadding);
+// Re-measure after first paint and after fonts settle so the bar's final
+// height is captured (otherwise the page can sit a few px under/over the bar).
+document.addEventListener('DOMContentLoaded', adjustTopPadding);
 setTimeout(adjustTopPadding, 100);
+setTimeout(adjustTopPadding, 500);
+if (document.fonts && document.fonts.ready) { document.fonts.ready.then(adjustTopPadding); }
 </script>
 
 </body>
